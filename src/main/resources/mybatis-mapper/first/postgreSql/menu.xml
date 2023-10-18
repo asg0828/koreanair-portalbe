@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.menu.mapper.MenuMapper">
+
+    <select id="selectList" parameterType="map" resultType="menuModel">
+		WITH RECURSIVE R AS (
+		    SELECT
+		        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT,M.COMPANY_CODE, M.MENU_ICON
+		      , 0 AS LV
+		      , ARRAY[M.MENU_ID::TEXT] AS FULL_PATH_ID
+		      , ARRAY[M.MENU_NM::TEXT] AS FULL_PATH_NM
+		      , ARRAY[LPAD(M.ORD_SEQ::TEXT,5,'0')] AS FULL_ORD_SEQ
+		    FROM T_USER_SYS_MENU M
+		    WHERE NULLIF(M.UP_MENU_ID,'') IS NULL AND M.DEL_YN = 'N'
+		    <if test="companyCode != null and companyCode != ''">
+		      		AND M.COMPANY_CODE = #{companyCode}
+		    </if>
+		    UNION ALL
+		    SELECT
+		        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT,M.COMPANY_CODE, M.MENU_ICON
+		      , R.LV + 1 AS LV
+		      , ARRAY_APPEND(R.FULL_PATH_ID,M.MENU_ID::TEXT) AS FULL_PATH_ID
+		      , ARRAY_APPEND(R.FULL_PATH_NM,M.MENU_NM::TEXT) AS FULL_PATH_NM
+		      , ARRAY_APPEND(R.FULL_ORD_SEQ,LPAD(M.ORD_SEQ::TEXT,5,'0')) AS FULL_ORD_SEQ
+		    FROM R
+		    JOIN T_USER_SYS_MENU M ON R.MENU_ID = M.UP_MENU_ID AND M.DEL_YN = 'N'
+		      <if test="searchKeyword != null and searchKeyword != ''">
+		        	AND UPPER(M.MENU_NM) LIKE '%' || UPPER(#{searchKeyword}) || '%'
+		      </if>
+		      <if test="companyCode != null and companyCode != ''">
+		      		AND M.COMPANY_CODE = #{companyCode}
+		      </if>
+		) SELECT
+		    MENU_ID, UP_MENU_ID, MENU_NM, MENU_URL, MENU_DSC, ORD_SEQ, MENU_SE, MENU_ATTR, USE_YN, RGST_ID, RGST_DT, MODI_ID, MODI_DT,COMPANY_CODE, MENU_ICON
+		  , LV
+		  , ARRAY_TO_JSON(FULL_PATH_ID) AS FULL_PATH_ID
+		  , ARRAY_TO_JSON(FULL_PATH_NM) AS FULL_PATH_NM
+		  , ARRAY_TO_STRING(FULL_ORD_SEQ,'-') AS FULL_ORD_SEQ
+		FROM R
+		ORDER BY FULL_ORD_SEQ, MENU_NM
+    </select>
+
+    <select id="select" resultType="menuModel" parameterType="menuModel">
+			WITH RECURSIVE R AS (
+			    SELECT
+			        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT,M.COMPANY_CODE, M.MENU_ICON
+			      , 0 AS LV
+			      , ARRAY[M.MENU_ID::TEXT] AS FULL_PATH_ID
+			      , ARRAY[M.MENU_NM::TEXT] AS FULL_PATH_NM
+			      , ARRAY[LPAD(M.ORD_SEQ::TEXT,5,'0')] AS FULL_ORD_SEQ
+			    FROM T_USER_SYS_MENU M
+			    WHERE NULLIF(M.UP_MENU_ID,'') IS NULL AND M.DEL_YN = 'N'
+			    UNION ALL
+			    SELECT
+			        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT,M.COMPANY_CODE, M.MENU_ICON
+			      , R.LV + 1 AS LV
+			      , ARRAY_APPEND(R.FULL_PATH_ID,M.MENU_ID::TEXT) AS FULL_PATH_ID
+			      , ARRAY_APPEND(R.FULL_PATH_NM,M.MENU_NM::TEXT) AS FULL_PATH_NM
+			      , ARRAY_APPEND(R.FULL_ORD_SEQ,LPAD(M.ORD_SEQ::TEXT,5,'0')) AS FULL_ORD_SEQ
+			    FROM R
+			    JOIN T_USER_SYS_MENU M ON R.MENU_ID = M.UP_MENU_ID AND M.DEL_YN = 'N'
+			) SELECT
+			    MENU_ID, UP_MENU_ID, MENU_NM, MENU_URL, MENU_DSC, ORD_SEQ, MENU_SE, MENU_ATTR, USE_YN, RGST_ID, RGST_DT, MODI_ID, MODI_DT,COMPANY_CODE, MENU_ICON
+			  , LV
+			  , ARRAY_TO_JSON(FULL_PATH_ID) AS FULL_PATH_ID
+			  , ARRAY_TO_JSON(FULL_PATH_NM) AS FULL_PATH_NM
+			  , ARRAY_TO_STRING(FULL_ORD_SEQ,'-') AS FULL_ORD_SEQ
+			FROM R
+			WHERE MENU_ID = #{menuId}
+			  <if test="companyCode != null and companyCode != ''">
+		      		AND COMPANY_CODE = #{companyCode}
+		      </if>
+    </select>
+
+    <insert id="insert" parameterType="menuModel">
+		INSERT INTO T_USER_SYS_MENU (
+		  MENU_ID
+		  <if test="upMenuId != null and upMenuId != ''">
+		  , UP_MENU_ID
+		  </if>
+		  , MENU_NM
+		  , MENU_URL
+		  , MENU_DSC
+		  , ORD_SEQ
+		  , USE_YN
+		  ,COMPANY_CODE
+		  , RGST_ID
+		  , MODI_ID
+		  , MENU_SE
+		  , MENU_ATTR
+		  , MENU_ICON
+		) VALUES (
+		    #{menuId}
+		  <if test="upMenuId != null and upMenuId != ''">
+		  , #{upMenuId}
+		  </if>
+		  , #{menuNm}
+		  , #{menuUrl}
+		  , #{menuDsc}
+		  , #{ordSeq}
+		  , #{useYn}
+		  ,#{companyCode}
+		  , #{rgstId}
+		  , #{modiId}
+		  , #{menuSe}
+		  , #{menuAttr}::jsonb
+		  , #{menuIcon}
+		)
+    </insert>
+
+    <update id="update" parameterType="menuModel">
+		UPDATE T_USER_SYS_MENU SET
+		  menu_nm = #{menuNm}
+		  , menu_url = #{menuUrl}
+		  , menu_dsc = #{menuDsc}
+		  , ord_seq = #{ordSeq}
+		  , use_yn = #{useYn}
+		  , modi_id = #{modiId}
+		  , modi_dt = NOW()
+		  , menu_se = #{menuSe}
+		  , menu_attr = #{menuAttr}::jsonb
+		  , menu_icon = #{menuIcon}
+		  <if test="upMenuId != null and upMenuId != ''">
+		  , up_menu_id = #{upMenuId}
+		  </if>
+		WHERE MENU_ID = #{menuId}
+    </update>
+
+    <delete id="delete" parameterType="menuModel">
+		UPDATE T_USER_SYS_MENU SET
+		    del_yn = 'Y'
+		  , modi_id = #{modiId}
+		  , modi_dt = NOW()
+		WHERE MENU_ID = #{menuId}
+    </delete>
+ 
+  <delete id="deleteAll" parameterType="string">
+  		delete from t_user_sys_menu
+  		WHERE company_code = #{companyCode}
+  </delete>
+  
+ <insert id="insertHst" parameterType="string">
+ 	insert into t_user_sys_menu_hist
+ 	select current_timestamp as hist_dt
+ 			,menu_id
+			,up_menu_id
+			,menu_nm
+			,menu_url
+			,menu_dsc
+			,ord_seq
+			,menu_se
+			,menu_attr
+			,use_yn
+			,company_code
+			,rgst_id
+			,rgst_dt
+			,modi_id
+			,modi_dt
+			,del_yn
+ 	from t_user_sys_menu
+ 	WHERE company_code = #{companyCode}
+ </insert>
+
+
+
+    <select id="selectUpperMenuIdForMenuUrl" resultType="string" parameterType="menuModel">
+<![CDATA[
+WITH RECURSIVE R AS (
+    SELECT
+        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT
+      , 0 AS LV
+      , ARRAY[M.MENU_ID::TEXT] AS FULL_PATH_ID
+      , ARRAY[M.MENU_NM::TEXT] AS FULL_PATH_NM
+      , ARRAY[LPAD(M.ORD_SEQ::TEXT,5,'0')] AS FULL_ORD_SEQ
+    FROM T_MGR_SYS_MENU M
+    WHERE NULLIF(M.UP_MENU_ID,'') IS NULL  AND M.USE_YN = 'Y'
+    UNION ALL
+    SELECT
+        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT
+      , R.LV + 1 AS LV
+      , ARRAY_APPEND(R.FULL_PATH_ID,M.MENU_ID::TEXT) AS FULL_PATH_ID
+      , ARRAY_APPEND(R.FULL_PATH_NM,M.MENU_NM::TEXT) AS FULL_PATH_NM
+      , ARRAY_APPEND(R.FULL_ORD_SEQ,LPAD(M.ORD_SEQ::TEXT,5,'0')) AS FULL_ORD_SEQ
+    FROM R
+    JOIN T_MGR_SYS_MENU M ON R.MENU_ID = M.UP_MENU_ID  AND M.USE_YN = 'Y'
+) SELECT
+    UP_MENU_ID
+FROM R
+WHERE LV > 0 AND MENU_URL = #{menuUrl}
+ORDER BY FULL_ORD_SEQ DESC, MENU_NM
+LIMIT 1
+]]>
+    </select>
+    
+    <select id="selectTopMenuListWithAuth" resultType="menuModel" parameterType="string">
+WITH RECURSIVE R AS (
+    SELECT
+        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT
+      , 0 AS LV
+      , ARRAY[M.MENU_ID::TEXT] AS FULL_PATH_ID
+      , ARRAY[M.MENU_NM::TEXT] AS FULL_PATH_NM
+      , ARRAY[LPAD(M.ORD_SEQ::TEXT,5,'0')] AS FULL_ORD_SEQ
+    FROM T_MGR_SYS_MENU M
+    JOIN T_MGR_SYS_MENU_AUTH A ON M.MENU_ID = A.MENU_ID AND M.MENU_SE = 'M' AND M.USE_YN = 'Y' AND A.USE_YN = 'Y' AND A.AUTH_ID = #{authId}
+    WHERE NULLIF(M.UP_MENU_ID,'') IS NULL
+    UNION ALL
+    SELECT
+        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT
+      , R.LV + 1 AS LV
+      , ARRAY_APPEND(R.FULL_PATH_ID,M.MENU_ID::TEXT) AS FULL_PATH_ID
+      , ARRAY_APPEND(R.FULL_PATH_NM,M.MENU_NM::TEXT) AS FULL_PATH_NM
+      , ARRAY_APPEND(R.FULL_ORD_SEQ,LPAD(M.ORD_SEQ::TEXT,5,'0')) AS FULL_ORD_SEQ
+    FROM R
+    JOIN T_MGR_SYS_MENU M ON R.MENU_ID = M.UP_MENU_ID AND M.MENU_SE = 'M' AND M.USE_YN = 'Y'
+    JOIN T_MGR_SYS_MENU_AUTH A ON M.MENU_ID = A.MENU_ID AND A.USE_YN = 'Y' AND A.AUTH_ID = #{authId}
+) SELECT
+    MENU_ID, UP_MENU_ID, MENU_NM, MENU_URL, MENU_DSC, ORD_SEQ, MENU_SE, MENU_ATTR, USE_YN, RGST_ID, RGST_DT, MODI_ID, MODI_DT
+  , LV
+  , ARRAY_TO_JSON(FULL_PATH_ID) AS FULL_PATH_ID
+  , ARRAY_TO_JSON(FULL_PATH_NM) AS FULL_PATH_NM
+  , ARRAY_TO_STRING(FULL_ORD_SEQ,'-') AS FULL_ORD_SEQ
+FROM R
+WHERE LV = 1
+ORDER BY FULL_ORD_SEQ, MENU_NM
+    </select>
+    
+    <select id="selectLeftMenuListWithAuth" resultType="menuModel" parameterType="map">
+WITH RECURSIVE R AS (
+    SELECT
+        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT, M.MENU_ICON
+      , 0 AS LV
+      , ARRAY[M.MENU_ID::TEXT] AS FULL_PATH_ID
+      , ARRAY[M.MENU_NM::TEXT] AS FULL_PATH_NM
+      , ARRAY[LPAD(M.ORD_SEQ::TEXT,5,'0')] AS FULL_ORD_SEQ
+    FROM T_MGR_SYS_MENU M
+    JOIN T_MGR_SYS_MENU_AUTH A ON M.MENU_ID = A.MENU_ID AND M.MENU_SE = 'M' AND M.USE_YN = 'Y' AND A.USE_YN = 'Y' AND A.AUTH_ID = #{authId}
+    WHERE NULLIF(M.UP_MENU_ID,'') IS NULL
+    UNION ALL
+    SELECT
+        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT, M.MENU_ICON
+      , R.LV + 1 AS LV
+      , ARRAY_APPEND(R.FULL_PATH_ID,M.MENU_ID::TEXT) AS FULL_PATH_ID
+      , ARRAY_APPEND(R.FULL_PATH_NM,M.MENU_NM::TEXT) AS FULL_PATH_NM
+      , ARRAY_APPEND(R.FULL_ORD_SEQ,LPAD(M.ORD_SEQ::TEXT,5,'0')) AS FULL_ORD_SEQ
+    FROM R
+    JOIN T_MGR_SYS_MENU M ON R.MENU_ID = M.UP_MENU_ID AND M.MENU_SE = 'M' AND M.USE_YN = 'Y'
+    JOIN T_MGR_SYS_MENU_AUTH A ON M.MENU_ID = A.MENU_ID AND A.USE_YN = 'Y' AND A.AUTH_ID = #{authId}
+) SELECT
+    MENU_ID, UP_MENU_ID, MENU_NM, MENU_URL, MENU_DSC, ORD_SEQ, MENU_SE, MENU_ATTR, USE_YN, RGST_ID, RGST_DT, MODI_ID, MODI_DT, MENU_ICON
+  , LV
+  , ARRAY_TO_JSON(FULL_PATH_ID) AS FULL_PATH_ID
+  , ARRAY_TO_JSON(FULL_PATH_NM) AS FULL_PATH_NM
+  , ARRAY_TO_STRING(FULL_ORD_SEQ,'-') AS FULL_ORD_SEQ
+FROM R
+<!--WHERE UP_MENU_ID = #{upMenuId}-->
+<!-- WHERE POSITION(#{upMenuId} in ARRAY_TO_STRING(FULL_PATH_ID,',')) > 0   -->
+WHERE UP_MENU_ID IS NOT NULL
+ORDER BY FULL_ORD_SEQ, MENU_NM
+    </select>
+
+	<select id="selectFirstMenuUrl" resultType="string" parameterType="map">
+WITH RECURSIVE R AS (
+    SELECT
+        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT
+      , 0 AS LV
+      , ARRAY[M.MENU_ID::TEXT] AS FULL_PATH_ID
+      , ARRAY[M.MENU_NM::TEXT] AS FULL_PATH_NM
+      , ARRAY[LPAD(M.ORD_SEQ::TEXT,5,'0')] AS FULL_ORD_SEQ
+    FROM T_MGR_SYS_MENU M
+    JOIN T_MGR_SYS_MENU_AUTH A ON M.MENU_ID = A.MENU_ID AND M.MENU_SE = 'M' AND M.USE_YN = 'Y' AND A.USE_YN = 'Y' AND A.AUTH_ID = #{authId}
+    WHERE NULLIF(M.UP_MENU_ID,'') IS NULL
+    UNION ALL
+    SELECT
+        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT
+      , R.LV + 1 AS LV
+      , ARRAY_APPEND(R.FULL_PATH_ID,M.MENU_ID::TEXT) AS FULL_PATH_ID
+      , ARRAY_APPEND(R.FULL_PATH_NM,M.MENU_NM::TEXT) AS FULL_PATH_NM
+      , ARRAY_APPEND(R.FULL_ORD_SEQ,LPAD(M.ORD_SEQ::TEXT,5,'0')) AS FULL_ORD_SEQ
+    FROM R
+    JOIN T_MGR_SYS_MENU M ON R.MENU_ID = M.UP_MENU_ID AND M.MENU_SE = 'M' AND M.USE_YN = 'Y'
+    JOIN T_MGR_SYS_MENU_AUTH A ON M.MENU_ID = A.MENU_ID AND A.USE_YN = 'Y' AND A.AUTH_ID = #{authId}
+) SELECT
+    MENU_URL
+FROM R
+<![CDATA[
+WHERE LV > 1
+]]>
+		<if test='@org.apache.commons.lang3.StringUtils@isNotBlank(menuUrl)'>
+  AND MENU_URL LIKE #{menuUrl}||'%'
+		</if>
+ORDER BY FULL_ORD_SEQ, MENU_NM
+LIMIT 1
+	</select>
+    
+    <select id="selectMenuAuthList" resultType="menuModel">
+    	SELECT
+			A.MENU_ID
+			, COUNT(*)
+			, B.MENU_NM
+			, B.MENU_URL
+			, B.ORD_SEQ
+			, B.UP_MENU_ID
+		FROM
+			T_USER_SYS_MENU_AUTH A
+		LEFT OUTER JOIN T_USER_SYS_MENU B 
+		ON
+			A.MENU_ID = B.MENU_ID
+		GROUP BY
+			A.MENU_ID,
+			B.MENU_ID
+    
+    </select>
+    
+    <select id="selectMenuListWithAuth" resultType="menuModel" parameterType="string">
+WITH RECURSIVE R AS (
+    SELECT
+        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, A.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT
+      , 0 AS LV
+      , ARRAY[M.MENU_ID::TEXT] AS FULL_PATH_ID
+      , ARRAY[M.MENU_NM::TEXT] AS FULL_PATH_NM
+      , ARRAY[LPAD(M.ORD_SEQ::TEXT,5,'0')] AS FULL_ORD_SEQ
+    FROM T_USER_SYS_MENU M
+    JOIN T_USER_SYS_MENU_AUTH A ON M.MENU_ID = A.MENU_ID AND A.AUTH_ID = #{authId}
+    WHERE NULLIF(M.UP_MENU_ID,'') IS NULL
+    UNION ALL
+    SELECT
+        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, A.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT
+      , R.LV + 1 AS LV
+      , ARRAY_APPEND(R.FULL_PATH_ID,M.MENU_ID::TEXT) AS FULL_PATH_ID
+      , ARRAY_APPEND(R.FULL_PATH_NM,M.MENU_NM::TEXT) AS FULL_PATH_NM
+      , ARRAY_APPEND(R.FULL_ORD_SEQ,LPAD(M.ORD_SEQ::TEXT,5,'0')) AS FULL_ORD_SEQ
+    FROM R
+    JOIN T_USER_SYS_MENU M ON R.MENU_ID = M.UP_MENU_ID
+    JOIN T_USER_SYS_MENU_AUTH A ON M.MENU_ID = A.MENU_ID AND A.AUTH_ID = #{authId}
+) SELECT
+    MENU_ID, UP_MENU_ID, MENU_NM, MENU_URL, MENU_DSC, ORD_SEQ, MENU_SE, MENU_ATTR, USE_YN, RGST_ID, RGST_DT, MODI_ID, MODI_DT
+  , LV
+  , ARRAY_TO_JSON(FULL_PATH_ID) AS FULL_PATH_ID
+  , ARRAY_TO_JSON(FULL_PATH_NM) AS FULL_PATH_NM
+  , ARRAY_TO_STRING(FULL_ORD_SEQ,'-') AS FULL_ORD_SEQ
+FROM R
+    </select>
+    
+    <update id="updateMenuListWithAuth" parameterType="menuModel">
+      INSERT INTO T_USER_SYS_MENU_AUTH (AUTH_ID, MENU_ID, use_yn, rgst_id, modi_id)
+      VALUES (#{authId}, #{menuId}, #{authUseYn}, #{modiId}, #{modiId})
+      ON CONFLICT (AUTH_ID, MENU_ID)
+      DO UPDATE
+      SET use_yn = #{authUseYn}
+      , modi_id = #{modiId}
+    </update>
+    
+    <select id="selectUpperMenuIdForMenuUrlDepth" resultType="menuModel" parameterType="menuModel">
+		SELECT CASE WHEN A.MENU_SE ='F'
+		            THEN (SELECT B.UP_MENU_ID  FROM T_MGR_SYS_MENU B
+		                  WHERE B.MENU_ID  =A.UP_MENU_ID) 
+		            ELSE A.UP_MENU_ID 
+		            END AS UP_MENU_ID
+		     , (SELECT B.MENU_NM  FROM T_MGR_SYS_MENU B WHERE B.MENU_ID  =A.UP_MENU_ID) AS UP_MENU_NM 
+		     , CASE WHEN A.MENU_SE ='F'
+		            THEN (SELECT B.MENU_ID  FROM T_MGR_SYS_MENU B
+		                  WHERE B.MENU_ID  =A.UP_MENU_ID) 
+		            ELSE A.MENU_ID 
+		            END AS MENU_ID
+		      , (SELECT B.MENU_NM  FROM T_MGR_SYS_MENU B WHERE B.MENU_ID  =A.MENU_ID) AS MENU_NM          
+		FROM T_MGR_SYS_MENU A
+		WHERE 1=1
+		AND A.MENU_URL = #{menuUrl}
+		AND A.USE_YN = 'Y' 
+    </select>
+    
+    
+    <select id="selectQuickMenuListWithAuth" resultType="quickMenuModel" parameterType="quickMenuModel">
+    	 WITH RECURSIVE R AS (
+		    SELECT
+		        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT
+		      , 0 AS LV
+		      , ARRAY[M.MENU_ID::TEXT] AS FULL_PATH_ID
+		      , ARRAY[M.MENU_NM::TEXT] AS FULL_PATH_NM
+		      , ARRAY[LPAD(M.ORD_SEQ::TEXT,5,'0')] AS FULL_ORD_SEQ
+		    FROM T_MGR_SYS_MENU M
+		    WHERE NULLIF(M.UP_MENU_ID,'') IS NULL AND M.DEL_YN = 'N'
+		    AND M.MENU_SE = 'M'
+<!-- 		    AND M.COMPANY_CODE = #{companyCd} -->
+		    
+		    UNION ALL
+		    SELECT
+		        M.MENU_ID, M.UP_MENU_ID, M.MENU_NM, M.MENU_URL, M.MENU_DSC, M.ORD_SEQ, M.MENU_SE, M.MENU_ATTR, M.USE_YN, M.RGST_ID, M.RGST_DT, M.MODI_ID, M.MODI_DT
+		      , R.LV + 1 AS LV
+		      , ARRAY_APPEND(R.FULL_PATH_ID,M.MENU_ID::TEXT) AS FULL_PATH_ID
+		      , ARRAY_APPEND(R.FULL_PATH_NM,M.MENU_NM::TEXT) AS FULL_PATH_NM
+		      , ARRAY_APPEND(R.FULL_ORD_SEQ,LPAD(M.ORD_SEQ::TEXT,5,'0')) AS FULL_ORD_SEQ
+		    FROM R
+		    JOIN T_MGR_SYS_MENU M ON R.MENU_ID = M.UP_MENU_ID AND M.DEL_YN = 'N'
+		    AND M.MENU_SE = 'M'  
+		      
+<!-- 		      		AND M.COMPANY_CODE = #{companyCd} -->
+		      
+		) SELECT
+		    R.MENU_ID, R.UP_MENU_ID, R.MENU_NM, R.MENU_URL, R.MENU_DSC, R.ORD_SEQ, R.MENU_SE, R.MENU_ATTR, R.USE_YN, R.RGST_ID, R.RGST_DT, R.MODI_ID, R.MODI_DT
+		  , LV
+		  , ARRAY_TO_JSON(R.FULL_PATH_ID) AS FULL_PATH_ID
+		  , ARRAY_TO_JSON(R.FULL_PATH_NM) AS FULL_PATH_NM
+		  , ARRAY_TO_STRING(R.FULL_ORD_SEQ,'-') AS FULL_ORD_SEQ
+		  , TMQM.QUICK_USER_ID AS QUICK_USER_ID
+		FROM R
+		LEFT OUTER JOIN T_MGR_QUICK_MENU TMQM		
+		ON R.MENU_ID = TMQM.MENU_ID
+		AND TMQM.QUICK_USER_ID = #{quickUserId}
+		AND TMQM.DEL_YN = #{delYn}
+		ORDER BY FULL_ORD_SEQ, MENU_NM
+    </select>
+    
+    <select id="selectQuickMenuList" resultType="quickMenuModel" parameterType="quickMenuModel">
+    	SELECT
+			  Q.QUICK_USER_ID	AS QUICK_USER_ID
+			, Q.MENU_ID			AS MENU_ID
+			, Q.UP_MENU_ID		AS UP_MENU_ID
+			, Q.DEL_YN			AS DEL_YN 
+			, M.MENU_NM			AS MENU_NM
+			, M.MENU_URL		AS MENU_URL
+		FROM T_MGR_QUICK_MENU Q 
+		INNER JOIN T_MGR_SYS_MENU M
+		ON Q.MENU_ID = M.MENU_ID
+		WHERE Q.QUICK_USER_ID = #{quickUserId}
+		AND Q.DEL_YN = 'N'
+    </select>
+    
+    <select id="selectBookMarkMenuListWithAuth" resultType="quickMenuModel" parameterType="quickMenuModel">
+    	with main as (SELECT M.MENU_ID
+							, M.UP_MENU_ID
+							, M.MENU_NM
+							, M.MENU_URL
+							, M.MENU_DSC
+							, M.ORD_SEQ
+							, M.MENU_SE
+							, M.MENU_ATTR
+							, M.USE_YN 
+							FROM T_MGR_SYS_MENU M 
+							JOIN T_MGR_SYS_MENU_AUTH A 
+							ON M.MENU_ID = A.MENU_ID 
+							AND M.MENU_SE = 'M' 
+							AND M.USE_YN = 'Y' 
+							AND A.USE_YN = 'Y' 
+							AND A.AUTH_ID = #{authId}
+							AND M.COMPANY_CODE = #{companyCode}
+							WHERE NULLIF(M.UP_MENU_ID,'') IS NULL 
+				), sub as (SELECT M.MENU_ID
+							, M.UP_MENU_ID
+							, M.MENU_NM
+							, M.MENU_URL
+							, M.MENU_DSC
+							, M.ORD_SEQ
+							, M.MENU_SE
+							, M.MENU_ATTR
+							, M.USE_YN 
+							FROM main 
+							JOIN T_MGR_SYS_MENU M 
+							ON main.MENU_ID = M.UP_MENU_ID 
+							AND M.MENU_SE = 'M' 
+							AND M.USE_YN = 'Y' 
+							JOIN T_MGR_SYS_MENU_AUTH A 
+							ON M.MENU_ID = A.MENU_ID 
+							AND A.USE_YN = 'Y' 
+							AND A.AUTH_ID = #{authId} 
+							AND M.COMPANY_CODE = #{companyCode}
+				), sub1 as (SELECT M.MENU_ID
+							, M.UP_MENU_ID
+							, M.MENU_NM
+							, M.MENU_URL
+							, M.MENU_DSC
+							, M.ORD_SEQ
+							, M.MENU_SE
+							, M.MENU_ATTR
+							, M.USE_YN 
+							FROM sub 
+							JOIN T_MGR_SYS_MENU M 
+							ON sub.MENU_ID = M.UP_MENU_ID 
+							AND M.MENU_SE = 'M' 
+							AND M.USE_YN = 'Y' 
+							JOIN T_MGR_SYS_MENU_AUTH A 
+							ON M.MENU_ID = A.MENU_ID 
+							AND A.USE_YN = 'Y' 
+							AND A.AUTH_ID = #{authId} 
+							AND M.COMPANY_CODE = #{companyCode}
+				)
+				select sub.menu_id as up_menu_id
+				      ,sub.menu_nm as up_menu_nm
+				      ,sub.menu_url as up_menu_url
+				      ,sub1.menu_id  
+				      ,sub1.menu_nm
+				      ,sub1.menu_url
+				      ,q.bookmark_yn
+				from sub
+				left outer join sub1
+				on sub.MENU_ID = sub1.UP_MENU_ID
+				inner join t_mgr_quick_menu q 
+				on q.menu_id = sub1.menu_id
+				and coalesce(q.del_yn ,'N')='N'
+				and q.quick_user_id=#{quickUserId}
+				<if test="bookmarkYn != null and bookmarkYn != ''">
+					and q.bookmark_yn =#{bookmarkYn} 
+				</if>
+				order by sub.ORD_SEQ
+    </select>
+    
+    <insert id="insertQuickMenu" parameterType="quickMenuModel">
+    	WITH UPSERT AS (
+		    	UPDATE T_MGR_QUICK_MENU 
+		    	SET   UP_MENU_ID = #{upMenuId}
+					, DEL_YN = #{delYn}
+					, MODI_DT = now()
+					, MODI_ID = #{modiId}
+				WHERE QUICK_USER_ID = #{quickUserId}
+				AND MENU_ID = #{menuId}
+				RETURNING *
+		)
+		INSERT INTO T_MGR_QUICK_MENU(
+				  QUICK_USER_ID
+				, MENU_ID
+				, UP_MENU_ID
+				, DEL_YN
+				, RGST_DT
+				, RGST_ID
+				, MODI_DT
+				, MODI_ID
+			)
+		SELECT
+				  #{quickUserId}
+				, #{menuId}
+				, #{upMenuId}
+				, #{delYn}
+				, NOW()
+				, #{rgstId}
+				, NOW()
+				, #{modiId}
+		WHERE NOT EXISTS (SELECT * FROM UPSERT)
+    </insert>
+     
+     <update id="updateQuickMenu" parameterType="quickMenuModel">
+     	update t_mgr_quick_menu set del_yn = #{delYn}
+     	                                     ,modi_dt=now()
+     	                                     ,modi_id=#{modiId}
+     	where quick_user_id = #{quickUserId}
+		and menu_id = #{menuId}
+		and coalesce(del_yn ,'N')='N'
+     </update>
+    
+     <update id="deleteQuickMenu" parameterType="quickMenuModel">
+     	update t_mgr_quick_menu set del_yn = #{delYn}
+     	                                     ,modi_dt=now()
+     	                                     ,modi_id=#{modiId}
+     	where quick_user_id = #{quickUserId}
+		and menu_id = #{menuId}
+     </update>
+</mapper>

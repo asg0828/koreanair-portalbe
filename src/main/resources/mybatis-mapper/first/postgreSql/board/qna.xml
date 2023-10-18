@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.board.mapper.QnaMapper">
+	<sql id="where">
+		<where>
+        	AND DEL_YN = 'N'
+			AND coalesce(bf_qna_id,'')=''
+			<if test="searchValue != '' ">
+				<bind
+						name="searchValue"
+						value='@com.bdp.ap.common.EscapeHelper@escape(searchValue)'
+				/>
+			</if>
+			<if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+				AND (UPPER(sj) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(cn) LIKE CONCAT('%',UPPER(#{searchValue}),'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'sj' and searchValue != ''">
+				AND UPPER(sj) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchKey != '' and searchKey == 'cn' and searchValue != ''">
+				AND UPPER(cn) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+        </where>
+	</sql>
+	
+	<sql id="order">
+		ORDER BY a.rownum DESC
+	</sql> 
+ 
+	<select id="selectQnaList" resultType="qnaModel" parameterType="criteria">
+		select
+			*
+		from (	
+			SELECT
+				row_number() over(order by tbq.rgst_dt ASC) as rownum,
+				tbq.qna_id,
+				tbq.cl_code,
+				(SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'QNA_CAT' AND CODE_ID = tbq.cl_code) AS qna_cate_nm,
+				tbq.sj,
+				tbq.cn,
+				tbq.answ,
+				tbq.answ_rgst_id,
+				(select file_url from t_user where user_id = tbq.answ_rgst_id) as answ_photo_url,
+				tbq.answ_rgst_dt,
+				tbq.bf_qna_id,
+				tbq.use_yn,
+				(CASE tbq.USE_YN WHEN 'Y' THEN '게시' ELSE '미게시' END) AS USE_YN_NM,
+				tbq.del_yn,
+				tbq.rgst_id,
+				tbq.rgst_dt,
+				tbq.modi_id,
+				tbq.modi_dt,
+				tbq.qna_stat,
+				(SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'QNA_STAT_CODE' AND CODE_ID = tbq.qna_stat) AS qna_stat_nm,
+				tbq.open_yn,
+				(SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'OPEN_YN' AND CODE_ID = tbq.open_yn) AS open_yn_nm,
+				tbq.view_cnt,
+				tu.user_nm as rgst_nm,
+				(select dept_nm from t_dept where dept_code = tu.dept_code) as rgst_dept_nm,
+				tu.file_url as rgst_photo_url	
+			FROM 
+	            ptl.t_bbs_qna tbq
+	            left outer join ptl.t_user tu on tbq.rgst_id = tu.user_id
+	        WHERE coalesce(tbq.bf_qna_id,'')=''			 
+		) a
+		<include refid="where" />
+		<include refid="order" />
+		<include refid="paging.pagingOffsetSQL" />  
+	</select>
+	
+	<select id="selectQnaListCount" resultType="int" parameterType="criteria">
+		SELECT
+			COUNT(*)
+		FROM 
+			ptl.t_bbs_qna
+		<include refid="where" />
+	</select>
+
+	<select id="selectQna" resultType="qnaModel" parameterType="qnaModel">
+		select * from 
+			(
+				SELECT
+					  tbq.qna_id
+					, tbq.cl_code
+					, (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'QNA_CAT' AND CODE_ID = tbq.cl_code) 						AS qna_cate_nm
+					, tbq.sj 																									AS sj
+					, lag(tbq.qna_id) over(order by tbq.rgst_dt ASC) 															AS pre_qna_id
+					, lag(tbq.sj) over(order by tbq.rgst_dt ASC) as pre_sj
+					, lead(tbq.qna_id) over(order by tbq.rgst_dt ASC) as next_qna_id
+					, lead(tbq.sj) over(order by tbq.rgst_dt ASC) as next_sj
+					, tbq.cn
+					, tbq.answ
+					, tbq.answ_rgst_id
+					, tuu.user_nm as answ_rgst_nm
+					, (select dept_nm from t_dept where dept_code = tuu.dept_code) as answ_dept_nm
+					, (select pstn_nm from t_pstn where pstn_code = tuu.pstn_code) as answ_pstn_nm
+					, tbq.answ_rgst_dt
+					, tbq.bf_qna_id
+					, tbq.use_yn
+					, (CASE tbq.USE_YN WHEN 'Y' THEN '게시' ELSE '미게시' END) AS USE_YN_NM
+					, tbq.rgst_id
+					, tbq.rgst_dt
+					, tbq.modi_id
+					, tbq.modi_dt
+					, tbq.qna_stat
+					, (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'QNA_STAT_CODE' AND CODE_ID = tbq.qna_stat) AS qna_stat_nm
+					, tbq.open_yn
+					, (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'OPEN_YN' AND CODE_ID = tbq.open_yn) AS open_yn_nm
+					, tbq.view_cnt
+					, tu.user_nm as rgst_nm
+					, (select dept_nm from t_dept where dept_code = tu.dept_code) as rgst_dept_nm
+					, (select pstn_nm from t_pstn where pstn_code = tu.pstn_code) as rgst_pstn_nm
+					, (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'COMPANY_CODE' AND CODE_ID = TU.COMPANY_CODE) AS COMPANY_NM
+					, tu.file_url as rgst_photo_url
+					, tuu.file_url as answ_photo_url	
+		        FROM 
+		            ptl.t_bbs_qna tbq
+		            left outer join ptl.t_user tu on tbq.rgst_id = tu.user_id
+		            left outer join ptl.t_user tuu on tbq.answ_rgst_id = tuu.user_id
+		            left outer join ptl.t_file tf on tu.file_url = tf.file_id
+		       where 1=1
+		       and coalesce(tbq.DEL_YN,'N') = 'N'
+		       AND coalesce(tbq.bf_qna_id,'')=''  
+		       ) z
+			where 1=1
+	         and z.qna_id = #{qnaId}
+	</select>
+
+	<insert id="insertQna" parameterType="qnaModel">
+        INSERT INTO T_BBS_QNA (
+        	  QNA_ID
+        	, CL_CODE
+        	, SJ
+        	, CN
+        	, ANSW
+        	, USE_YN
+        	, RGST_ID
+        	, RGST_DT
+        	, MODI_ID
+        	, MODI_DT
+        	, QNA_STAT
+        	, BF_QNA_ID
+        	, OPEN_YN
+       <if test="answRgstId != null and !('').equals(answRgstId)"> 	
+        	,ANSW_RGST_ID
+        	,ANSW_RGST_DT
+       </if> 	
+        	, VIEW_CNT
+        )VALUES(
+			  #{qnaId}
+			, #{clCode}
+			, #{sj}
+			, #{cn}
+			, #{answ}
+			, #{useYn}
+			, #{rgstId}
+			, NOW()
+			, #{modiId}
+			, NOW()
+			, #{qnaStat}
+			, #{bfQnaId}
+			, #{openYn}
+		<if test="answRgstId != null and !('').equals(answRgstId)">	
+			,#{answRgstId}
+			, NOW()
+		</if>	
+			, 0
+        )
+	</insert>
+	
+	<update id="updateQna" parameterType="qnaModel">
+        UPDATE
+            ptl.t_bbs_qna
+        SET
+        	sj = #{sj},
+        	cn = #{cn},
+        	cl_code = #{clCode},
+        	<if test="answRgstId != null and !('').equals(answRgstId)">
+        		answ_rgst_id = #{answRgstId},
+        	</if>
+        	<if test="answ != null and !('').equals(answ)">
+        	   ANSW = #{answ},
+        	</if>
+			USE_YN = #{useYn},
+            modi_id = #{modiId},
+            modi_dt = now(),
+            open_yn = #{openYn}
+       WHERE
+            qna_id = #{qnaId}
+	</update>
+    
+    <update id="deleteQna" parameterType="qnaModel">
+        UPDATE
+            ptl.t_bbs_qna
+        SET
+            Del_YN = 'Y',
+            modi_id = #{modiId},
+            modi_dt = now()
+       WHERE
+            qna_id = #{qnaId}
+    </update>
+    
+	<update id="qnaStat" parameterType="qnaModel">
+		UPDATE
+			ptl.t_bbs_qna
+		set
+			QNA_STAT = #{qnaStat}
+		WHERE
+			qna_id = #{qnaId}
+	</update>
+	
+	<update id="addViewCntQna" parameterType="qnaModel">
+		UPDATE
+			ptl.t_bbs_qna
+		set
+			view_cnt = (coalesce(view_cnt, 0) + 1)
+		WHERE
+			qna_id = #{qnaId}
+	</update> 	    
+	
+	<select id="selectQnaReplyList" resultType="qnaModel" parameterType="qnaModel">
+		WITH RECURSIVE R AS (
+		    select a.qna_id
+		            ,a.bf_qna_id
+		            ,a.answ
+		            ,a.answ_rgst_id
+		            ,a.answ_rgst_dt
+		           ,b.user_nm as rgst_nm 
+				   ,(select dept_nm from t_dept where dept_code = b.dept_code) as rgst_dept_nm
+		           ,a.modi_dt       
+		           , 0 AS lv
+			FROM t_bbs_qna a
+			left outer join t_user b 
+			on a.answ_rgst_id = b.user_id
+			where  a.qna_id =#{qnaId}
+			union all 
+			select a.qna_id
+		            ,a.bf_qna_id
+		            ,a.answ
+		            ,a.answ_rgst_id
+		            ,a.answ_rgst_dt
+		           ,b.user_nm  as rgst_nm
+		           ,(select dept_nm from t_dept where dept_code = b.dept_code) as rgst_dept_nm
+		           ,a.modi_dt       
+		           , R.lv + 1 AS lv
+			FROM R
+			join t_bbs_qna a
+			on R.qna_id = a.bf_qna_id 
+			left outer join t_user b 
+			on a.answ_rgst_id = b.user_id
+			where  coalesce(a.DEL_YN,'N') = 'N'
+		)
+		select qna_id
+		        ,bf_qna_id
+		        ,answ
+		        ,answ_rgst_id
+		        ,answ_rgst_dt		        
+		       ,rgst_nm
+			   ,rgst_dept_nm
+		       ,modi_dt  
+		       , lv
+		from R
+		where lv>0
+		order by answ_rgst_dt
+	</select>
+
+
+</mapper>

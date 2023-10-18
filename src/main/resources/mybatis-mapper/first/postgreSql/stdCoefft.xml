@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.bizmeta.mapper.StdCoefftMapper">
+    
+	<sql id="order">
+		ORDER BY z.rgst_dt DESC
+	</sql> 
+	
+	<select id="selectStdCoefftList" resultType="bizmetaModel" parameterType="bizmetaCriteria">
+		select row_number() over (order by  z.rgst_dt desc) as row_num
+		        ,z.std_coefft_id
+				,z.std_coefft_se
+				,z.std_coefft_se_nm
+				,z.std_coefft_nm
+		        ,z.std_coefft_fm
+		        ,z.std_coefft_def  
+		        ,z.mes_cyc
+		        ,z.mes_cyc_nm
+		        ,z.mng_user_nm
+		        ,z.rgst_dt
+		        ,COALESCE(z.seq,0) as seq
+		from 
+		(select distinct a.std_coefft_id
+		        ,a.std_coefft_se
+		        ,cd1.code_nm  as std_coefft_se_nm
+		        ,a.std_coefft_nm
+		        ,a.std_coefft_fm
+		        ,a.std_coefft_def  
+		        ,a.mes_cyc       
+		        ,cd2.code_nm  as mes_cyc_nm
+		        ,(select array_to_string(array_agg(s2.user_nm), ',')
+		            from t_mng_user s1
+			         		,t_user s2
+			       where s1.user_id = s2.user_id
+			       and  s1.mng_user_se_id = a.std_coefft_id			 
+			       and s1.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )      
+			       and COALESCE(s1.del_yn,'N') = 'N'
+			       ) as mng_user_nm
+		        ,a.rgst_dt
+		        ,(select max(seq) 
+		            from t_std_coefft_hist s1
+		            where s1.std_coefft_id = a.std_coefft_id
+		        ) as seq
+		from t_std_coefft a
+		left outer join t_mng_user b 
+		on a.std_coefft_id = b.mng_user_se_id
+		and b.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and COALESCE(b.del_yn,'N') = 'N'
+		left outer join t_mng_dept c 
+		on a.std_coefft_id = c.mng_dept_se_id
+		and c.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and c.dept_se ='01'
+		and COALESCE(c.del_yn,'N') = 'N'
+		left outer join t_code cd1 
+		    on cd1.group_id = 'STD_COEFFT_SE_CD'  /*표준계수구분*/
+		    and cd1.code_id= a.std_coefft_se
+		left outer join t_code cd2 
+		    on cd2.group_id = 'MES_CYC_CD'  /*측정주기*/
+		    and cd2.code_id= a.mes_cyc    
+		left outer join t_rpt f
+		on a.std_coefft_id = f.rpt_se_id 
+		and f.rpt_se = '1'     /*기본보고서*/
+		and f.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and COALESCE(f.del_yn,'N') = 'N'
+		left outer join t_rpt g
+		on a.std_coefft_id = g.rpt_se_id 
+		and g.rpt_se = '2'     /*관련보고서*/
+		and g.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and COALESCE(g.del_yn,'N') = 'N'
+		where 1=1
+		and COALESCE(a.del_yn,'N') = 'N'
+		<if test="stdCoefftSe != null and !('').equals(stdCoefftSe)">
+			and a.std_coefft_se = #{stdCoefftSe}                       /*계수구분*/
+		</if>
+		<if test="startDt != null and startDt != ''">
+			AND TO_DATE(A.RGST_DT::text,'YYYY-MM-DD')  >= TO_DATE(#{startDt},'YYYY-MM-DD')    /*등록일*/
+		</if>
+		<if test="endDt != null and endDt != ''">
+			AND TO_DATE(#{endDt},'YYYY-MM-DD') >= TO_DATE(A.RGST_DT::text,'YYYY-MM-DD')			/*등록일*/
+		</if>
+		<if test="userId != null and !('').equals(userId)">
+			and b.user_id =#{userId}     									/*담당자*/
+		</if>
+		<if test="deptCd != null and !('').equals(deptCd)">
+			and c.dept_cd  = #{deptCd}									/*관리부서*/
+		</if>
+		<if test="searchNm != null and !('').equals(searchNm)">
+			<bind
+					name="searchNm"
+					value='@com.bdp.ap.common.EscapeHelper@escape(searchNm)'
+			/>
+			and (1 !=1
+				<if test="stdCoefftNmChk != null and !('').equals(stdCoefftNmChk)">   
+					or UPPER(a.std_coefft_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )               /*표준계수명*/
+				</if>
+				<if test="stdCoefftEngNmChk != null and !('').equals(stdCoefftEngNmChk)">
+					or UPPER(a.std_coefft_eng_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )          /*표준계수영문명*/
+				</if>
+				<if test="calcObjChk != null and !('').equals(calcObjChk)">
+					or UPPER(a.calc_obj)  like CONCAT('%',UPPER(#{searchNm}),'%' )                       /*산출목적*/
+				</if>
+				<if test="stdCoefftFmChk != null and !('').equals(stdCoefftFmChk)">
+					or UPPER(a.std_coefft_fm) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*표준계수산식*/
+				</if>
+				<if test="basRptNmChk != null and !('').equals(basRptNmChk)">
+					or UPPER(f.rpt_nm)  like CONCAT('%',UPPER(#{searchNm}),'%' )                         /*표준계수보고서*/   
+				</if>
+				<if test="relRptNmChk != null and !('').equals(relRptNmChk)">
+					or UPPER(g.rpt_nm)  like CONCAT('%',UPPER(#{searchNm}),'%' )                         /*관련보고서*/
+				</if>
+			)
+		</if>  
+		) z
+		<include refid="order" />
+		<include refid="paging.pagingOffsetSQL" />
+	</select>
+	
+	<select id="selectStdCoefftListCount" resultType="int" parameterType="bizmetaCriteria">
+		select count(*)
+		from 
+		(select distinct a.std_coefft_id
+		        ,a.std_coefft_se
+		        ,cd1.code_nm  as std_coefft_se_nm
+		        ,a.std_coefft_nm
+		        ,a.std_coefft_fm
+		        ,a.std_coefft_def  
+		        ,a.mes_cyc       
+		        ,cd2.code_nm  as mes_cyc_nm
+		        ,(select array_to_string(array_agg(s2.user_nm), ',') 
+		            from t_mng_user s1
+			         		,t_user s2
+			       where s1.user_id = s2.user_id
+			       and  s1.mng_user_se_id = a.std_coefft_id		
+			       and s1.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )	       
+			       ) as mng_user_nm
+		        ,a.rgst_dt
+		         ,(select max(seq) 
+		            from t_std_coefft_hist s1
+		            where s1.std_coefft_id = a.std_coefft_id
+		        ) as seq
+		from t_std_coefft a
+		left outer join t_mng_user b 
+		on a.std_coefft_id = b.mng_user_se_id
+		and b.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and COALESCE(b.del_yn,'N') = 'N'
+		left outer join t_mng_dept c 
+		on a.std_coefft_id = c.mng_dept_se_id
+		and c.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and c.dept_se ='01'
+		and COALESCE(c.del_yn,'N') = 'N'
+		left outer join t_code cd1 
+		    on cd1.group_id = 'STD_COEFFT_SE_CD'  /*표준계수구분*/
+		    and cd1.code_id= a.std_coefft_se
+		left outer join t_code cd2 
+		    on cd2.group_id = 'MES_CYC_CD'  /*측정주기*/
+		    and cd2.code_id= a.mes_cyc    
+		left outer join t_rpt f
+		on a.std_coefft_id = f.rpt_se_id 
+		and f.rpt_se = '1'     /*기본보고서*/
+		and f.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and COALESCE(f.del_yn,'N') = 'N'
+		left outer join t_rpt g
+		on a.std_coefft_id = g.rpt_se_id 
+		and g.rpt_se = '2'     /*관련보고서*/
+		and g.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and COALESCE(g.del_yn,'N') = 'N'
+		where 1=1
+		and COALESCE(a.del_yn,'N') = 'N'
+		<if test="stdCoefftSe != null and !('').equals(stdCoefftSe)">
+			and a.std_coefft_se = #{stdCoefftSe}                       /*계수구분*/
+		</if>
+		<if test="startDt != null and startDt != ''">
+			AND TO_DATE(A.rgst_dt::text,'YYYY-MM-DD')  >= TO_DATE(#{startDt},'YYYY-MM-DD')    /*등록일*/
+		</if>
+		<if test="endDt != null and endDt != ''">
+			AND TO_DATE(#{endDt},'YYYY-MM-DD') >= TO_DATE(A.rgst_dt::text,'YYYY-MM-DD')			/*등록일*/
+		</if>
+		<if test="userId != null and !('').equals(userId)">
+			and b.user_id =#{userId}     									/*담당자*/
+		</if>
+		<if test="deptCd != null and !('').equals(deptCd)">
+			and c.dept_cd  = #{deptCd}									/*관리부서*/
+		</if>
+		<if test="searchNm != null and !('').equals(searchNm)">
+			<bind
+					name="searchNm"
+					value='@com.bdp.ap.common.EscapeHelper@escape(searchNm)'
+			/>
+			and (1 !=1
+			   	<if test="stdCoefftNmChk != null and !('').equals(stdCoefftNmChk)">   
+					or UPPER(a.std_coefft_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )               /*표준계수명*/
+				</if>
+				<if test="stdCoefftEngNmChk != null and !('').equals(stdCoefftEngNmChk)">
+					or UPPER(a.std_coefft_eng_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )          /*표준계수영문명*/
+				</if>
+				<if test="calcObjChk != null and !('').equals(calcObjChk)">
+					or UPPER(a.calc_obj)  like CONCAT('%',UPPER(#{searchNm}),'%' )                       /*산출목적*/
+				</if>
+				<if test="stdCoefftFmChk != null and !('').equals(stdCoefftFmChk)">
+					or UPPER(a.std_coefft_fm) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*표준계수산식*/
+				</if>
+				<if test="basRptNmChk != null and !('').equals(basRptNmChk)">
+					or UPPER(f.rpt_nm)  like CONCAT('%',UPPER(#{searchNm}),'%' )                         /*표준계수보고서*/   
+				</if>
+				<if test="relRptNmChk != null and !('').equals(relRptNmChk)">
+					or UPPER(g.rpt_nm)  like CONCAT('%',UPPER(#{searchNm}),'%' )                         /*관련보고서*/
+				</if>
+			)
+		</if>  
+		) z
+	</select>
+	
+	<select id="selectStdCoefftExcel" resultType="bizmetaModel" parameterType="bizmetaCriteria">
+		select row_number() over (order by  z.rgst_dt desc) as row_num
+				,z.std_coefft_se
+				,z.std_coefft_se_nm
+				,z.std_coefft_nm
+		        ,z.std_coefft_fm
+		        ,z.std_coefft_def  
+		        ,z.mes_cyc
+		        ,z.mes_cyc_nm
+		        ,z.mng_user_nm
+		        ,z.rgst_dt
+		from 
+		(select distinct a.std_coefft_id
+		        ,a.std_coefft_se
+		        ,cd1.code_nm  as std_coefft_se_nm
+		        ,a.std_coefft_nm
+		        ,a.std_coefft_fm
+		        ,a.std_coefft_def  
+		        ,a.mes_cyc       
+		        ,cd2.code_nm  as mes_cyc_nm
+		        ,(select array_to_string(array_agg(s2.user_nm), ',') 
+		            from t_mng_user s1
+			         		,t_user s2
+			       where s1.user_id = s2.user_id
+			       and  s1.mng_user_se_id = a.std_coefft_id			    
+			       and s1.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )	     
+			       and COALESCE(s1.del_yn,'N') = 'N'
+			       ) as mng_user_nm
+		        ,a.rgst_dt
+		from t_std_coefft a
+		left outer join t_mng_user b 
+		on a.std_coefft_id = b.mng_user_se_id
+		and b.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and COALESCE(b.del_yn,'N') = 'N'
+		left outer join t_mng_dept c 
+		on a.std_coefft_id = c.mng_dept_se_id
+		and c.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and c.dept_se ='01'
+		and COALESCE(c.del_yn,'N') = 'N'
+		left outer join t_code cd1 
+		    on cd1.group_id = 'STD_COEFFT_SE_CD'  /*표준계수구분*/
+		    and cd1.code_id= a.std_coefft_se
+		left outer join t_code cd2 
+		    on cd2.group_id = 'MES_CYC_CD'  /*측정주기*/
+		    and cd2.code_id= a.mes_cyc    
+		left outer join t_rpt f
+		on a.std_coefft_id = f.rpt_se_id 
+		and f.rpt_se = '1'     /*기본보고서*/
+		and f.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and COALESCE(f.del_yn,'N') = 'N'
+		left outer join t_rpt g
+		on a.std_coefft_id = g.rpt_se_id 
+		and g.rpt_se = '2'     /*관련보고서*/
+		and g.ref_ver =  ( select max(seq) from t_std_coefft_hist s3
+                          where s3.std_coefft_id = a.std_coefft_id )
+		and COALESCE(g.del_yn,'N') = 'N'
+		where 1=1
+		and COALESCE(a.del_yn,'N') = 'N'
+		<if test="stdCoefftSe != null and !('').equals(stdCoefftSe)">
+			and a.std_coefft_se = #{stdCoefftSe}                       /*계수구분*/
+		</if>
+		<if test="startDt != null and startDt != ''">
+			AND TO_DATE(A.RGST_DT::text,'YYYY-MM-DD')  >= TO_DATE(#{startDt},'YYYY-MM-DD')    /*등록일*/
+		</if>
+		<if test="endDt != null and endDt != ''">
+			AND TO_DATE(#{endDt},'YYYY-MM-DD') >= TO_DATE(A.RGST_DT::text,'YYYY-MM-DD')			/*등록일*/
+		</if>
+		<if test="userId != null and !('').equals(userId)">
+			and b.user_id =#{userId}     									/*담당자*/
+		</if>
+		<if test="deptCd != null and !('').equals(deptCd)">
+			and c.dept_cd  = #{deptCd}									/*관리부서*/
+		</if>
+		<if test="searchNm != null and !('').equals(searchNm)">
+			<bind
+					name="searchNm"
+					value='@com.bdp.ap.common.EscapeHelper@escape(searchNm)'
+			/>
+			and (1!=1
+				<if test="stdCoefftNmChk != null and !('').equals(stdCoefftNmChk)">   
+					or UPPER(a.std_coefft_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )               /*표준계수명*/
+				</if>
+				<if test="stdCoefftEngNmChk != null and !('').equals(stdCoefftEngNmChk)">
+					or UPPER(a.std_coefft_eng_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )          /*표준계수영문명*/
+				</if>
+				<if test="calcObjChk != null and !('').equals(calcObjChk)">
+					or UPPER(a.calc_obj)  like CONCAT('%',UPPER(#{searchNm}),'%' )                       /*산출목적*/
+				</if>
+				<if test="stdCoefftFmChk != null and !('').equals(stdCoefftFmChk)">
+					or UPPER(a.std_coefft_fm) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*표준계수산식*/
+				</if>
+				<if test="basRptNmChk != null and !('').equals(basRptNmChk)">
+					or UPPER(f.rpt_nm)  like CONCAT('%',UPPER(#{searchNm}),'%' )                         /*표준계수보고서*/   
+				</if>
+				<if test="relRptNmChk != null and !('').equals(relRptNmChk)">
+					or UPPER(g.rpt_nm)  like CONCAT('%',UPPER(#{searchNm}),'%' )                         /*관련보고서*/
+				</if>
+			)
+		</if>  
+		) z
+		<include refid="order" /> 
+	</select>
+	
+	
+	<insert id="insertStdCoefft" parameterType="bizmetaModel">
+		insert into t_std_coefft(
+			std_coefft_id
+			,std_coefft_se
+			,std_coefft_ctgy
+			,std_coefft_nm
+			,std_coefft_eng_nm
+			,mes_cyc
+			,type_gbn
+			,calc_obj
+			,calc_unt
+			,std_coefft_def
+			,std_coefft_fm
+			,anlz_mrt_id
+			,del_yn
+			,rgst_dt
+			,rgst_id
+			,modi_dt
+			,modi_id
+		)values(
+		 #{stdCoefftId}
+		,#{stdCoefftSe}
+		,#{stdCoefftCtgy}
+		,trim(#{stdCoefftNm})
+		,trim(#{stdCoefftEngNm})
+		,#{mesCyc}
+		,#{typeGbn}
+		,#{calcObj}
+		,#{calcUnt}
+		,trim(#{stdCoefftDef})
+		,trim(#{stdCoefftFm})
+		,#{anlzMrtId}
+		,#{delYn}
+		,now()
+		,#{rgstId}
+		,now()
+		,#{modiId}
+		)
+	</insert>
+	
+	<select id="selectStdCoefftDetail" resultType="bizmetaModel" parameterType="bizmetaCriteria">
+		select a.std_coefft_id
+		        ,a.std_coefft_se
+		        ,cd1.code_nm  as std_coefft_se_nm
+		        ,a.std_coefft_ctgy
+		        ,cd2.code_nm  as std_coefft_ctgy_nm
+		        ,a.std_coefft_nm
+		        ,a.std_coefft_eng_nm 
+		        ,a.mes_cyc 
+		        ,cd3.code_nm  as mes_cyc_nm
+		        ,a.type_gbn 
+		        ,cd4.code_nm  as type_gbn_nm
+		        ,a.calc_obj 
+		        ,a.calc_unt 
+		        ,cd5.code_nm  as calc_unt_nm  
+		        ,a.std_coefft_def 
+		        ,a.std_coefft_fm
+		        , ( select array_agg(s1.rpt_nm) 
+		                                from t_rpt s1 
+		                    where s1.rpt_se= '1'
+		                    and s1.rpt_se_id =a.std_coefft_id
+		                    and s1.ref_ver = #{refVer}
+		                    and COALESCE(s1.del_yn,'N') = 'N'
+		                    ) as  bas_rpt_nm
+		        , ( select array_agg(s1.rpt_nm) 
+		                                from t_rpt s1 
+		                    where s1.rpt_se= '2'
+		                    and s1.rpt_se_id =a.std_coefft_id
+		                    and s1.ref_ver = #{refVer}
+		                    and COALESCE(s1.del_yn,'N') = 'N'
+		                    ) as rel_rpt_nm
+		        ,a.anlz_mrt_id            
+		        , c.mart_nm 
+		        ,(select array_to_string(array_agg(s1.file_nm), ',')
+							from  t_file s1
+							where s1.ref_id = a.std_coefft_id
+							and s1.ref_ver = #{refVer}
+							and s1.use_yn='Y') as file_nm
+		        ,(select array_to_string(array_agg(s2.user_nm), ',')
+		            from t_mng_user s1
+			              left outer join t_user s2
+			             on s1.user_id = s2.user_id
+			             where s1.mng_user_se_id = a.std_coefft_id
+			             and s1.ref_ver = #{refVer}
+			             and COALESCE(s1.del_yn,'N') = 'N'
+			       ) as mng_user_nm
+		        ,(select array_to_string(array_agg(s2.dept_nm), ',')
+						from t_mng_dept s1
+						left outer join t_dept s2
+						on s1.dept_cd = s2.dept_code 
+						where s1.mng_dept_se_id = a.std_coefft_id
+						and s1.dept_se ='01'
+						and s1.ref_ver = #{refVer}
+						and COALESCE(s1.del_yn,'N') = 'N'
+						) as dept_nm
+		        ,a.rgst_dt
+			    ,a.modi_dt
+			    ,d.app_opin 
+			    ,(select array_to_string(array_agg(s1.fnd_tag_nm), ',')
+							from t_find_tag s1
+							where s1.fnd_tag_se_id = a.std_coefft_id
+							and s1.ref_ver = #{refVer}
+							and COALESCE(s1.del_yn,'N') = 'N'
+							)  as fnd_tag_nm
+		from t_std_coefft a
+		left outer join t_code cd1 
+		    on cd1.group_id = 'STD_COEFFT_SE_CD'  /*표준계수구분*/
+		    and cd1.code_id= a.std_coefft_se
+		left outer join t_code cd2 
+		    on cd2.group_id = 'STD_COEFFT_CTGY_CD'  /*표준계수유형*/
+		    and cd2.code_id= a.std_coefft_ctgy
+		left outer join t_code cd3 
+		    on cd3.group_id = 'MES_CYC_CD'  /*측정주기*/
+		    and cd3.code_id= a.mes_cyc    
+		left outer join t_code cd4 
+		    on cd4.group_id = 'TYPE_GBN_CD'  /*망대망소구분*/
+		    and cd4.code_id= a.type_gbn
+		left outer join t_code cd5 
+		    on cd5.group_id = 'CALC_UNT_CD'  /*산출단위*/
+		    and cd5.code_id= a.calc_unt   
+		left outer join t_anlz_mart c
+			on c.anlz_mrt_id = a.anlz_mrt_id   
+			and COALESCE(c.del_yn,'N') = 'N'
+		left outer join t_manage_info d	
+			on d.mng_inf_se_id = a.std_coefft_id
+			and d.ref_ver = #{refVer}
+			and COALESCE(d.del_yn,'N') = 'N' 	
+		 where a.std_coefft_id = #{seId}
+	</select>
+	
+	<update id="updateStdCoefft" parameterType="bizmetaModel">
+		update t_std_coefft set std_coefft_ctgy = #{stdCoefftCtgy}
+			,std_coefft_nm = #{stdCoefftNm}
+			,std_coefft_eng_nm = #{stdCoefftEngNm}
+			,mes_cyc = #{mesCyc}
+			,type_gbn = #{typeGbn}
+			,calc_obj = #{calcObj}
+			,calc_unt = #{calcUnt}
+			,std_coefft_def = #{stdCoefftDef}
+			,std_coefft_fm = #{stdCoefftFm}
+			,anlz_mrt_id = #{anlzMrtId}
+			,modi_dt = now()
+			,modi_id = #{modiId} 
+		where std_coefft_id = #{stdCoefftId}
+		and std_coefft_se = #{stdCoefftSe}
+	</update>
+	
+	<update id="deleteStdCoefft" parameterType="bizmetaModel">
+			update t_std_coefft set del_yn = 'Y'
+						,modi_dt = now()
+						,modi_id = #{modiId} 
+			where std_coefft_id = #{stdCoefftId}
+			and std_coefft_se = #{stdCoefftSe}
+	</update>
+	
+	<select id="selectStdCoefftNmCount" resultType="int" parameterType="bizmetaCriteria">
+		select count(*)
+		from t_std_coefft
+		where COALESCE(del_yn,'N') = 'N'
+		<if test="searchNm != null and !('').equals(searchNm) and searchKey != null and ('stdCoefftNm').equals(searchKey)" >
+			and std_coefft_nm = trim(#{searchNm})
+		</if>
+		<if test="searchNm != null and !('').equals(searchNm) and searchKey != null and ('stdCoefftEngNm').equals(searchKey)" >
+			and std_coefft_eng_nm = trim(#{searchNm})
+		</if>		
+	</select>
+	
+	<select id="selectStdCoefftNmList" resultType="bizmetaModel" parameterType="bizmetaCriteria">
+		select row_number() over (order by  modi_dt desc) as row_num
+		          ,std_coefft_nm
+		          ,std_coefft_eng_nm
+		          ,std_coefft_def
+		from t_std_coefft
+		where COALESCE(del_yn,'N') = 'N'
+		<if test="searchNm != null and !('').equals(searchNm) and searchKey != null and ('stdCoefftNm').equals(searchKey)" >
+			and std_coefft_nm = trim(#{searchNm})
+		</if>
+		<if test="searchNm != null and !('').equals(searchNm) and searchKey != null and ('stdCoefftEngNm').equals(searchKey)" >
+			and std_coefft_eng_nm = trim(#{searchNm})
+		</if>
+	</select>
+	
+	<select id="selectStdCoefftNmListCount" resultType="int" parameterType="bizmetaCriteria">
+		select count(*)
+		from t_std_coefft
+		where COALESCE(del_yn,'N') = 'N'
+		<if test="searchNm != null and !('').equals(searchNm) and searchKey != null and ('stdCoefftNm').equals(searchKey)" >
+			and std_coefft_nm = trim(#{searchNm})
+		</if>
+		<if test="searchNm != null and !('').equals(searchNm) and searchKey != null and ('stdCoefftEngNm').equals(searchKey)" >
+			and std_coefft_eng_nm = trim(#{searchNm})
+		</if>
+	</select>
+		
+	<select id="selectStdCoefftDeptList" resultType="bizmetaModel" parameterType="bizmetaCriteria">
+		select row_number() over (order by  z.modi_dt desc) as row_num
+		        ,z.std_coefft_id
+	   			,z.std_coefft_nm 
+		        ,z.std_coefft_eng_nm 
+		        ,z.std_coefft_def 
+		        ,(select 
+						array_to_string(array_agg(s2.dept_nm), ',')
+					from 
+						t_mng_dept s1
+						left outer join t_dept s2
+						on s1.dept_cd = s2.dept_code
+					where 
+						s1.mng_dept_se_id = z.std_coefft_id
+						and s1.del_yn = 'N'
+						and s1.dept_se ='01'
+						and s1.ref_ver = z.seq
+				) as dept_nm
+				,(select 
+						array_to_string(array_agg(s2.user_nm), ',')
+		            from t_mng_user s1
+						left outer join t_user s2
+						on s1.user_id = s2.user_id
+					where s1.mng_user_se_id = z.std_coefft_id
+						and s1.del_yn = 'N'
+						and s1.ref_ver = z.seq
+			       ) as mng_user_nm
+		        ,z.modi_dt 
+		        ,z.seq
+	   from 
+		(select distinct a.std_coefft_nm 
+		        ,a.std_coefft_id
+		        ,a.std_coefft_eng_nm 
+		        ,a.std_coefft_def 	
+				,a.modi_dt  
+				,(select max(s1.seq) 
+				from t_std_coefft_hist s1  
+				where s1.std_coefft_id = a.std_coefft_id
+				and s1.std_coefft_se = a.std_coefft_se ) as seq
+		from t_std_coefft a
+		left outer join t_mng_dept b 
+				on a.std_coefft_id = b.mng_dept_se_id
+		where 1=1
+		and a.std_coefft_se = '02'
+		and COALESCE(a.del_yn,'N') = 'N'
+		<if test="searchNm != null and !('').equals(searchNm)">
+			and (UPPER(a.std_coefft_nm) like CONCAT('%',UPPER(#{searchNm}),'%' ) 
+			or UPPER(a.std_coefft_def) like CONCAT('%',UPPER(#{searchNm}),'%' )) 
+		</if>		
+		<if test="deptCd != null and !('').equals(deptCd)">
+			and b.dept_cd =#{deptCd}
+		</if>
+		) z
+		order by z.modi_dt desc
+	    <include refid="paging.pagingOffsetSQL" />
+	</select>
+	
+	
+	<select id="selectStdCoefftDeptCount" resultType="int" parameterType="bizmetaCriteria">
+		select
+			count(*)
+		from(
+			select  
+				a.std_coefft_id  
+			from 
+				t_std_coefft a
+				left outer join t_mng_dept b 
+				on a.std_coefft_id = b.mng_dept_se_id
+			where 1=1
+				and a.std_coefft_se = '02'
+				and COALESCE(a.del_yn,'N') = 'N'
+				<if test="searchNm != null and !('').equals(searchNm)">
+					and (UPPER(a.std_coefft_nm) like CONCAT('%',UPPER(#{searchNm}),'%' ) 
+					or UPPER(a.std_coefft_def) like CONCAT('%',UPPER(#{searchNm}),'%' )) 
+				</if>
+				<if test="deptCd != null and !('').equals(deptCd)">
+					and b.dept_cd =#{deptCd}
+				</if>
+			group by a.std_coefft_id
+			) z
+	</select>
+	 
+	 <select id="selectRptList" resultType="rptModel" parameterType="bizmetaCriteria">
+	 	select a.rpt_id 
+		        ,a.rpt_se
+		        ,a.rpt_nm 
+		        ,a.ref_id 
+		from t_rpt a
+		where COALESCE(a.del_yn,'N') = 'N'
+		<if test="seId != null and !('').equals(seId)">
+			and a.rpt_se_id =#{seId}
+		</if>
+		<if test="refVer != null and !('').equals(refVer)">
+			and ref_ver = #{refVer}
+		</if>
+	 </select>
+	 <select id="selectAnalysisMartList" resultType="analysisMartModel" parameterType="bizmetaCriteria">
+	 	select anlz_mrt_id 
+		        ,mart_nm 
+				,tbl_id
+		from t_anlz_mart
+		where COALESCE(del_yn,'N') = 'N'
+		<if test="anlzMrtId != null and !('').equals(anlzMrtId)">
+			and anlz_mrt_id =#{anlzMrtId}
+		</if>		
+		<if test="searchNm != null and !('').equals(searchNm)">
+			and UPPER(mart_nm) like  CONCAT('%',UPPER(#{searchNm}),'%' )
+		</if>
+		
+	 </select>
+	 
+	 <insert id="insertStdCoefftHist" parameterType="bizmetaModel">
+	 		insert into t_std_coefft_hist(
+				seq
+				,std_coefft_id
+				,std_coefft_se
+				,std_coefft_ctgy
+				,std_coefft_nm
+				,std_coefft_eng_nm
+				,mes_cyc
+				,type_gbn
+				,calc_obj
+				,calc_unt
+				,std_coefft_def
+				,std_coefft_fm
+				,anlz_mrt_id
+				,del_yn
+				,rgst_dt
+				,rgst_id
+				,modi_dt
+				,modi_id
+			)select nextval('std_coefft_hist_seq')
+				,std_coefft_id
+				,std_coefft_se
+				,std_coefft_ctgy
+				,std_coefft_nm
+				,std_coefft_eng_nm
+				,mes_cyc
+				,type_gbn
+				,calc_obj
+				,calc_unt
+				,std_coefft_def
+				,std_coefft_fm
+				,anlz_mrt_id
+				,del_yn
+				,rgst_dt
+				,rgst_id
+				,modi_dt
+				,modi_id
+			from t_std_coefft
+			where std_coefft_id=#{stdCoefftId}
+	 </insert>
+	 
+	 <select id="selectStdCoefftHistList" resultType="bizmetaModel" parameterType="bizmetaCriteria">
+	 	select row_number() over (order by  z.seq desc) as row_num
+	 			,z.std_coefft_def
+	 			,z.std_coefft_fm
+	 			,z.mes_cyc_nm
+	 			,z.mng_user_nm
+	 			,z.modi_dt
+	 			,z.seq
+	 	from 
+	 	(select a.std_coefft_def 
+		       ,a.std_coefft_fm 
+		       ,cd1.code_nm  as mes_cyc_nm
+		       ,(select array_to_string(array_agg(s2.user_nm), ',')
+		            from t_mng_user s1
+			              left outer join t_user s2
+			             on s1.user_id = s2.user_id
+			             where s1.mng_user_se_id = a.std_coefft_id
+			             and s1.ref_ver = a.seq
+			             and COALESCE(s1.del_yn,'N') = 'N'
+			       ) as mng_user_nm		
+			      ,a.modi_dt
+			      ,a.seq  
+		from t_std_coefft_hist a
+		left outer join t_code cd1 
+		    on cd1.group_id = 'MES_CYC_CD'  /*측정주기*/
+		    and cd1.code_id= a.mes_cyc    
+		where COALESCE(a.del_yn,'N') = 'N'
+		<if test="searchNm != null and !('').equals(searchNm)">
+			and UPPER(a.std_coefft_nm) like CONCAT('%',UPPER(#{searchNm}),'%' ) 
+		</if>
+		<if test="stdCoefftSe != null and !('').equals(stdCoefftSe)">
+			and a.std_coefft_se = #{stdCoefftSe}
+		</if>
+		<if test="startDt != null and startDt != ''">
+			AND TO_DATE(A.MODI_DT::text,'YYYY-MM-DD')  >= TO_DATE(#{startDt},'YYYY-MM-DD')    /*최종수정일*/
+		</if>
+		<if test="endDt != null and endDt != ''">
+			AND TO_DATE(#{endDt},'YYYY-MM-DD') >= TO_DATE(A.MODI_DT::text,'YYYY-MM-DD')			/*최종수정일*/
+		</if>
+		<if test="seId != null and !('').equals(seId)">
+			and a.std_coefft_id = #{seId}
+		</if>
+		
+		) z
+		
+	 </select>
+	 
+	 <select id="selectStdCoefftHistListCount" resultType="int" parameterType="bizmetaCriteria">
+	 	select count(*)
+	 	from 
+	 	(select a.std_coefft_def 
+		       ,a.std_coefft_fm 
+		       ,cd1.code_nm  as mes_cyc_nm
+		       ,(select array_to_string(array_agg(s2.user_nm), ',')
+		            from t_mng_user s1
+			              left outer join t_user s2
+			             on s1.user_id = s2.user_id
+			             where s1.mng_user_se_id = a.std_coefft_id
+			             and s1.ref_ver = a.seq
+			             and COALESCE(s1.del_yn,'N') = 'N'
+			       ) as mng_user_nm		
+			      ,a.modi_dt
+			      ,a.seq  
+		from t_std_coefft_hist a
+		left outer join t_code cd1 
+		    on cd1.group_id = 'MES_CYC_CD'  /*측정주기*/
+		    and cd1.code_id= a.mes_cyc    
+		where COALESCE(a.del_yn,'N') = 'N'
+		<if test="searchNm != null and !('').equals(searchNm)">
+			and UPPER(a.std_coefft_nm) like CONCAT('%',UPPER(#{searchNm}),'%' ) 
+		</if>
+		<if test="stdCoefftSe != null and !('').equals(stdCoefftSe)">
+			and a.std_coefft_se = #{stdCoefftSe}
+		</if>
+		<if test="startDt != null and startDt != ''">
+			AND TO_DATE(A.MODI_DT::text,'YYYY-MM-DD')  >= TO_DATE(#{startDt},'YYYY-MM-DD')    /*최종수정일*/
+		</if>
+		<if test="endDt != null and endDt != ''">
+			AND TO_DATE(#{endDt},'YYYY-MM-DD') >= TO_DATE(A.MODI_DT::text,'YYYY-MM-DD')			/*최종수정일*/
+		</if>
+		<if test="seId != null and !('').equals(seId)">
+			and a.std_coefft_id = #{seId}
+		</if>
+		) z
+		 
+	 </select>
+	 
+	 <select id="selectStdCoefftHist" resultType="bizmetaModel" parameterType="bizmetaCriteria">
+	 	select a.std_coefft_id
+		        ,a.std_coefft_se
+		        ,cd1.code_nm  as std_coefft_se_nm
+		        ,a.std_coefft_ctgy
+		        ,cd2.code_nm  as std_coefft_ctgy_nm
+		        ,a.std_coefft_nm
+		        ,a.std_coefft_eng_nm 
+		        ,a.mes_cyc 
+		        ,cd3.code_nm  as mes_cyc_nm
+		        ,a.type_gbn 
+		        ,cd4.code_nm  as type_gbn_nm
+		        ,a.calc_obj 
+		        ,a.calc_unt 
+		        ,cd5.code_nm  as calc_unt_nm  
+		        ,a.std_coefft_def 
+		        ,a.std_coefft_fm
+		        , ( select array_agg(s1.rpt_nm) 
+		                                from t_rpt s1 
+		                    where s1.rpt_se= '1'
+		                    and s1.rpt_se_id =a.std_coefft_id
+		                    and s1.ref_ver = a.seq
+		                    and COALESCE(s1.del_yn,'N') = 'N'
+		                    ) as  bas_rpt_nm
+		        , ( select array_agg(s1.rpt_nm) 
+		                                from t_rpt s1 
+		                    where s1.rpt_se= '2'
+		                    and s1.rpt_se_id =a.std_coefft_id
+		                    and s1.ref_ver = a.seq
+		                    and COALESCE(s1.del_yn,'N') = 'N'
+		                    ) as rel_rpt_nm
+		        , c.mart_nm 
+		        ,(select array_to_string(array_agg(s1.file_nm), ',')
+							from  t_file s1
+							where s1.ref_id = a.std_coefft_id
+							and s1.ref_ver = a.seq
+							and s1.use_yn='Y') as file_nm
+		        ,(select array_to_string(array_agg(s2.user_nm), ',')
+		            from t_mng_user s1
+			              left outer join t_user s2
+			             on s1.user_id = s2.user_id
+			             where s1.mng_user_se_id = a.std_coefft_id
+			             and s1.ref_ver = a.seq
+			             and COALESCE(s1.del_yn,'N') = 'N'
+			       ) as mng_user_nm
+		        ,(select array_to_string(array_agg(s2.dept_nm), ',')
+						from t_mng_dept s1
+						left outer join t_dept s2
+						on s1.dept_cd = s2.dept_code 
+						where s1.mng_dept_se_id = a.std_coefft_id
+						and s1.ref_ver = a.seq
+						and s1.dept_se ='01'
+						and COALESCE(s1.del_yn,'N') = 'N'
+						) as dept_nm
+		        ,a.rgst_dt
+			    ,a.modi_dt
+			    ,d.app_opin 
+			    ,a.anlz_mrt_id
+			    ,(select array_to_string(array_agg(s1.fnd_tag_nm), ',')
+							from t_find_tag s1
+							where s1.fnd_tag_se_id = a.std_coefft_id
+							and s1.ref_ver = a.seq
+							and COALESCE(s1.del_yn,'N') = 'N'
+							)  as fnd_tag_nm
+		from t_std_coefft_hist a
+		left outer join t_code cd1 
+		    on cd1.group_id = 'STD_COEFFT_SE_CD'  /*표준계수구분*/
+		    and cd1.code_id= a.std_coefft_se
+		left outer join t_code cd2 
+		    on cd2.group_id = 'STD_COEFFT_CTGY_CD'  /*표준계수유형*/
+		    and cd2.code_id= a.std_coefft_ctgy
+		left outer join t_code cd3 
+		    on cd3.group_id = 'MES_CYC_CD'  /*측정주기*/
+		    and cd3.code_id= a.mes_cyc    
+		left outer join t_code cd4 
+		    on cd4.group_id = 'TYPE_GBN_CD'  /*망대망소구분*/
+		    and cd4.code_id= a.type_gbn
+		left outer join t_code cd5 
+		    on cd5.group_id = 'CALC_UNT_CD'  /*산출단위*/
+		    and cd5.code_id= a.calc_unt   
+		left outer join t_anlz_mart c
+			on c.anlz_mrt_id = a.std_coefft_id   
+			and COALESCE(c.del_yn,'N') = 'N'
+		left outer join t_manage_info d	
+			on d.mng_inf_se_id = a.std_coefft_id
+			and COALESCE(d.del_yn,'N') = 'N' 	
+			and d.ref_ver = a.seq
+		 where a.seq = #{refVer}
+		 and a.std_coefft_id =#{seId} 
+		 order by a.seq desc 
+	 </select>
+	 <select id="selectStdCoefftHistSeq" parameterType="string" resultType="int">
+	 	select max(seq)
+	 	from t_std_coefft_hist
+	 	where std_coefft_id =#{id}
+	 </select>
+</mapper>

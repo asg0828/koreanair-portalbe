@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.bizmeta.mapper.BizmetaAnalysisMartMapper">
+    
+	<sql id="order">
+		ORDER BY z.rgst_dt DESC
+	</sql> 
+	
+	<select id="selectAnalysisMartList" resultType="analysisMartModel" parameterType="bizmetaCriteria">
+	 	 select row_number() over (order by z.rgst_dt desc) as row_num
+					,z.anlz_mrt_id
+					,z.topic_area 
+			        ,z.topic_area_nm
+			        ,z.mart_nm 
+			        ,z.tbl_id 
+			        ,z.def  
+			        ,z.reg_id
+			        ,z.reg_nm
+			        ,z.dept_nm
+			        ,z.rgst_dt 
+			        ,z.opn_yn
+			from 
+			(select distinct a.anlz_mrt_id
+					 ,a.topic_area 
+			        ,cd1.code_nm  as topic_area_nm
+			        ,a.mart_nm 
+			        ,a.tbl_id 
+			        ,a.def  
+			        ,a.reg_id
+			        ,c.user_nm as reg_nm
+			         ,(select array_to_string(array_agg(s2.dept_nm), ',')
+						from t_mng_dept s1
+						left outer join t_dept s2
+						on s1.dept_cd = s2.dept_code 
+						and COALESCE(s1.del_yn,'N') = 'N'
+						and s1.dept_se ='01'
+						where s1.mng_dept_se_id = a.anlz_mrt_id ) as dept_nm
+			        ,a.rgst_dt 
+			        ,cd2.code_nm as opn_yn
+			from t_anlz_mart a
+			inner join t_code cd1 
+			    on cd1.group_id = 'TOPIC_AREA_CD'  /*주제영역*/
+			    and cd1.code_id= a.topic_area
+			inner join t_manage_info b
+				on b.mng_inf_se_id = a.anlz_mrt_id 
+				and COALESCE(b.del_yn,'N') = 'N'
+			inner join t_code cd2 
+			    on cd2.group_id = 'OPEN_YN'  /*공개여부*/
+			    and cd2.code_id= b.opn_yn    		
+			inner join t_user c 
+			    on c.user_id = b.reg_id
+			left outer join t_key_item d 
+				on d.key_itm_se_id = a.anlz_mrt_id 
+				and COALESCE(d.del_yn,'N') = 'N'
+			left outer join t_data_mart e	
+				on e.dt_mrt_se_id = a.anlz_mrt_id  	
+				and COALESCE(e.del_yn,'N') = 'N'
+			left outer join  t_dimension f
+				on f.dim_se_id = a.anlz_mrt_id 
+				and COALESCE(f.del_yn,'N') = 'N'
+			left outer join  t_measure g 
+				on g.mes_se_id = a.anlz_mrt_id 	
+				and COALESCE(g.del_yn,'N') = 'N'
+			left outer join t_mng_dept h 
+				on h.mng_dept_se_id = a.anlz_mrt_id 
+				and h.dept_se ='01'
+				and COALESCE(h.del_yn,'N') = 'N'
+			left outer join t_mng_user i
+				on i.mng_user_se_id = a.anlz_mrt_id  
+			where 1=1
+			and COALESCE(a.del_yn,'N') = 'N'
+			<if test="topicArea != null and !('').equals(topicArea)">
+				and a.topic_area = #{topicArea}                     /*주제영역*/
+			</if>
+			<if test="startDt != null and startDt != ''">
+				AND TO_DATE(A.rgst_dt::text,'YYYY-MM-DD')  >= TO_DATE(#{startDt},'YYYY-MM-DD')    /*등록일*/
+			</if>
+			<if test="endDt != null and endDt != ''">
+				AND TO_DATE(#{endDt},'YYYY-MM-DD') >= TO_DATE(A.rgst_dt::text,'YYYY-MM-DD')			/*등록일*/
+			</if>
+			<if test="deptCd != null and !('').equals(deptCd)">
+				and h.dept_cd =#{deptCd}                           /*관리부서*/
+			</if>
+			<if test="userId != null and !('').equals(userId)">
+				and b.reg_id =#{userId}							   /*담당자*/
+			</if>
+			<if test="opnYn != null and !('').equals(opnYn)">	
+				and b.opn_yn =#{opnYn}                            /*공개여부*/
+			</if>
+			<if test="searchNm != null and !('').equals(searchNm)">
+				<bind
+						name="searchNm"
+						value='@com.bdp.ap.common.EscapeHelper@escape(searchNm)'
+				/>
+				and (1!=1   
+					<if test="martNmChk != null and !('').equals(martNmChk)">
+						or UPPER(a.mart_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*마트명*/
+					</if>
+					<if test="tblIdChk != null and !('').equals(tblIdChk)">
+							or UPPER(a.tbl_id) like CONCAT('%',UPPER(#{searchNm}),'%' )         			   /*테이블ID*/
+					</if>
+					<if test="defChk != null and !('').equals(defChk)">
+						or UPPER(a.def) like CONCAT('%',UPPER(#{searchNm}),'%' )             		  /*정의*/
+					</if>
+					<if test="keyItmNmChk != null and !('').equals(keyItmNmChk)">
+						or UPPER(d.key_itm_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )           /*키항목명*/
+					</if>
+					<if test="datSrcChk != null and !('').equals(datSrcChk)">
+						or UPPER(e.tbl_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*데이터원천*/
+						or UPPER(e.tbl_id) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*데이터원천*/
+					</if>
+					<if test="usDtlChk != null and !('').equals(usDtlChk)">
+						or UPPER(a.us_dtl)  like CONCAT('%',UPPER(#{searchNm}),'%' )           	    /*활용상세*/
+					</if>
+					<if test="anlzAptChk != null and !('').equals(anlzAptChk)">
+						or UPPER(f.dim_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )           /*분석관점=디멘젼*/
+						or UPPER(g.mes_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )           /*분석관점=메젼*/
+					</if>					   			   
+				)
+			</if>			
+			  )
+			z  
+		<include refid="order" />
+		<include refid="paging.pagingOffsetSQL" />
+	</select>
+	
+	
+	<select id="selectAnalysisMartCount" resultType="int" parameterType="bizmetaCriteria">
+		 select count(*)
+			from 
+			(select distinct a.anlz_mrt_id
+					 ,a.topic_area 
+			        ,cd1.code_nm  as topic_area_nm
+			        ,a.mart_nm 
+			        ,a.tbl_id 
+			        ,a.def  
+			        ,a.reg_id
+			        ,c.user_nm as reg_nm
+			        ,a.rgst_dt 
+			        ,cd2.code_nm as opn_yn
+			from t_anlz_mart a
+			inner join t_code cd1 
+			    on cd1.group_id = 'TOPIC_AREA_CD'  /*주제영역*/
+			    and cd1.code_id= a.topic_area
+			inner join t_manage_info b
+				on b.mng_inf_se_id = a.anlz_mrt_id 
+				and COALESCE(b.del_yn,'N') = 'N'
+			inner join t_code cd2 
+			    on cd2.group_id = 'OPEN_YN'  /*공개여부*/
+			    and cd2.code_id= b.opn_yn    		
+			inner join t_user c 
+			    on c.user_id = b.reg_id
+			left outer join t_key_item d 
+				on d.key_itm_se_id = a.anlz_mrt_id 
+				and COALESCE(d.del_yn,'N') = 'N'
+			left outer join t_data_mart e	
+				on e.dt_mrt_se_id = a.anlz_mrt_id  	
+				and COALESCE(e.del_yn,'N') = 'N'
+			left outer join  t_dimension f
+				on f.dim_se_id = a.anlz_mrt_id 
+				and COALESCE(f.del_yn,'N') = 'N'
+			left outer join  t_measure g 
+				on g.mes_se_id = a.anlz_mrt_id 	
+				and COALESCE(g.del_yn,'N') = 'N'
+			left outer join t_mng_dept h 
+				on h.mng_dept_se_id = a.anlz_mrt_id 
+				and h.dept_se ='01'
+				and COALESCE(h.del_yn,'N') = 'N'
+			left outer join t_mng_user i
+				on i.mng_user_se_id = a.anlz_mrt_id 
+			where 1=1
+			and COALESCE(a.del_yn,'N') = 'N'
+			<if test="topicArea != null and !('').equals(topicArea)">
+				and a.topic_area = #{topicArea}                     /*주제영역*/
+			</if>
+			<if test="startDt != null and startDt != ''">
+				AND TO_DATE(A.rgst_dt::text,'YYYY-MM-DD')  >= TO_DATE(#{startDt},'YYYY-MM-DD')    /*등록일*/
+			</if>
+			<if test="endDt != null and endDt != ''">
+				AND TO_DATE(#{endDt},'YYYY-MM-DD') >= TO_DATE(A.rgst_dt::text,'YYYY-MM-DD')			/*등록일*/
+			</if>
+			<if test="deptCd != null and !('').equals(deptCd)">
+				and h.dept_cd =#{deptCd}                           /*관리부서*/
+			</if>
+			<if test="userId != null and !('').equals(userId)">
+				and b.reg_id =#{userId}							   /*담당자*/
+			</if>	
+			<if test="opnYn != null and !('').equals(opnYn)">	
+				and b.opn_yn =#{opnYn}                            /*공개여부*/
+			</if>
+			<if test="searchNm != null and !('').equals(searchNm)">
+				<bind
+						name="searchNm"
+						value='@com.bdp.ap.common.EscapeHelper@escape(searchNm)'
+				/>
+				and (1!=1   
+				    	<if test="martNmChk != null and !('').equals(martNmChk)">
+				      		or UPPER(a.mart_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*마트명*/
+					   	</if>
+					   	<if test="tblIdChk != null and !('').equals(tblIdChk)">
+					   		 or UPPER(a.tbl_id) like CONCAT('%',UPPER(#{searchNm}),'%' )         			   /*테이블ID*/
+					   	</if>
+					   	<if test="defChk != null and !('').equals(defChk)">
+					   		or UPPER(a.def) like CONCAT('%',UPPER(#{searchNm}),'%' )             		  /*정의*/
+					   	</if>
+					   	<if test="keyItmNmChk != null and !('').equals(keyItmNmChk)">
+					   		or UPPER(d.key_itm_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )           /*키항목명*/
+					   	</if>
+					   	<if test="datSrcChk != null and !('').equals(datSrcChk)">
+					   		or UPPER(e.tbl_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*데이터원천*/
+					   		or UPPER(e.tbl_id) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*데이터원천*/
+					   	</if>
+					   	<if test="usDtlChk != null and !('').equals(usDtlChk)">
+					   		or UPPER(a.us_dtl)  like CONCAT('%',UPPER(#{searchNm}),'%' )           	    /*활용상세*/
+						</if>
+					   	<if test="anlzAptChk != null and !('').equals(anlzAptChk)">
+					   		or UPPER(f.dim_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )           /*분석관점=디멘젼*/
+					   		or UPPER(g.mes_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )           /*분석관점=메젼*/
+						</if>					   			   
+					)
+			</if>			
+			  )
+			z  
+	</select>
+	
+	<select id="selectAnalysisMartExcel" resultType="analysisMartModel" parameterType="bizmetaCriteria">
+	 	 select row_number() over (order by z.rgst_dt desc) as row_num
+					,z.anlz_mrt_id
+					,z.topic_area 
+			        ,z.topic_area_nm
+			        ,z.mart_nm 
+			        ,z.tbl_id 
+			        ,z.def  
+			        ,z.reg_id
+			        ,z.reg_nm
+			        ,z.dept_nm
+			        ,z.rgst_dt 
+			        ,z.opn_yn
+			from 
+			(select distinct a.anlz_mrt_id
+					 ,a.topic_area 
+			        ,cd1.code_nm  as topic_area_nm
+			        ,a.mart_nm 
+			        ,a.tbl_id 
+			        ,a.def  
+			        ,a.reg_id
+			        ,c.user_nm as reg_nm
+			         ,(select array_to_string(array_agg(s2.dept_nm), ',')
+						from t_mng_dept s1
+						left outer join t_dept s2
+						on s1.dept_cd = s2.dept_code 
+						and COALESCE(s1.del_yn,'N') = 'N'
+						and s1.dept_se ='01'
+						where s1.mng_dept_se_id = a.anlz_mrt_id ) as dept_nm
+			        ,a.rgst_dt 
+			        ,cd2.code_nm as opn_yn
+			from t_anlz_mart a
+			inner join t_code cd1 
+			    on cd1.group_id = 'TOPIC_AREA_CD'  /*주제영역*/
+			    and cd1.code_id= a.topic_area
+			inner join t_manage_info b
+				on b.mng_inf_se_id = a.anlz_mrt_id 
+				and COALESCE(b.del_yn,'N') = 'N'
+			inner join t_code cd2 
+			    on cd2.group_id = 'OPEN_YN'  /*공개여부*/
+			    and cd2.code_id= b.opn_yn    		
+			inner join t_user c 
+			    on c.user_id = b.reg_id
+			left outer join t_key_item d 
+				on d.key_itm_se_id = a.anlz_mrt_id 
+				and COALESCE(d.del_yn,'N') = 'N'
+			left outer join t_data_mart e	
+				on e.dt_mrt_se_id = a.anlz_mrt_id  	
+				and COALESCE(e.del_yn,'N') = 'N'
+			left outer join  t_dimension f
+				on f.dim_se_id = a.anlz_mrt_id 
+				and COALESCE(f.del_yn,'N') = 'N'
+			left outer join  t_measure g 
+				on g.mes_se_id = a.anlz_mrt_id 	
+				and COALESCE(g.del_yn,'N') = 'N'
+			left outer join t_mng_dept h 
+				on h.mng_dept_se_id = a.anlz_mrt_id 
+				and h.dept_se ='01'
+				and COALESCE(h.del_yn,'N') = 'N'
+			left outer join t_mng_user i
+				on i.mng_user_se_id = a.anlz_mrt_id  
+			where 1=1
+			and COALESCE(a.del_yn,'N') = 'N'
+			<if test="topicArea != null and !('').equals(topicArea)">
+				and a.topic_area = #{topicArea}                     /*주제영역*/
+			</if>
+			<if test="startDt != null and startDt != ''">
+				AND TO_DATE(A.rgst_dt::text,'YYYY-MM-DD')  >= TO_DATE(#{startDt},'YYYY-MM-DD')    /*등록일*/
+			</if>
+			<if test="endDt != null and endDt != ''">
+				AND TO_DATE(#{endDt},'YYYY-MM-DD') >= TO_DATE(A.rgst_dt::text,'YYYY-MM-DD')			/*등록일*/
+			</if>
+			<if test="deptCd != null and !('').equals(deptCd)">
+				and h.dept_cd =#{deptCd}                           /*관리부서*/
+			</if>
+			<if test="deptCd != null and !('').equals(deptCd)">
+				and i.user_id =#{userId}							   /*담당자*/
+			</if>	
+			<if test="opnYn != null and !('').equals(opnYn)">	
+				and b.opn_yn =#{opnYn}                            /*공개여부*/
+			</if>
+			<if test="searchNm != null and !('').equals(searchNm)">
+				<bind
+						name="searchNm"
+						value='@com.bdp.ap.common.EscapeHelper@escape(searchNm)'
+				/>
+				and (1!=1   
+				      	<if test="martNmChk != null and !('').equals(martNmChk)">
+				      		or UPPER(a.mart_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*마트명*/
+					   	</if>
+					   	<if test="tblIdChk != null and !('').equals(tblIdChk)">
+					   		 or UPPER(a.tbl_id) like CONCAT('%',UPPER(#{searchNm}),'%' )         			   /*테이블ID*/
+					   	</if>
+					   	<if test="defChk != null and !('').equals(defChk)">
+					   		or UPPER(a.def) like CONCAT('%',UPPER(#{searchNm}),'%' )             		  /*정의*/
+					   	</if>
+					   	<if test="keyItmNmChk != null and !('').equals(keyItmNmChk)">
+					   		or UPPER(d.key_itm_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )           /*키항목명*/
+					   	</if>
+					   	<if test="datSrcChk != null and !('').equals(datSrcChk)">
+					   		or UPPER(e.tbl_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*데이터원천*/
+					   		or UPPER(e.tbl_id) like CONCAT('%',UPPER(#{searchNm}),'%' )                /*데이터원천*/
+					   	</if>
+					   	<if test="usDtlChk != null and !('').equals(usDtlChk)">
+					   		or UPPER(a.us_dtl)  like CONCAT('%',UPPER(#{searchNm}),'%' )           	    /*활용상세*/
+						</if>
+					   	<if test="anlzAptChk != null and !('').equals(anlzAptChk)">
+					   		or UPPER(f.dim_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )           /*분석관점=디멘젼*/
+					   		or UPPER(g.mes_nm) like CONCAT('%',UPPER(#{searchNm}),'%' )           /*분석관점=메젼*/
+						</if>					   			   
+					)
+			</if>			
+			  )
+			z  
+		<include refid="order" /> 
+	</select>
+	 	
+	<insert id="insertAnalysisMart" parameterType="analysisMartModel">
+		  insert into t_anlz_mart(
+				anlz_mrt_id
+				,tbl_id
+				,mart_nm
+				,topic_area
+				,load_cyc
+				,def
+				,us_dtl
+				,reg_id
+				,reg_dt
+				,del_yn
+				,rgst_dt
+				,rgst_id
+				,modi_dt
+				,modi_id
+			)values(
+				#{anlzMrtId}
+				,#{tblId}
+				,#{martNm}
+				,#{topicArea}
+				,#{loadCyc}
+				,#{def}
+				,#{usDtl}
+				,#{regId}
+				,#{regDt}
+				,#{delYn}
+				,now()
+				,#{rgstId}
+				,now()
+				,#{modiId}
+			)
+	</insert>
+	
+	<select id="selectAnalysisMartDetail" resultType="analysisMartModel" parameterType="bizmetaCriteria">
+		  select a.anlz_mrt_id 
+		        ,a.tbl_id 
+		        ,a.mart_nm 
+		        ,a.load_cyc
+		        ,a.topic_area
+		        ,cd2.code_nm  as topic_area_nm
+		        ,a.load_cyc
+		        ,cd3.code_nm  as load_cyc_nm
+		        ,a.def
+		        ,a.us_dtl 
+		        ,(select array_to_string(array_agg(s1.file_nm), ',')
+							from  t_file s1  
+							where s1.ref_id = a.anlz_mrt_id
+							and s1.use_yn='Y' 
+							) as  file_nm
+		        ,(select array_to_string(array_agg(tmc.col_nm), ',')
+					from t_key_item s1
+					inner join t_meta_col tmc
+					on tmc.co_id = s1.key_itm_nm
+					where s1.key_itm_se_id = a.anlz_mrt_id
+					and COALESCE(s1.del_yn,'N') = 'N'
+				 ) as key_itm_nm
+			,(select array_to_string(array_agg(tmc.col_nm), ',')
+				from t_dimension s1
+				inner join t_meta_col tmc
+				on tmc.co_id = s1.dim_nm
+				where s1.dim_se_id = a.anlz_mrt_id 
+				and COALESCE(s1.del_yn,'N') = 'N'
+			 ) as 	dim_nm 
+			,(select array_to_string(array_agg(tmc.col_nm), ',')
+				from t_measure s1
+				inner join t_meta_col tmc
+				on tmc.co_id = s1.mes_nm
+				where s1.mes_se_id = a.anlz_mrt_id
+				and COALESCE(s1.del_yn,'N') = 'N' 	
+			 ) as  mes_nm
+			,(select array_to_string(array_agg(s1.tbl_nm||'('||s1.tbl_id||')'), ',')
+				from t_data_mart s1
+				where s1.dt_mrt_se_id = a.anlz_mrt_id
+				and COALESCE(s1.del_yn,'N') = 'N'
+			) as dataNm
+			,(select array_to_string(array_agg(s1.fnd_tag_nm), ',')
+				from t_find_tag s1
+				where s1.fnd_tag_se_id = a.anlz_mrt_id
+				and COALESCE(s1.del_yn,'N') = 'N'
+			) as fndTagNm
+			,c.user_id  as reg_id
+			,c.user_nm as reg_nm
+			,cd1.code_nm as opn_yn 
+		    ,(select array_to_string(array_agg(s2.dept_nm), ',')
+					from t_mng_dept s1
+					left outer join t_dept s2
+					on s1.dept_cd = s2.dept_code 
+					and COALESCE(s1.del_yn,'N') = 'N'
+					and s1.dept_se ='01'
+					where s1.mng_dept_se_id = a.anlz_mrt_id ) as dept_nm
+			,(select array_to_string(array_agg(s2.dept_nm), ',')
+					from t_mng_dept s1
+					left outer join t_dept s2
+					on s1.dept_cd = s2.dept_code 
+					and COALESCE(s1.del_yn,'N') = 'N'
+					and s1.dept_se ='02'
+					where s1.mng_dept_se_id = a.anlz_mrt_id ) as avoid_dept_nm		
+		        ,a.rgst_dt
+			    ,a.modi_dt	
+			    ,b.app_opin 
+		from t_anlz_mart a 	
+		inner join t_manage_info b
+			on b.mng_inf_se_id = a.anlz_mrt_id 
+			and COALESCE(b.del_yn,'N') = 'N'
+		inner join t_code cd1 
+		    on cd1.group_id = 'OPEN_YN'  /*공개여부*/
+		    and cd1.code_id= b.opn_yn    			
+		inner join t_user c 
+		    on c.user_id = b.reg_id
+		inner join t_code cd2 
+		    on cd2.group_id = 'TOPIC_AREA_CD'  /*주제영역*/
+		    and cd2.code_id= a.topic_area
+		inner join t_code cd3 
+		    on cd3.group_id = 'LOAD_CYC_CD'  /*적재주기*/
+		    and cd3.code_id= a.load_cyc    
+		where 1=1
+		and a.anlz_mrt_id =#{anlzMrtId}
+	</select>
+	
+	<update id="updateAnalysisMart" parameterType="analysisMartModel">
+		 update t_anlz_mart set tbl_id = #{tblId}
+				,mart_nm = #{martNm}
+				,topic_area= #{topicArea}
+				,load_cyc = #{loadCyc}
+				,def = #{def}
+				,us_dtl= #{usDtl}
+				,modi_dt = now()
+				,modi_id = #{modiId}
+		where anlz_mrt_id =#{anlzMrtId}		
+	</update>
+	
+	<update id="deleteAnalysisMart" parameterType="analysisMartModel">
+			 update t_anlz_mart set del_yn = 'Y'
+						,modi_dt = now()
+						,modi_id = #{modiId} 
+			where anlz_mrt_id =#{anlzMrtId}		
+	</update>
+	
+	 
+	 
+</mapper>

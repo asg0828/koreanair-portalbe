@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.audit.mapper.LogMapper">
+
+<!-- 접속 로그에서 프로그램 명 조회 -->
+	<select id="selectProgramNm" parameterType="logModel" resultType="string">
+SELECT PROGRAM_NM FROM T_LOG_REF_INFO WHERE SYS_SE = #{sysSe} AND CONTROLLER_NM = #{controllerNm} AND METHOD_NM = #{methodNm}
+	</select>
+
+    <sql id="order">
+        order by log_dt DESC
+    </sql>
+
+    <sql id="searchLog">
+        <where>
+            <if test="searchValue != '' ">
+                <bind
+                        name="searchValue"
+                        value='@com.bdp.ap.common.EscapeHelper@escape(searchValue)'
+                />
+            </if>
+            <if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+                AND ( UPPER(program_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(user_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%') )
+            </if>
+            <if test="searchKey != '' and searchKey == 'programNm' and searchValue != ''">
+                AND UPPER(program_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+            </if>
+            <if test="searchKey != '' and searchKey == 'userNm' and searchValue != ''">
+                AND UPPER(user_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%') 
+            </if>
+            <if test="startDt != null and startDt != ''">
+                AND TO_DATE(log_dt::text,'YYYY-MM-DD')  >= TO_DATE(#{startDt},'YYYY-MM-DD')
+            </if>
+            <if test="endDt != null and endDt != ''">
+                AND TO_DATE(#{endDt},'YYYY-MM-DD') >= TO_DATE(log_dt::text,'YYYY-MM-DD')
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectUserLogList" resultType="logModel" parameterType="com.bdp.ap.common.paging.Criteria">
+        select
+            row_number() over () as rownum,
+            log_dt,
+            user_id,
+            user_nm,
+            pstn_code,
+            pstn_nm,
+            dept_code,
+            dept_nm,
+            auth_id,
+            auth_nm,
+            client_ip,
+            server_ip,
+            rqst_method,
+            rqst_uri,
+            program_nm,
+            controller_nm,
+            method_nm,
+            msg
+        from
+            t_log_rqst_user_sys
+        <include refid="searchLog"></include>
+        <include refid="order"></include>
+        <include refid="paging.pagingOffsetSQL" />
+    </select>
+
+    <select id="selectUserLogCount" resultType="int" parameterType="com.bdp.ap.common.paging.Criteria">
+        select count(*)
+        from
+            t_log_rqst_user_sys
+        <include refid="searchLog"></include>
+    </select>
+
+    <select id="selectMgrLogList" resultType="logModel" parameterType="com.bdp.ap.common.paging.Criteria">
+        select
+            row_number() over () as rownum,
+            log_dt,
+            user_id,
+            user_nm,
+            pstn_code,
+            pstn_nm,
+            dept_code,
+            dept_nm,
+            auth_id,
+            auth_nm,
+            client_ip,
+            server_ip,
+            rqst_method,
+            rqst_uri,
+            program_nm,
+            controller_nm,
+            method_nm,
+            msg
+        from
+            t_log_rqst_mgr_sys
+        <include refid="searchLog"></include>
+        <include refid="order"></include>
+        <include refid="paging.pagingOffsetSQL" />
+    </select>
+
+    <select id="selectMgrLogCount" resultType="int" parameterType="com.bdp.ap.common.paging.Criteria">
+        select count(*)
+        from
+            t_log_rqst_mgr_sys
+        <include refid="searchLog"></include>
+    </select>
+
+    <insert id="insert" parameterType="logModel">
+        insert into t_log_rqst_mgr_sys (
+              log_dt
+            , user_id
+            , user_nm
+            , pstn_code
+            , pstn_nm
+            , dept_code
+            , dept_nm
+            , auth_id
+            , auth_nm
+            , client_ip
+            , server_ip
+            , rqst_method
+            , rqst_uri
+            , program_nm
+            , controller_nm
+            , method_nm
+            <if test="msg != null and msg != ''">
+            , msg
+            </if>
+        ) values (
+              NOW()
+            , #{userId}
+            , #{userNm}
+            , #{pstnCode}
+            , #{pstnNm}
+            , #{deptCode}
+            , #{deptNm}
+            , #{authId}
+            , #{authNm}
+            , #{clientIp}
+            , #{serverIp}
+            , #{rqstMethod}
+            , #{rqstUri}
+            , #{programNm}
+            , #{controllerNm}
+            , #{methodNm}
+            <if test="msg != null and msg != ''">
+            , #{msg}::json
+            </if>
+        )
+    </insert>
+    
+    <insert id="insertTableau" parameterType="logModel">
+        INSERT INTO T_LOG_TABLEAU_MGR_SYS (
+              LOG_DT
+            , USER_ID
+            , REPORT_ID
+            , VER
+            , TABLEAU_WORKBOOK_ID
+            , TABLEAU_PARAM
+            , TABLEAU_USER_ID
+            , USER_NM
+            , DEPT_CODE
+            , DEPT_NM
+            , PSTN_CODE
+            , PSTN_NM
+        ) values (
+              NOW()
+            , #{userId}
+            , #{reportId}
+            , #{ver}::numeric
+            , #{tableauWorkbookId}
+            , #{tableauParam}::jsonb
+            , #{tableauUserId}
+            , #{userNm}
+            , #{deptCode}
+            , #{deptNm}
+            , #{pstnCode}
+            , #{pstnNm}
+        )
+    </insert>
+</mapper>

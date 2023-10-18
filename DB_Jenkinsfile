@@ -1,0 +1,37 @@
+def DOCKER_REGISTRY = "110.45.156.133:10159"
+def DOCKER_NAME = "shinhanpostgre"
+def DEPLOYMENT_NAME = "postgres-shinhan"
+def NAMESPACE = "shinhan"
+def tag = "v2"
+
+pipeline {
+   agent any
+
+   stages {
+      stage('build docker image'){
+            steps{
+                script{
+                    docker_image_name = "${DOCKER_REGISTRY}/${DOCKER_NAME}:${tag}"
+                    builded_dockerimage = docker.build("${docker_image_name}")
+                }
+            }
+        }
+        stage("push dockerimage"){
+            steps{
+                script{
+                    docker.withRegistry("""http://${DOCKER_REGISTRY}""", 'IDCNEXUS'){
+                        builded_dockerimage.push()
+                    }
+                    sh "docker rmi ${docker_image_name}"
+                }
+            }
+        }
+        stage("restart k8s reousrces"){
+            steps{
+              script {
+                  sh(script:"""kubectl rollout restart deploy/${DEPLOYMENT_NAME} -n ${NAMESPACE}""")
+              }
+            }
+        }
+   }
+}

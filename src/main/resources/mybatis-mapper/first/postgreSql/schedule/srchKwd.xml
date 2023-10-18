@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.schedule.mapper.JobSrchKwdMapper">
+
+
+<!-- 최근 검색어 -->
+	<select id="selectNewKwd" resultType="map">
+WITH R1 AS (
+    SELECT
+        LOG_DT, SRCH_KWD
+    FROM T_LOG_SRCH_KWD
+    WHERE CHAR_LENGTH(SRCH_KWD) > 1 AND SRCH_KWD ~ '[^0-9]'
+    ORDER BY LOG_DT DESC
+    LIMIT 10000
+), R2 AS (
+    SELECT
+        ROW_NUMBER() OVER(PARTITION BY SRCH_KWD ORDER BY LOG_DT DESC) AS RNO, LOG_DT, SRCH_KWD
+    FROM R1
+) SELECT
+    'N' AS "srchCl", R2.SRCH_KWD AS "srchKwd", ROW_NUMBER() OVER(ORDER BY R2.LOG_DT) AS "srchCnt", COALESCE(SK.SRCH_CNT,0) AS "bfSrchCnt" 
+FROM R2
+LEFT OUTER JOIN T_SRCH_KWD SK ON R2.SRCH_KWD = SK.SRCH_KWD AND SK.SRCH_CL = 'N'
+WHERE RNO = 1
+LIMIT 12
+	</select>
+
+	<delete id="deleteNewKwd">
+DELETE FROM T_SRCH_KWD WHERE SRCH_CL = 'N'
+	</delete>
+
+	<insert id="insertNewKwd" parameterType="map">
+INSERT INTO T_SRCH_KWD (SRCH_KWD,SRCH_CNT,RGST_ID,RGST_DT,SRCH_CL,BF_SRCH_CNT) VALUES
+		<foreach collection="data" item="i" separator=",">
+(#{i.srchKwd},#{i.srchCnt},'SYSTEM',NOW(),#{i.srchCl},#{i.bfSrchCnt})
+		</foreach>
+	</insert>
+
+
+
+
+
+<!-- 최다 검색어 -->
+	<select id="selectHitKwd" resultType="map">
+WITH R1 AS (
+    SELECT
+        LOG_DT, SRCH_KWD
+    FROM T_LOG_SRCH_KWD
+    WHERE CHAR_LENGTH(SRCH_KWD) > 1 AND SRCH_KWD ~ '[^0-9]'
+    ORDER BY LOG_DT DESC
+    LIMIT 10000
+), R2 AS (
+    SELECT
+        SRCH_KWD, COUNT(1) AS SRCH_CNT
+    FROM R1
+    GROUP BY SRCH_KWD
+    ORDER BY SRCH_CNT DESC
+LIMIT 12
+) SELECT
+    'M' AS "srchCl", R2.SRCH_KWD AS "srchKwd", R2.SRCH_CNT AS "srchCnt", COALESCE(SK.SRCH_CNT,0) AS "bfSrchCnt"
+FROM R2
+LEFT OUTER JOIN T_SRCH_KWD SK ON R2.SRCH_KWD = SK.SRCH_KWD AND SK.SRCH_CL = 'M'
+LIMIT 12
+	</select>
+
+	<delete id="deleteHitKwd">
+DELETE FROM T_SRCH_KWD WHERE SRCH_CL = 'M'
+	</delete>
+
+	<insert id="insertHitKwd" parameterType="map">
+INSERT INTO T_SRCH_KWD (SRCH_KWD,SRCH_CNT,RGST_ID,RGST_DT,SRCH_CL,BF_SRCH_CNT) VALUES
+		<foreach collection="data" item="i" separator=",">
+(#{i.srchKwd},#{i.srchCnt},'SYSTEM',NOW(),#{i.srchCl},#{i.bfSrchCnt})
+		</foreach>
+	</insert>
+
+
+</mapper>

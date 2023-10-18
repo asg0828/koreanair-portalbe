@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.board.mapper.AnlzSourceMapper">
+	<sql id="where">
+		<where>
+			<if test="searchValue != '' ">
+				<bind
+						name="searchValue"
+						value='@com.bdp.ap.common.EscapeHelper@escape(searchValue)'
+				/>
+			</if>
+			<if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+				AND (UPPER(sj) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(cn) LIKE CONCAT('%',UPPER(#{searchValue}),'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'sj' and searchValue != ''">
+				AND UPPER(sj) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchKey != '' and searchKey == 'cn' and searchValue != ''">
+				AND UPPER(cn) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="codeId != 'ALL' and codeId != null">
+				AND source_type = #{codeId}
+			</if>
+			AND DEL_YN = 'N'	
+		</where>
+	</sql>
+	
+    <sql id="order">
+        ORDER BY a.rownum ASC
+    </sql> 	
+ 
+	<select id="selectAnlzSourceList" resultType="anlzSourceModel" parameterType="criteria">
+		select
+			*
+		from (
+			select
+				row_number() over(order by tbn.rgst_dt desc) as rownum,
+				tbn.anlz_source_id,
+				tbn.sj,
+				tbn.cn,
+				tbn.source_type,
+				tu.dept_code,
+				d.dept_nm,
+				tu.company_code,
+				(select code_nm from t_code where group_id = 'COMPANY_CODE' and code_id = tu.company_code) company_nm,
+				tbn.use_yn,
+				(CASE tbn.USE_YN WHEN 'Y' THEN '게시' ELSE '미게시' END) AS USE_YN_NM,
+				tbn.del_yn,
+				tbn.rgst_id,
+				tbn.rgst_dt,
+				tbn.modi_id,
+				tbn.modi_dt,
+				tbn.view_cnt,
+				tu.user_nm as rgst_nm,
+				(select dept_nm from t_dept where dept_code = tu.dept_code) as rgst_dept_nm
+			from
+				ptl.t_anlz_source tbn
+				left outer join ptl.t_user tu on tbn.rgst_id = tu.user_id
+				left outer join t_dept d on tu.dept_code = d.dept_code
+
+		) a
+        <include refid="where" />
+        <include refid="order" />
+        <include refid="paging.pagingOffsetSQL" />  
+    </select> 
+ 
+	<select id="selectAnlzSourceListCount" resultType="int" parameterType="criteria">
+		SELECT
+			COUNT(*)
+		FROM 
+			ptl.t_anlz_source
+		<include refid="where" />
+	</select>
+
+	<select id="selectAnlzSource" resultType="anlzSourceModel" parameterType="anlzSourceModel">
+		SELECT A.*
+		FROM (
+			SELECT
+				ta.anlz_source_id,
+				ta.sj,
+				ta.cn,
+				ta.source_type,
+				tu.user_nm,
+				tu.dept_code,
+				d.dept_nm,
+				tu.company_code,
+				(select code_nm from t_code where group_id = 'COMPANY_CODE' and code_id = tu.company_code) company_nm,
+				ta.use_yn,
+				(CASE ta.USE_YN WHEN 'Y' THEN '게시' ELSE '미게시' END) AS USE_YN_NM,
+				ta.rgst_id,
+				ta.rgst_dt,
+				ta.modi_id,
+				ta.modi_dt,
+				ta.view_cnt,
+				LEAD(ta.anlz_source_id,1) OVER (
+					ORDER BY ta.anlz_source_id
+				) next_id,
+				LEAD(ta.sj,1) OVER (
+					ORDER BY ta.anlz_source_id
+				) next_sj,
+				lag(ta.anlz_source_id,1) OVER (
+					ORDER BY ta.anlz_source_id
+				) pre_id,
+				lag(ta.sj,1) OVER (
+					ORDER BY ta.anlz_source_id
+				) pre_sj
+			FROM 
+				ptl.t_anlz_source ta
+				left outer join ptl.t_user tu 
+					on ta.rgst_id = tu.user_id
+				left outer join ptl.t_dept d 
+					on tu.dept_code = d.dept_code
+			WHERE
+				ta.DEL_YN = 'N'
+			) A
+		WHERE
+			A.anlz_source_id = #{anlzSourceId}
+
+	</select>
+	
+	<select id="selectAnlzSourceAuth" resultType="anlzSourceModel" parameterType="anlzSourceModel">
+		SELECT
+			au.anlz_source_id,
+			tu.user_nm,
+			au.user_id,
+			d.dept_code,
+			d.dept_nm,
+			p.pstn_nm 
+		FROM  ptl.t_anlz_source_auth au
+			left outer join ptl.t_anlz_source asa
+					on au.user_id = asa.rgst_id 
+					and asa.anlz_source_id = au.anlz_source_id 
+			left outer join ptl.t_user tu 
+					on  tu.user_id = au.user_id 
+			left outer join ptl.t_dept d 
+					on tu.dept_code = d.dept_code
+			left outer join t_pstn p 
+					on tu.pstn_code = p.pstn_code
+		WHERE au.anlz_source_id = #{anlzSourceId}
+	</select>
+
+	<select id="selectAnlzSourceAuthList" resultType="String" parameterType="anlzSourceModel">
+		SELECT
+			user_id 
+		FROM  ptl.t_anlz_source_auth au
+		WHERE au.anlz_source_id = #{anlzSourceId}
+	</select>
+
+	<delete id="deleteAnlzSourceAuth" parameterType="anlzSourceModel">
+		DELETE FROM ptl.t_anlz_source_auth
+		WHERE anlz_source_id = #{anlzSourceId}
+	</delete>
+
+	<select id="selectAnlzSourceCommentList" resultType="anlzSourceCmtModel" parameterType="anlzSourceModel">
+		WITH RECURSIVE dept_record(anlz_source_cmt_id, anlz_parents_cmt_id, cn, rgst_id, rgst_dt, modi_id, modi_dt, LEVEL, use_yn, PATH, cycle) AS(
+				SELECT d.anlz_source_cmt_id, d.anlz_parents_cmt_id, (case use_yn when 'Y' then d.cn else '삭제된 코멘트 입니다.' end), d.rgst_id, d.rgst_dt, d.modi_id, d.modi_dt, 0, d.use_yn, ARRAY[d.anlz_source_cmt_id], FALSE
+				FROM t_anlz_source_cmt d
+				WHERE d.anlz_parents_cmt_id IS NULL and d.anlz_source_id  = #{anlzSourceId}
+			UNION ALL
+				SELECT d.anlz_source_cmt_id, d.anlz_parents_cmt_id, d.cn, d.rgst_id, d.rgst_dt, d.modi_id, d.modi_dt, LEVEL + 1, d.use_yn, PATH || d.anlz_source_cmt_id, d.anlz_source_cmt_id = ANY(PATH)
+				FROM t_anlz_source_cmt d, dept_record dr
+				WHERE d.anlz_parents_cmt_id = dr.anlz_source_cmt_id 
+				and d.anlz_source_id  = #{anlzSourceId} AND NOT CYCLE)
+		SELECT r.anlz_source_cmt_id, r.anlz_parents_cmt_id, r.cn, r.rgst_id, r.rgst_dt, r.modi_id, r.modi_dt, LEVEL as lv, r.use_yn, path, tu.user_id , tu.user_nm as rgst_nm, (select dept_nm from t_dept where dept_code = tu.dept_code) as rgst_dept_nm
+		FROM dept_record r left outer join t_user tu 
+			on r.rgst_id = tu.user_id
+		ORDER BY PATH;
+	</select> 
+
+	<insert id="insertAnlzSource" parameterType="anlzSourceModel">
+		INSERT INTO ptl.t_anlz_source (
+			anlz_source_id,
+			sj,
+			cn,
+			source_type,
+			use_yn,
+			rgst_id,
+			rgst_dt,
+			modi_id,
+			modi_dt,
+			view_cnt	
+		) VALUES (
+			#{anlzSourceId},
+			#{sj},
+			#{cn},
+			#{sourceType},
+			#{useYn},
+			#{rgstId},
+			now(),
+			#{modiId},
+			now(),
+			0
+		)
+	</insert>
+	
+	<insert id="insertAnlzSourceAuth" parameterType="anlzSourceModel">
+		INSERT INTO ptl.t_anlz_source_auth (
+			anlz_source_id,
+			user_id,
+			rgst_id,
+			rgst_dt
+		) VALUES (
+			#{anlzSourceId},
+			#{userId},
+			#{rgstId},
+			now()
+		)
+	</insert>
+	<update id="updateAnlzSource" parameterType="anlzSourceModel">
+		UPDATE
+			ptl.t_anlz_source
+		SET
+			sj = #{sj},
+			cn = #{cn},
+			source_type = #{sourceType},
+			use_yn = #{useYn},
+			modi_id = #{modiId},
+			modi_dt = now()
+	   WHERE
+			anlz_source_id = #{anlzSourceId}
+	</update>
+	
+	<update id="deleteAnlzSource" parameterType="anlzSourceModel">
+		UPDATE
+			ptl.t_anlz_source
+		set
+			DEL_YN = 'Y',
+			modi_id = #{modiId},
+			modi_dt = now()
+		WHERE
+			anlz_source_id = #{anlzSourceId}
+	</update>
+	
+	<update id="updateAnlzSourceReadCnt" parameterType="anlzSourceModel">
+		UPDATE
+			ptl.t_anlz_source
+		set
+			view_cnt = view_cnt + 1
+		WHERE
+			anlz_source_id = #{anlzSourceId}
+	</update>
+	
+	<insert id="insertAnlzSourceCmt" parameterType="anlzSourceCmtModel">
+		INSERT INTO ptl.t_anlz_source_cmt (
+			anlz_source_cmt_id, 
+			anlz_parents_cmt_id, 
+			anlz_source_id, 
+			cmt_dept, 
+			cn, 
+			view_cnt, 
+			use_yn, 
+			rgst_id, 
+			rgst_dt, 
+			modi_id, 
+			modi_dt
+		)VALUES(
+			(select nextval('anlz_cmt_seq')),
+			#{anlzParentsCmtId},
+			#{anlzSourceId},
+			'0',
+			#{cmt},
+			'0',
+			'Y',
+			#{rgstId},
+			now(),
+			#{modiId},
+			now()
+		)
+	</insert>
+
+	<update id="updateAnlzSourceCmt" parameterType="anlzSourceCmtModel">
+		UPDATE
+			ptl.t_anlz_source_cmt
+		set
+			cn = #{cn},
+			modi_id = #{modiId},
+			modi_dt = now()
+		WHERE
+			anlz_source_cmt_id = #{anlzSourceCmtId}
+	</update>
+
+	<update id="deleteAnlzSourceCmt" parameterType="anlzSourceCmtModel">
+		UPDATE
+			ptl.t_anlz_source_cmt
+		set
+			USE_YN = 'N',
+			modi_id = #{modiId},
+			modi_dt = now()
+		WHERE
+			anlz_source_cmt_id = #{anlzSourceCmtId}
+			OR anlz_parents_cmt_id = #{anlzSourceCmtId}
+	</update>
+	
+	<delete id="deleteRealAnlzSourceCmt" parameterType="anlzSourceCmtModel">
+		DELETE FROM 
+			ptl.t_anlz_source_cmt
+		WHERE 
+			anlz_source_cmt_id = #{anlzSourceCmtId}
+	</delete>
+</mapper>

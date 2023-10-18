@@ -1,0 +1,22 @@
+spring:
+    profiles:
+        active: local
+    servlet:
+        multipart:
+            enabled: true
+            max-file-size: 100MB
+            max-request-size: 100MB
+server:
+    port: 8081
+    error:
+        whitelabel:
+            enabled: false
+        path: /error
+        include-exception: true
+        include-stacktrace: always
+jasypt:
+    encryptor:
+        bean: jasyptStringEncryptor
+dbms-props:
+    dbms-kind: postgreSql # postgreSql
+    dbms-connect-type: JNDI

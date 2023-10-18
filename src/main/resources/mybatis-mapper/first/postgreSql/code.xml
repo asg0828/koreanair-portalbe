@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.code.mapper.CodeMapper">
+
+	<select id="selectGroupIdList" resultType="codeModel" parameterType="com.bdp.ap.common.paging.Criteria">
+		SELECT
+			ROW_NUMBER() OVER (ORDER BY UPPER(CODE_NM) ASC) AS ROWNUM,
+			GROUP_ID,
+			CODE_ID,
+			CODE_NM,
+			CODE_DSC,
+			USE_YN,
+			RGST_ID,
+			RGST_DT,
+			MODI_ID,
+			MODI_DT
+		FROM T_CODE
+		where GROUP_ID = #{groupId}
+		ORDER BY ROWNUM ASC
+		<include refid="paging.pagingOffsetSQL" />
+	</select>
+	
+	<select id="selectGroupLikeIdList" resultType="codeModel" parameterType="com.bdp.ap.common.paging.Criteria">
+		SELECT
+			ROW_NUMBER() OVER (ORDER BY UPPER(CODE_NM) ASC) AS ROWNUM,
+			GROUP_ID,
+			CODE_ID,
+			CODE_NM,
+			CODE_DSC,
+			USE_YN,
+			RGST_ID,
+			RGST_DT,
+			MODI_ID,
+			MODI_DT
+		FROM T_CODE
+		where GROUP_ID LIKE #{groupId}
+		ORDER BY ROWNUM ASC
+		<include refid="paging.pagingOffsetSQL" />
+	</select>
+
+	<select id="selectGroupIdListCount" resultType="int">
+		select
+			count(*)
+		from
+			t_code
+		where
+			group_id = #{groupId}
+	</select>
+
+	<select id="selectGroupIdAllList" resultType="codeModel">
+		select
+			row_number() over (order by ord_seq ASC) as rownum,
+			group_id,
+			code_id,
+			code_nm,
+			code_dsc,
+			use_yn,
+			rgst_id,
+			rgst_dt,
+			modi_id,
+			modi_dt,
+			ord_seq
+		from
+			t_code
+		where
+			group_id = #{groupId}
+		order by rownum
+	</select>
+
+	<select id="select" resultType="codeModel" parameterType="codeModel">
+		select
+			group_id,
+			code_id,
+			code_nm,
+			code_dsc,
+			use_yn,
+			rgst_id,
+			rgst_dt,
+			modi_id,
+			modi_dt
+		from
+			t_code
+		where
+			group_id = #{groupId}
+		and
+			code_id = #{codeId}
+	</select>
+
+	<insert id="insert" parameterType="codeModel">
+		insert into t_code (
+			group_id
+			, code_id
+			, code_nm
+			, code_dsc
+			, use_yn
+			, rgst_id
+			, rgst_dt
+			, modi_id
+			, modi_dt
+			, ord_seq
+		) values (
+			#{groupId}
+			, #{codeId}
+			, #{codeNm}
+			, #{codeDsc}
+			, #{useYn}
+			, #{rgstId}
+			, now()
+			, #{modiId}
+			, now()
+			, #{ordSeq}
+		)
+	</insert>
+
+	<update id="update" parameterType="codeModel">
+		update t_code
+		set
+			code_nm = #{codeNm}
+			, code_dsc = #{codeDsc}
+			, modi_dt = now()
+			, modi_id = #{modiId}
+			, use_yn = #{useYn}
+			, ord_seq = #{ordSeq}
+		where
+			group_id = #{groupId}
+		and
+			code_id = #{codeId}
+	</update>
+
+	<update id="delete" parameterType="codeModel">
+		update t_code
+		set
+			use_yn = 'N'
+		where
+			group_id = #{groupId}
+		and
+			code_id = #{codeId}
+	</update>
+
+	<select id="selectCodeCountForGroupId" resultType="int" parameterType="codeModel">
+		select count(*)
+		from t_code
+		where group_id = #{codeId}
+		and use_yn = 'Y'
+	</select>
+
+	<select id="pstnSelect" resultType="codeModel" parameterType="String">
+		SELECT
+			pstn_code as code_id
+			,pstn_nm as code_nm
+		FROM t_pstn
+		where use_yn ='Y'
+		<if test="companyCode != null and companyCode != ''">
+				and company_code = #{companyCode}
+		</if>
+		and up_pstn_code is not null
+	</select>
+	
+	<select id="deptSelect" resultType="codeModel" parameterType="String">
+		select dept_code as code_id
+        		 ,dept_nm as code_nm
+		from t_dept
+		where use_yn ='Y'
+		<if test="companyCode != null and companyCode != ''">
+				and company_code = #{companyCode}
+		</if>
+		and hdept_code is not null		
+	</select>
+	<select id="rankSelect" resultType="codeModel" parameterType="String">
+		select rank_code as code_id
+        		 ,rank_nm as code_nm
+		from t_rank
+		where use_yn ='Y'
+		<if test="companyCode != null and companyCode != ''">
+				and company_code = #{companyCode}
+		</if>
+		and up_rank_code is not null
+	</select>
+	<select id="dutySelect" resultType="codeModel" parameterType="String">
+		select duty_code as code_id
+        		 ,duty_nm as code_nm
+		from t_duty
+		where use_yn ='Y'
+		<if test="companyCode != null and companyCode != ''">
+				and company_code = #{companyCode}
+		</if>
+		and up_duty_code is not null
+	</select>
+	<select id="selectGroupTreeList" resultType="codeModel" parameterType="String">
+		with recursive cte as (
+			select
+				cast(null as text) as group_id,
+				cast(#{groupId} as text) as code_id,
+				cast('전체' as text) as code_nm,
+				0 as lv,
+				array[cast (0 as numeric)] as ids
+			union
+			select
+				a.group_id,
+				a.code_id,
+				a.code_nm,
+				b.lv + 1,
+				b.ids || a.ord_seq
+			from
+				t_code a,
+				cte b
+			where
+				a.group_id = b.code_id
+		)
+		select
+			group_id,
+			code_id,
+			code_nm,
+			lv
+		from cte where group_id is not null order by ids;
+	</select>
+	<select id="selectCodeNm" resultType="String" parameterType="String">
+		select
+			code_nm
+		from
+			t_code
+		where
+			code_id = #{codeId}
+	</select>
+</mapper>

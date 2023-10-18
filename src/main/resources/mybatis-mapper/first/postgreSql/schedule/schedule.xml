@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.schedule.mapper.ScheduleMapper">
+
+<!-- 스케줄 로그 기록 -->
+	<insert id="insertScheduleLog" parameterType="scheduleLogModel">
+INSERT INTO PTL.T_LOG_IF (LOG_DT,IF_TY,IF_TY_KR,SERVER_IP,START_DT,END_DT,RSLT_CODE,MSG,ERR_MSG) VALUES
+(NOW(),#{ifTy},#{ifTyKr},#{serverIp},#{startDt},#{endDt},#{rsltCode},#{msg}::json,#{errMsg})
+	</insert>
+
+
+<!-- 스케줄 LOCK 목록 조회 -->
+	<select id="selectScheduleLockList" resultType="scheduleModel">
+SELECT
+    L.SCHEDULE_NM
+  , S.SCHEDULE_CL
+  , S.EXECUT_CYCLE
+  , S.SCHEDULE_DSC
+  , S.OBJECT_NM
+  , S.TRIGGER_NM
+  , S.LOCK_YN
+  , S.LOCK_CYCLE
+  , S.USE_YN
+  , S.RGST_ID
+  , S.RGST_DT
+  , S.MODI_ID
+  , S.MODI_DT
+  , L.SERVER_IP
+  , L.RGST_DT AS LOCK_RGST_DT
+  , CASE WHEN L.RGST_DT + (S.LOCK_CYCLE||' minutes')::INTERVAL &lt; NOW() THEN 'Y' ELSE 'N' END AS LOCK_STOP_YN
+FROM T_MGR_SYS_SCHEDULE_LOCK L
+JOIN T_MGR_SYS_SCHEDULE S ON L.SCHEDULE_NM = S.SCHEDULE_NM
+ORDER BY S.SCHEDULE_CL, S.SCHEDULE_NM
+	</select>
+
+<!-- 스케줄 락 있는지 조회 -->
+	<select id="selectScheduleLockCount" parameterType="scheduleModel" resultType="int">
+SELECT COUNT(1) AS CNT FROM PTL.T_MGR_SYS_SCHEDULE_LOCK WHERE SCHEDULE_NM = #{scheduleNm}
+	</select>
+
+<!-- 스케줄 락 등록 -->
+	<insert id="insertScheduleLock" parameterType="scheduleModel">
+INSERT INTO PTL.T_MGR_SYS_SCHEDULE_LOCK (SCHEDULE_NM, SCHEDULE_CL, SERVER_IP, RGST_DT) VALUES (#{scheduleNm}, #{scheduleCl}, #{serverIp}, NOW())
+	</insert>
+
+<!-- 스케줄 락 해제 -->
+	<delete id="deleteScheduleLock" parameterType="scheduleModel">
+DELETE FROM PTL.T_MGR_SYS_SCHEDULE_LOCK WHERE SCHEDULE_NM = #{scheduleNm}
+	</delete>
+
+<!-- 스케줄 정보 조회 -->
+	<select id="selectSchedule" parameterType="string" resultType="scheduleModel">
+SELECT
+    SCHEDULE_NM
+  , SCHEDULE_CL
+  , EXECUT_CYCLE
+  , SCHEDULE_DSC
+  , OBJECT_NM
+  , TRIGGER_NM
+  , LOCK_YN
+  , LOCK_CYCLE
+  , USE_YN
+  , RGST_ID
+  , RGST_DT
+  , MODI_ID
+  , MODI_DT
+FROM T_MGR_SYS_SCHEDULE
+WHERE SCHEDULE_NM = #{scheduleNm}
+	</select>
+
+	<select id="selectScheduleListAtStart" resultType="scheduleModel">
+SELECT
+    SCHEDULE_NM
+  , SCHEDULE_CL
+  , EXECUT_CYCLE
+  , SCHEDULE_DSC
+  , OBJECT_NM
+  , TRIGGER_NM
+  , LOCK_YN
+  , LOCK_CYCLE
+  , USE_YN
+  , RGST_ID
+  , RGST_DT
+  , MODI_ID
+  , MODI_DT
+FROM T_MGR_SYS_SCHEDULE
+WHERE USE_YN = 'Y'
+ORDER BY SCHEDULE_CL, SCHEDULE_NM
+	</select>
+
+
+	<select id="selectScheduleList" resultType="scheduleModel">
+SELECT
+    SCHEDULE_NM
+  , SCHEDULE_CL
+  , EXECUT_CYCLE
+  , SCHEDULE_DSC
+  , OBJECT_NM
+  , TRIGGER_NM
+  , LOCK_YN
+  , LOCK_CYCLE
+  , USE_YN
+  , RGST_ID
+  , RGST_DT
+  , MODI_ID
+  , MODI_DT
+FROM T_MGR_SYS_SCHEDULE
+ORDER BY SCHEDULE_CL, SCHEDULE_NM
+	</select>
+
+
+</mapper>

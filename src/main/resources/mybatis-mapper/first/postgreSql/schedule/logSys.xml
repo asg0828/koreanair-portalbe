@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.schedule.mapper.JobLogSysMapper">
+
+	<sql id="paging">
+LIMIT 1000 OFFSET #{pageNo} * 1000
+	</sql>
+
+<!-- 로그 - 사용자 접속 로그 : 접속 건수 -->
+	<select id="selectUserSysRqstCntCount" resultType="int">
+SELECT COUNT(1) AS CNT
+FROM PTL.T_LOG_RQST_USER_SYS
+WHERE LOG_DT BETWEEN (CURRENT_DATE - '1 DAYS'::INTERVAL) AND (CURRENT_DATE - '1 SECONDS'::INTERVAL)
+AND USER_ID !~* 'ANONYMOUSUSER'
+	</select>
+	<select id="selectUserSysRqstCnt" parameterType="int" resultType="map">
+SELECT USER_ID AS MEMB, DEPT_NM, COUNT(1) CNT, TO_CHAR(CURRENT_DATE - '1 DAYS'::INTERVAL,'YYYYMMDD') AS LOG_DT
+FROM PTL.T_LOG_RQST_USER_SYS
+WHERE LOG_DT BETWEEN (CURRENT_DATE - '1 DAYS'::INTERVAL) AND (CURRENT_DATE - '1 SECONDS'::INTERVAL)
+AND USER_ID !~* 'ANONYMOUSUSER'
+GROUP BY USER_ID, DEPT_NM
+		<include refid="paging" />
+	</select>
+
+</mapper>

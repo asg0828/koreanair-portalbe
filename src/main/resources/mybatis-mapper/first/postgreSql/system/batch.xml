@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.system.mapper.BatchMapper">
+	<sql id="where">
+		<where>
+			<if test="searchValue != ''">
+				<bind
+						name="searchValue"
+						value='@com.bdp.ap.common.EscapeHelper@escape(searchValue)'
+				/>
+			</if>
+			<if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+				AND (UPPER(schedule_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(schedule_dsc) LIKE CONCAT('%',UPPER(#{searchValue}),'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'scheduleNm' and searchValue != ''">
+				AND UPPER(schedule_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchKey != '' and searchKey == 'scheduleDsc' and searchValue != ''">
+				AND UPPER(schedule_dsc) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="lockYn!= null and lockYn != ''">
+				AND lock_yn = #{lockYn}
+			</if>
+			<if test="useYn!= null and useYn != ''">
+				AND use_yn = #{useYn}
+			</if>
+			AND del_yn = 'N'
+		</where>
+	</sql>
+	
+    <sql id="order">
+        ORDER BY rgst_dt DESC
+    </sql> 	
+ 
+	<select id="selectBatchList" resultType="batchModel" parameterType="batchReqModel">
+		select
+			schedule_nm,
+			execut_cycle,
+			schedule_dsc,
+			(case lock_yn
+				when 'Y' then '잠김' 
+				else '해제됨' 
+			end) as lock_yn,
+			(case use_yn
+				when 'Y' then '사용중' 
+				else '사용중지' 
+			end) as use_yn,
+			rgst_dt  
+		from
+			ptl.t_mgr_sys_schedule
+        <include refid="where" />
+        <include refid="order" /> 
+        <include refid="paging.pagingOffsetSQL" />   
+    </select> 
+ 
+	<select id="selectBatchListCount" resultType="int" parameterType="batchReqModel">
+		SELECT
+			COUNT(*)
+		FROM 
+			ptl.t_mgr_sys_schedule
+		<include refid="where" />
+	</select>
+	
+	<select id="selectSameBatchNmCount" resultType="int" parameterType="batchReqModel">
+		select count(*)
+		from t_mgr_sys_schedule
+		where del_yn = 'N'
+			and schedule_nm = trim(#{scheduleNm})
+	</select>
+
+	<select id="selectBatch" resultType="batchModel" >
+		select 
+			a.schedule_nm,
+			a.schedule_cl,
+			(select code_nm from t_code where group_id = 'SCHEDULE_CL' and code_id = a.schedule_cl) as schedule_cl_nm,
+			a.execut_cycle,
+			a.time_zone,
+			a.schedule_dsc,
+			a.lock_yn,
+			(case a.lock_yn
+				when 'Y' then '잠김' 
+				else '해제됨' 
+			end) as lock_yn_nm,
+			a.lock_cycle,
+			a.use_yn,
+			(case a.use_yn
+				when 'Y' then '사용중' 
+				else '사용중지' 
+			end) as use_yn_nm,
+			a.rgst_id,
+			a.rgst_dt,
+			a.modi_id,
+			a.modi_dt,
+			b.user_nm as rgst_nm,
+			b.user_nm as modi_nm
+			
+		from
+			ptl.t_mgr_sys_schedule a
+			left outer join t_user b
+			on a.rgst_id = b.user_id and
+				a.modi_id = b.user_id
+		where
+			schedule_nm = #{scheduleNm}
+
+	</select>
+	
+	<insert id="insertBatch" parameterType="batchModel">
+		insert 
+			into ptl.t_mgr_sys_schedule (
+				schedule_nm,
+				schedule_cl,
+				execut_cycle,
+				time_zone,
+				schedule_dsc,
+				lock_yn,
+				lock_cycle,
+				use_yn,
+				rgst_id,
+				rgst_dt,
+				modi_id,
+				modi_dt
+			)
+			values(
+				#{scheduleNm},
+				#{scheduleCl},
+				#{executCycle},
+				#{timeZone},
+				#{scheduleDsc},
+				#{lockYn},
+				#{lockCycle},
+				#{useYn},
+				#{rgstId},
+				now(),
+				#{modiId},
+				now()
+			)
+	</insert>
+	
+	<update id="updateBatch" parameterType="batchModel">
+		UPDATE
+			ptl.t_mgr_sys_schedule
+		SET
+			schedule_cl = #{scheduleCl},
+			execut_cycle = #{executCycle},
+			time_zone = #{timeZone},
+			schedule_dsc = #{scheduleDsc},
+			lock_yn = #{lockYn},
+			lock_cycle = #{lockCycle},
+			use_yn = #{useYn},
+			modi_id = #{modiId},
+			modi_dt = now()
+	   WHERE
+			schedule_nm = #{scheduleNm}
+	</update>
+	
+	<update id="deleteBatch" parameterType="batchModel">
+		UPDATE
+			ptl.t_mgr_sys_schedule
+		set
+			del_yn = 'Y',
+			modi_id = #{modiId},
+			modi_dt = now()
+		WHERE
+			schedule_nm = #{scheduleNm}
+	</update>
+	
+</mapper>

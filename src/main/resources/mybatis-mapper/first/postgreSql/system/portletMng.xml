@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.system.mapper.PortletMngMapper">
+ 
+	<insert id="insertPortletMng" parameterType="portletMngModel">
+		insert into ptl.t_portlet_mng (
+			portlet_mng_id,
+			scroll_type,
+			col_cnt,
+			portlet_view,
+			rgst_id,
+			rgst_dt,
+			modi_id,
+			modi_dt
+		) values (
+			#{portletMngId},
+			#{scrollType},
+			#{colCnt},
+			#{portletView}::jsonb,
+			#{rgstId},
+			now(),
+			#{modiId},
+			now()
+		)
+	</insert>
+
+	<select id="selectPortletMng" 
+		resultType="portletMngModel">
+		select *
+		from ptl.t_portlet_mng
+	</select>
+
+	<update id="updatePortletMng" 
+		parameterType="portletMngModel">
+		update ptl.t_portlet_mng set
+			scroll_type = #{scrollType},
+			col_cnt = #{colCnt},
+			portlet_view = #{portletView}::jsonb,
+			modi_id = #{modiId},
+			modi_dt = now()
+		where portlet_mng_id = #{portletMngId}	
+	</update>
+
+	
+</mapper>

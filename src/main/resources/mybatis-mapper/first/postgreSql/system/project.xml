@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.system.mapper.ProjectMapper">
+
+
+    <sql id="where">
+        <if test="projectNm != '' and projectNm != null">
+            <bind
+                    name="projectNm"
+                    value='@com.bdp.ap.common.EscapeHelper@escape(projectNm)'
+            />
+            AND UPPER(TP.PROJECT_NM) LIKE CONCAT('%',UPPER(#{projectNm}),'%')
+        </if>
+        <if test="projectTy != '' and projectTy != null">
+            AND tp.project_ty = #{projectTy}
+        </if>
+        <if test="projectDsc != '' and projectDsc != null">
+            AND UPPER(TP.PROJECT_DSC) LIKE CONCAT('%',UPPER(#{projectDsc}),'%')
+        </if>
+        <if test="startRqstDt != null and startRqstDt != ''">
+            AND TO_DATE(TP.END_DT::text, 'YYYY-MM-DD') >= TO_DATE(#{startRqstDt}, 'YYYY-MM-DD')
+        </if>
+        <if test="endRqstDt != null and endRqstDt != ''">
+            AND TO_DATE(#{endRqstDt}, 'YYYY-MM-DD') >= TO_DATE(TP.START_DT::text, 'YYYY-MM-DD')
+        </if>
+        <if test="mgrUserId != '' and mgrUserId != null">
+            AND PCPT.MGR_USER_ID = #{mgrUserId}
+        </if>
+        <if test="pcptUserId != '' and pcptUserId != null">
+            AND PCPT.PCPT_USER_ID = #{pcptUserId}
+        </if>
+    </sql>
+    
+    <sql id="order">      
+	    ORDER BY modi_dt DESC, project_nm ASC
+    </sql> 
+
+    <select id="selectProjectList" resultType="projectModel" parameterType="projectModel">
+		SELECT
+			  TP.PROJECT_ID			AS PROJECT_ID
+			, TP.VER				AS VER
+			, TP.PROJECT_NM			AS PROJECT_NM
+			, TP.PROJECT_TY			AS PROJECT_TY		
+			, (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'PRJ_TYPE_CODE' AND CODE_ID = TP.PROJECT_TY) AS PROJECT_TY_NM
+			, TP.PCPT_INFO			AS PCPT_INFO
+			, TP.MGR_INFO			AS MGR_INFO 
+			, TP.START_DT			AS START_DT
+			, TP.END_DT				AS END_DT
+			, TP.PROJECT_DSC		AS PROJECT_DSC
+			, TP.USE_YN				AS USE_YN
+			, TP.RGST_ID			AS RGST_ID
+			, TP.RGST_DT			AS RGST_DT
+			, TP.MODI_ID			AS MODI_ID 
+			, TP.MODI_DT			AS MODI_DT
+		FROM 
+			PTL.T_PROJECT TP
+        WHERE 
+            1=1
+		<include refid="where" />
+		<include refid="order" />
+		<include refid="paging.pagingOffsetSQL" />  
+	</select>
+    
+	<select id="selectProjectListCount" resultType="int" parameterType="projectModel">
+		SELECT 
+            COUNT(TP.PROJECT_ID)
+		FROM 
+            PTL.T_PROJECT TP
+        WHERE 
+            1=1
+        <include refid="where" />
+	</select>
+
+    <select id="selectProject" resultType="projectModel" parameterType="projectModel">
+		SELECT
+              TP.PROJECT_ID 			AS PROJECT_ID
+            , TP.VER					AS VER
+            , TP.PROJECT_NM				AS PROJECT_NM
+            , TP.PROJECT_TY				AS PROJECT_TY
+            , (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'PRJ_TYPE_CODE' AND CODE_ID = TP.PROJECT_TY) AS PROJECT_TY_NM
+            , TP.PCPT_INFO				AS PCPT_INFO
+            , TP.MGR_INFO				AS MGR_INFO
+            , TP.START_DT				AS START_DT
+            , TP.END_DT					AS END_DT
+            , TP.PROJECT_DSC			AS PROJECT_DSC
+            , TP.RGST_ID				AS RGST_ID
+            , TP.RGST_DT				AS RGST_DT
+            , TP.MODI_ID				AS MODI_ID
+            , TP.MODI_DT				AS MODI_DT
+            , TP.USE_YN					AS USE_YN
+            , TP.PROJECT_DATA			AS PROJECT_DATA
+            , TP.TABLEAU_PROJECT_ID		AS TABLEAU_PROJECT_ID
+            , TP.PROJECT_RSRC			AS PROJECT_RSRC
+        FROM 
+	        T_PROJECT TP
+		WHERE 
+			TP.PROJECT_ID = #{projectId}
+	</select>
+
+</mapper>

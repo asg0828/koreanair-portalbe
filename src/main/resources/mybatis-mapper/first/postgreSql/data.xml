@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.audit.mapper.DataMapper">
+
+	<sql id="where">
+		<where>
+			AND type = #{type}
+			<if test="searchValue != '' ">
+				<bind
+						name="searchValue"
+						value='@com.bdp.ap.common.EscapeHelper@escape(searchValue)'
+				/>
+			</if>
+			<if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+				AND (UPPER(job_name) LIKE CONCAT('%',UPPER(#{searchValue}), '%') OR UPPER(table_name) LIKE CONCAT ('%', UPPER(#{searchValue}), '%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'searchJobName' and searchValue != ''">
+				AND UPPER(job_name) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="searchKey != '' and searchKey == 'searchTableName' and searchValue != ''">
+				AND UPPER(table_name) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+			</if>
+			<if test="startDt != null and startDt != ''">
+				AND TO_DATE(start_dt::text,'YYYY-MM-DD')  >= TO_DATE(#{startDt},'YYYY-MM-DD')
+			</if>
+			<if test="endDt != null and endDt != ''">
+				AND TO_DATE(#{endDt},'YYYY-MM-DD') >= TO_DATE(start_dt::text,'YYYY-MM-DD')
+			</if>
+			<if test="status != null and status != ''">
+				AND status = #{status}
+			</if>			
+		</where>
+	</sql>
+
+    <sql id="order">
+        ORDER BY a.rownum ASC
+    </sql> 	
+ 
+	<select id="selectDataList" resultType="dataModel" parameterType="com.bdp.ap.common.paging.Criteria">
+		select
+			*
+		from (
+			select
+				row_number() over (order by tbn.data_id desc) as rownum,
+				tbn.data_id,
+				tbn.data_dt,
+				tbn.job_name,
+				tbn.table_name,
+				tbn.start_dt,
+				tbn.end_dt,
+				tbn.collect_cnt,
+				tbn.criterion_dt,
+				tbn.status,
+				tbn.log_cn,
+				tbn.type
+			from
+				ptl.t_data_manage tbn
+		) a
+        <include refid="where" />
+        <include refid="order" />
+        <include refid="paging.pagingOffsetSQL" />  
+    </select> 
+ 
+	<select id="selectDataListCount" resultType="int" parameterType="com.bdp.ap.common.paging.Criteria">
+		SELECT
+			COUNT(*)
+		FROM 
+			ptl.t_data_manage
+		<include refid="where" />
+	</select>
+
+	
+</mapper>

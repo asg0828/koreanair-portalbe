@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.system.mapper.PortletMapper">
+	<sql id="where">
+		<if test="portletNm != null and portletNm != ''">
+			<bind
+					name="portletNm"
+					value='@com.bdp.ap.common.EscapeHelper@escape(portletNm)'
+			/>
+			AND UPPER(portlet_nm) LIKE CONCAT('%',UPPER(#{portletNm}),'%')
+		</if>
+		<if test="portletTypeCd != null and portletTypeCd != ''">
+			AND portlet_type_cd  = #{portletTypeCd}
+		</if>
+		<if test="shareYn != null and shareYn != ''">
+			AND share_yn  = #{shareYn}
+		</if>
+		<if test="useYn != null and useYn != ''">
+			AND p.use_yn  = #{useYn}
+		</if>
+	</sql>
+	
+	<sql id="where2">
+		<where>
+			<if test="groupId != null and groupId != ''">
+				AND group_id = #{groupId}
+			</if>
+			<if test="codeId != null and codeId != ''">
+				AND code_id = #{codeId}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="selectPortletList" 
+		resultType="portletModel" 
+		parameterType="portletReqModel">
+		select
+			row_number() over(order by p.portlet_id asc) as rownum,
+			p.*,
+			c.code_nm as portlet_type_nm
+		from
+			ptl.t_portlet p, (select * from ptl.t_code <include refid="where2" />) c
+		where
+			p.portlet_type_cd = c.code_id
+		<include refid="where" />
+		<include refid="paging.pagingOffsetSQL" />
+    </select> 
+ 
+	<select id="selectPortletListCnt" 
+		resultType="int" 
+		parameterType="portletReqModel">
+		select
+			COUNT(*)
+		from 
+			ptl.t_portlet p, (select * from ptl.t_code <include refid="where2" />) c
+		where
+			p.portlet_type_cd = c.code_id
+		<include refid="where" />
+	</select>
+
+	<insert id="insertPortlet" parameterType="portletModel">
+		insert into ptl.t_portlet (
+			portlet_id,
+			portlet_nm,
+			portlet_dsc,
+			portlet_type_cd,
+			default_view_url,
+			more_view_url,
+			share_yn,
+			use_yn,
+			portlet_auth,
+			rgst_id,
+			rgst_dt,
+			modi_id,
+			modi_dt
+		) values (
+			#{portletId},
+			#{portletNm},
+			#{portletDsc},
+			#{portletTypeCd},
+			#{defaultViewUrl},
+			#{moreViewUrl},
+			#{shareYn},
+			#{useYn},
+			#{portletAuth}::jsonb,
+			#{rgstId},
+			now(),
+			#{modiId},
+			now()
+		)
+	</insert>
+
+	<select id="selectPortlet" parameterType="portletModel"	resultType="portletModel">
+		select *
+		from ptl.t_portlet
+		where portlet_id = #{portletId}
+	</select>
+
+	<update id="updatePortlet" 
+		parameterType="portletModel">
+		update ptl.t_portlet set
+			portlet_nm = #{portletNm},
+			portlet_dsc = #{portletDsc},
+			portlet_type_cd = #{portletTypeCd},
+			default_view_url = #{defaultViewUrl},
+			more_view_url = #{moreViewUrl},
+			share_yn = #{shareYn},
+			use_yn = #{useYn},
+			portlet_auth = #{portletAuth}::jsonb,
+			modi_id = #{modiId},
+			modi_dt = now()
+		where portlet_id = #{portletId}	
+	</update>
+
+	
+</mapper>

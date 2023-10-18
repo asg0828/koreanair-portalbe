@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.bizmeta.mapper.BizmetaComMapper">
+    <sql id="searchMember">
+		<where>
+			<if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+				and (upper(u.user_id) like upper('%'||#{searchValue}||'%') or upper(u.user_nm) like upper('%'||#{searchValue}||'%')) or (upper(d.dept_nm) like upper('%'||#{searchValue}||'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'userId' and searchValue != ''">
+				and (upper(u.user_id) like upper('%'||#{searchValue}||'%'))
+			</if>
+			<if test="userNm != '' and userNm != null" >
+				and (upper(u.user_nm) like upper('%'||#{userNm}||'%'))
+			</if>
+			<if test="deptNm != '' and deptNm != null">
+				and (upper(d.dept_nm) like upper('%'||#{deptNm}||'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'userNm' and searchValue != ''">
+				and (upper(u.user_nm) like upper('%'||#{searchValue}||'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'deptNm' and searchValue != ''">
+				and (upper(d.dept_nm) like upper('%'||#{searchValue}||'%'))
+			</if>
+			<if test="searchKey != '' and searchKey == 'deptCode' and searchValue != ''">
+				and (upper(u.dept_code) = upper(#{searchValue}))
+			</if>
+			<if test="searchUseYn != null and searchUseYn != ''">
+				and u.use_yn = #{searchUseYn}
+			</if>
+			<if test="searchCompanyCode != null and searchCompanyCode != ''">
+				and u.company_code = #{searchCompanyCode}
+			</if>
+			<if test="searchRoleCode != null and searchRoleCode != ''">
+				and r.auth_id = #{searchRoleCode}
+			</if>			
+			<if test="deptCode != null and deptCode != ''">
+				and (upper(u.dept_code) = upper(#{deptCode}))
+			</if>
+			<if test="filterLockYn != null and filterLockYn != ''">
+				<choose>
+					<when test="filterLockYn == 'Y'.toString()">
+					and	coalesce(last_log_dt, now()) + interval '3 month' <![CDATA[<=]]> now()
+					</when>
+					<when test="filterLockYn == 'N'.toString()">
+					and	coalesce(last_log_dt, now()) + interval '3 month' <![CDATA[>]]> now()
+					</when>
+				</choose> 			
+			</if>			
+		</where>
+	</sql>
+	<select id="selectMemberList" resultType="memberModel" parameterType="memberCriteria">
+		select
+			row_number() over () as rownum,
+			u.user_id,
+			u.user_nm,
+			u.pstn_code,
+			p.pstn_nm,
+			u.dept_code,
+			d.dept_nm,
+			u.company_code,
+			(select code_nm from t_code where group_id = 'COMPANY_CODE' and code_id = u.company_code) company_nm,
+			u.adof_dept_code,
+			ad.dept_nm as adof_dept_nm,
+			r.auth_id,
+			r.use_yn as auth_use_yn,
+			a.auth_nm,
+			u.use_yn,
+			u.last_log_dt,
+			case
+			when coalesce(last_log_dt, now()) + interval '3 month' <![CDATA[>]]> now() then 'N'
+			else 'Y' end as lock_yn,
+			u.start_dt,
+			u.end_dt,
+			'N' as expired_yn,
+			u.rgst_id,
+			u.rgst_dt,
+			u.modi_id,
+			u.modi_dt,
+			u.file_url,
+			ttu.tableau_user_id,
+			COALESCE(tma.USE_YN,'N') AS MGR_YN,
+			msa.AUTH_ID AS MGR_AUTH_ID,
+			msa.AUTH_NM AS MGR_AUTH_NM
+		from
+			t_user u
+			left outer join t_pstn p on u.pstn_code = p.pstn_code
+			left outer join t_dept d on u.dept_code = d.dept_code
+			left outer join t_hdept h on u.hdept_code = h.hdept_code
+			left outer join t_dept ad on u.adof_dept_code = ad.dept_code
+			left outer join t_user_auth r on u.user_id = r.user_id
+			left outer join t_user_sys_auth a on r.auth_id = a.auth_id
+			left outer join t_tableau_user ttu on u.user_id = ttu.user_id and ttu.use_yn = 'Y'
+			left outer join t_mgr_auth tma on u.user_id = tma.user_id
+			left outer join t_mgr_sys_auth msa on tma.auth_id = msa.auth_id
+		<include refid="searchMember"></include> 
+	</select>
+
+	<select id="selectMemberListCount" resultType="int" parameterType="memberCriteria">
+		select
+			count(*)
+		from
+			t_user u
+			left outer join t_pstn p on u.pstn_code = p.pstn_code
+			left outer join t_dept d on u.dept_code = d.dept_code
+			left outer join t_hdept h on u.hdept_code = h.hdept_code
+			left outer join t_dept ad on u.adof_dept_code = ad.dept_code
+			left outer join t_user_auth r on u.user_id = r.user_id
+			left outer join t_user_sys_auth a on r.auth_id = a.auth_id
+			left outer join t_tableau_user ttu on u.user_id = ttu.user_id and ttu.use_yn = 'Y'
+			left outer join t_mgr_auth tma on u.user_id = tma.user_id
+			left outer join t_mgr_sys_auth msa on tma.auth_id = msa.auth_id
+		<include refid="searchMember"></include>
+	</select>          
+    <select id="selectReportInfoList" resultType="reportInfoModel" parameterType="bizmetaCriteria">
+    		select rpt_inf_id
+						,rpt_cl
+						,rpt_cd
+						,rpt_nm
+						,topic_area
+			from t_rpt_inf
+			where 1=1			
+			and COALESCE(del_yn,'N') = 'N'
+			<if test="seId != null and !('').equals(seId)">
+				and rpt_inf_id = #{seId}
+			</if>
+			<if test="searchNm != null and !('').equals(searchNm)">
+				and UPPER(rpt_nm) LIKE CONCAT('%',UPPER(#{searchNm}),'%')
+			</if>
+    </select>	
+    
+	 <select id="selectRptList" resultType="rptModel" parameterType="bizmetaCriteria">
+	 		select rpt_id
+	 		        ,rpt_se
+					,rpt_nm
+					,ref_id
+				from t_rpt
+				where 1=1					
+					and COALESCE(del_yn,'N') = 'N'
+					<if test="seId != null and !('').equals(seId)">
+						and rpt_se_id = #{seId}
+					</if>
+					<if test="refVer != null and !('').equals(refVer)">
+						and ref_ver = #{refVer}
+					</if>
+	 </select>
+	
+	 <insert id="insertRpt" parameterType="rptModel">
+	 	insert into t_rpt(
+				rpt_id
+			,rpt_se_id
+			,ref_ver
+			,rpt_se
+			,rpt_nm
+			,ref_id
+			,del_yn
+			,rgst_dt
+			,rgst_id
+			,modi_dt
+			,modi_id
+		)values(
+			#{rptId}
+			,#{rptSeId}
+			,#{refVer}
+			,#{rptSe}
+			,#{rptNm}
+			,#{refId}
+			,#{delYn}
+			,now()
+			,#{rgstId}
+			,now()
+			,#{modiId}
+		)
+	 </insert>
+	 
+	 <update id="deleteRpt" parameterType="string">
+	 		update t_rpt set del_yn = 'Y'
+	 		where rpt_se_id = #{rptSeId}
+	 </update>
+	
+	<select id="selectDimensiont" resultType="dimensionModel" parameterType="bizmetaCriteria">
+		select dim_id
+			,dim_nm
+		from t_dimension
+		where 1=1
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="seId != null and !('').equals(seId)">
+			and dim_se_id = #{seId}
+		</if>
+	</select>	
+	
+	<insert id="insertDimension" parameterType="dimensionModel">
+		insert into t_dimension(
+			dim_id
+			,dim_se_id
+			,dim_nm
+			,del_yn
+			,rgst_dt
+			,rgst_id
+			,modi_dt
+			,modi_id
+		) values(
+			#{dimId}
+			,#{dimSeId}
+			,#{dimNm}
+			,#{delYn}
+			,now()
+			,#{rgstId}
+			,now()
+			,#{modiId}
+		)
+	</insert>
+	
+	<update id="deleteDimension" parameterType="string">
+		update t_dimension set del_yn = 'Y'
+			where  dim_se_id = #{dimSeId}
+	</update>
+	
+	<select id="selectMeasure" resultType="measureModel" parameterType="bizmetaCriteria">
+		select mes_id
+			,mes_nm
+		from t_measure
+		where 1=1
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="seId != null and !('').equals(seId)"> 
+			and mes_se_id = #{seId}
+		</if>
+		
+	</select>
+	
+	<insert id="insertMeasure" parameterType="measureModel">
+		insert into t_measure(
+			mes_id
+			,mes_se_id
+			,mes_nm
+			,del_yn
+			,rgst_dt
+			,rgst_id
+			,modi_dt
+			,modi_id
+		)values(
+			#{mesId}
+			,#{mesSeId}
+			,#{mesNm}
+			,#{delYn}
+			,now()
+			,#{rgstId}
+			,now()
+			,#{modiId}
+		)
+	</insert>
+	
+	<update id="deleteMeasure" parameterType="string">
+			update t_measure set del_yn = 'Y'
+			where  mes_se_id = #{mesSeId}
+	</update>
+	
+	
+	<select id="selectKeyItem" resultType="keyItemModel" parameterType="bizmetaCriteria">
+		select key_itm_id
+			,key_itm_nm
+		from t_key_item
+		where 1=1
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="seId != null and !('').equals(seId)">
+			and key_itm_se_id = #{seId}
+		</if>
+	</select>
+	
+	<insert id="insertKeyItem" parameterType="keyItemModel">
+		insert into t_key_item(
+			key_itm_id
+			,key_itm_se_id
+			,key_itm_nm
+			,del_yn
+			,rgst_dt
+			,rgst_id
+			,modi_dt
+			,modi_id
+		)values(
+			#{keyItmId}
+			,#{keyItmSeId}
+			,#{keyItmNm}
+			,#{delYn}
+			,now()
+			,#{rgstId}
+			,now()
+			,#{modiId}
+		)
+	</insert>	
+	
+	<update id="deleteKeyItem" parameterType="string">
+		update t_key_item set del_yn = 'Y'
+		where  key_itm_se_id = #{keyItmSeId}
+	</update>
+	
+	
+	<select id="selectDataMart" resultType="dataMartModel" parameterType="bizmetaCriteria">
+		select dt_mrt_id
+			,tbl_id
+			,tbl_nm
+		from t_data_mart
+		where 1=1
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="seId != null and !('').equals(seId)">
+			and dt_mrt_se_id = #{seId}
+		</if>
+		<if test="searchNm != null and !('').equals(searchNm)">
+			and tbl_id = #{searchNm}
+		</if>
+	</select>
+	
+	<select id="selectDataMartCount" resultType="int" parameterType="bizmetaCriteria">
+		select count(*)
+		from t_data_mart
+		where 1=1
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="seId != null and !('').equals(seId)">
+			and dt_mrt_se_id = #{seId}
+		</if>
+		<if test="searchNm != null and !('').equals(searchNm)">
+			and tbl_id = #{searchNm}
+		</if>
+	</select>
+	
+	
+	<insert id="insertDataMart" parameterType="dataMartModel">
+		insert into t_data_mart(
+			dt_mrt_id
+			,dt_mrt_se_id
+			,tbl_id
+			,tbl_nm
+			,del_yn
+			,rgst_dt
+			,rgst_id
+			,modi_dt
+			,modi_id
+		)values(
+			#{dtMrtId}
+			,#{dtMrtSeId}
+			,#{tblId}
+			,#{tblNm}
+			,#{delYn}
+			,now()
+			,#{rgstId}
+			,now()
+			,#{modiId}
+		)
+	</insert>
+	
+	<update id="deleteDataMart" parameterType="string">
+		update t_data_mart set del_yn = 'Y'
+		where  dt_mrt_se_id = #{dtMrtSeId}
+	</update>
+	 
+	
+	<select id="selectManageUser" resultType="manageUserModel" parameterType="bizmetaCriteria">
+		select a.mng_user_id
+			,a.user_id
+			,b.user_nm
+		from t_mng_user a
+		 left outer join t_user b 
+ 		 on a.user_id = b.user_id 
+		where 1=1 
+		and COALESCE(a.del_yn,'N') = 'N'
+		<if test="seId != null and !('').equals(seId)">
+			and a.mng_user_se_id = #{seId}
+		</if>
+		<if test="refVer != null and !('').equals(refVer)">
+			and a.ref_ver = #{refVer}
+		</if>
+	</select>
+	
+	<insert id="insertManageUser" parameterType="manageUserModel">
+		insert into t_mng_user(
+			mng_user_id
+			,user_id
+			,mng_user_se_id
+			,ref_ver
+			,del_yn
+			,rgst_dt
+			,rgst_id
+			,modi_dt
+			,modi_id
+		)values(
+		    #{mngUserId}
+			,#{userId}
+			,#{mngUserSeId}
+			,#{refVer}
+			,#{delYn}
+			,now()
+			,#{rgstId}
+			,now()
+			,#{modiId}
+		)
+	</insert>
+	<update id="deleteManageUser" parameterType="string">
+		update t_mng_user set del_yn = 'Y'
+		where  mng_user_se_id = #{mngUserSeId}
+	</update>
+	
+	<select id="selectManageDept" resultType="manageDeptModel" parameterType="bizmetaCriteria">
+		select a.mng_dept_cd
+			,a.dept_cd
+			,b.dept_nm
+			,a.dept_se
+			,b.company_code
+			,(select code_nm from t_code where group_id = 'COMPANY_CODE' and code_id = b.company_code) company_nm
+		from t_mng_dept a
+		left outer join t_dept b 
+		on a.dept_cd  = b.dept_code		
+		where 1=1		 
+		and COALESCE(a.del_yn,'N') = 'N'
+		<if test="seId != null and !('').equals(seId)">
+			and a.mng_dept_se_id = #{seId}	
+		</if>
+		<if test="deptSe != null and !('').equals(deptSe)">
+			and a.dept_se= #{deptSe}
+		</if>
+		<if test="refVer != null and !('').equals(refVer)">
+			and a.ref_ver = #{refVer}
+		</if>
+		
+	</select>
+	
+	<insert id="insertManageDept" parameterType="manageDeptModel">
+		insert into t_mng_dept(
+			mng_dept_cd
+			,dept_cd
+			,dept_se
+			,mng_dept_se_id
+			,ref_ver
+			,del_yn
+			,rgst_dt
+			,rgst_id
+			,modi_dt
+			,modi_id
+		)values(
+			#{mngDeptCd}
+			,#{deptCd}
+			,#{deptSe}
+			,#{mngDeptSeId}
+			,#{refVer}
+			,#{delYn}
+			,now()
+			,#{rgstId}
+			,now()
+			,#{modiId}
+		)
+	</insert>
+	
+	<update id="deleteManageDept" parameterType="comDeptModel">
+		update t_mng_dept set del_yn = 'Y'
+		where mng_dept_se_id = #{mngDeptSeId}
+		and dept_se = #{deptSe}
+	</update>
+	
+	<select id="selectFindTag" resultType="findTagModel" parameterType="bizmetaCriteria">
+		select fnd_tag_id 
+			,fnd_tag_nm
+		from t_find_tag
+		where 1=1
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="seId != null and !('').equals(seId)">
+			and fnd_tag_se_id = #{seId}
+		</if>
+		<if test="refVer != null and !('').equals(refVer)">
+			and ref_ver = #{refVer}
+		</if>
+		
+	</select>
+	
+	<insert id="insertFindTag" parameterType="findTagModel">
+		insert into t_find_tag (
+			fnd_tag_id
+			,fnd_tag_se_id
+			,ref_ver
+			,fnd_tag_nm
+			,del_yn
+			,rgst_dt
+			,rgst_id
+			,modi_dt
+			,modi_id
+		)values(
+			#{fndTagId}
+			,#{fndTagSeId}
+			,#{refVer}
+			,#{fndTagNm}
+			,#{delYn}
+			,now()
+			,#{rgstId}
+			,now()
+			,#{modiId}
+		)
+	</insert>
+	
+	<update id="deleteFindTag" parameterType="findTagModel">
+		update t_find_tag set del_yn = 'Y'
+		where fnd_tag_se_id =#{fndTagSeId}
+	</update>
+	
+	
+	<select id="selectManageInfo" resultType="manageInfoModel" parameterType="bizmetaCriteria">
+		select mng_inf_id
+				,reg_id
+				,opn_yn
+				,app_opin
+		from t_manage_info
+		where 1=1		
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="seId != null and !('').equals(seId)">
+			and mng_inf_se_id = #{seId}
+		</if>
+		<if test="refVer != null and !('').equals(refVer)">
+			and ref_ver = #{refVer}
+		</if>
+	</select>
+	
+	<insert id="insertManageInfo" parameterType="manageInfoModel">
+		insert into t_manage_info(
+				mng_inf_id
+				,mng_inf_se_id
+				,ref_ver
+				,reg_id
+				,opn_yn
+				,app_opin
+				,del_yn
+				,rgst_dt
+				,rgst_id
+				,modi_dt
+				,modi_id
+			)values(
+				#{mngInfId}
+				,#{mngInfSeId}
+				,#{refVer}
+				,#{regId}
+				,#{opnYn}
+				,#{appOpin}
+				,#{delYn}
+				,now()
+				,#{rgstId}
+				,now()
+				,#{modiId}
+			)
+	</insert>
+	
+	<update id="deleteManageInfo" parameterType="manageInfoModel">
+		update t_manage_info set del_yn = 'Y'
+		where mng_inf_se_id = #{mngInfSeId}
+	</update>
+	
+	<select id="selectTblList" resultType="metaModel" parameterType="metaModel">
+		select row_number() over (order by  z.modi_dt desc) as row_num
+				,z.tbl_id
+				,z.tbl_nm
+				,z.topic_area
+				,z.tbl_def
+		from 
+		(select tbl_id
+				,tbl_nm
+				,topic_area
+				,tbl_def
+				,modi_dt
+		from t_meta_tbl
+		where 1=1
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="metaTblId != null and !('').equals(metaTblId)">
+			and meta_tbl_id = #{metaTblId}
+		</if>
+		<if test="tblId != null and !('').equals(tblId)">
+			and tbl_id = #{tblId}
+		</if>
+		<if test="tblNm != null and !('').equals(tblNm)">
+			and UPPER(tbl_nm) like  CONCAT('%',UPPER(#{tblNm}),'%' )
+		</if>
+		) z
+	</select>
+	
+	<select id="selectTblListCount" resultType="int" parameterType="metaModel">
+		select count(*)
+		from t_meta_tbl
+		where 1=1
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="metaTblId != null and !('').equals(metaTblId)">
+			and meta_tbl_id = #{metaTblId}
+		</if>
+		<if test="tblId != null and !('').equals(tblId)">
+			and tbl_id = #{tblId}
+		</if>
+		<if test="tblNm != null and !('').equals(tblNm)">
+			and UPPER(tbl_nm) like  CONCAT('%',UPPER(#{tblNm}),'%' )
+		</if>
+	</select>
+	
+	<select id="selectColList" resultType="metaModel" parameterType="metaModel">
+		select co_id
+				,tbl_id
+				,col_nm
+				,col_def
+				,col_typ
+				,col_len
+		from t_meta_col
+		where 1=1 
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="metaTblId != null and !('').equals(metaTblId)">
+			and meta_col_id = #{metaColId} 
+		</if>
+		<if test="coId != null and !('').equals(coId)">
+			and co_id= #{coId}
+		</if>
+		<if test="tblId != null and !('').equals(tblId)">
+			and tbl_id = #{tblId}
+		</if>
+		<if test="colNm != null and !('').equals(colNm)">
+			and UPPER(col_nm) like CONCAT('%',UPPER(#{colNm}),'%' )
+		</if>
+	</select>
+	
+	<select id="selectColListCount" resultType="int" parameterType="metaModel">
+		select count(*)
+		from t_meta_col
+		where 1=1 
+		and COALESCE(del_yn,'N') = 'N'
+		<if test="metaTblId != null and !('').equals(metaTblId)">
+			and meta_col_id = #{metaColId} 
+		</if>
+		<if test="coId != null and !('').equals(coId)">
+			and co_id= #{coId}
+		</if>
+		<if test="tblId != null and !('').equals(tblId)">
+			and tbl_id = #{tblId}
+		</if>
+		<if test="colNm != null and !('').equals(colNm)">
+			and UPPER(col_nm) like CONCAT('%',UPPER(#{colNm}),'%' )
+		</if>
+	</select>
+	
+	<insert id="insertBizMetaFile" parameterType="bizMetaFileModel">
+		insert into t_biz_meta_file(
+				biz_file_id
+				,file_id
+				,file_se_id
+				,ref_ver
+				,del_yn
+				,rgst_dt
+				,rgst_id
+				,modi_dt
+				,modi_id
+			)values(
+				#{bizFileId}
+				,#{fileId}
+				,#{fileSeId}
+				,#{refVer}
+				,#{delYn}
+				,now()
+				,#{rgstId}
+				,now()
+				,#{modiId}
+			)
+	</insert>
+	<select id="selectBizMetaFileList" parameterType="bizMetaFileModel" resultType="fileModel">
+		SELECT
+		    a.FILE_ID
+		  , a.STORAGE_SE
+		  , a.SAVE_PATH
+		  , a.SAVE_FILE_NM
+		  , a.FILE_NM
+		  , a.FILE_EXTSN
+		  , a.FILE_SIZE
+		  , a.USE_YN
+		  , a.RGST_ID
+		  , a.RGST_DT
+		  , a.MODI_ID
+		  , a.MODI_DT
+		  , a.BUCKET_NM
+		  , a.FILE_URL
+		  , a.FILE_CL
+		  , a.SAVE_FILE_VER
+		  , a.REF_ID
+		  , b.REF_VER::TEXT
+		  , a.ATMC_DEL_YN
+		  , a.ATMC_DEL_DT
+		FROM T_FILE a
+		join t_biz_meta_file b
+		on a.file_id =b.file_id 
+		WHERE a.USE_YN = 'Y'
+		and COALESCE(b.del_yn,'N') = 'N'
+		<if test="fileSeId != null and fileSeId != ''">
+			and b.file_se_id = #{fileSeId}
+		</if>
+		<if test="refVer != null and refVer != ''">
+			and b.ref_ver = #{refVer}
+		</if>
+		<if test="fileId != null and fileId != ''">
+			AND a.FILE_ID = #{fileId}
+		</if>		 		
+		ORDER BY a.FILE_ID
+	</select>
+</mapper>

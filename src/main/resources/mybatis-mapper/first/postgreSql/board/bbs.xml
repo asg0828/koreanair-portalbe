@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bdp.ap.app.board.mapper.BbsMapper">
+	
+	<select id="selectBbsList" resultType="bbsModel" parameterType="criteria">
+		 select  a.board_id
+			,a.board_nm
+			,a.typ_cd
+			,a.description
+			,a.url_addr
+			,a.rgst_dt
+			,a.rgst_id
+			,a.use_yn
+			,case when a.use_yn ='Y' then '사용중' else '사용중지' end as use_yn_nm   
+			,b.user_nm	as rgst_nm
+		from t_board_mng a
+		 left outer join t_user b
+		 on a.rgst_id = b.user_id 
+		where coalesce(a.del_yn,'N') = 'N'
+		<if test="searchKey != '' and searchKey == 'board_nm' and searchValue != ''">
+				AND UPPER(a.board_nm) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+		</if>
+		<if test="type == 'menu'">
+			AND coalesce(a.use_yn,'Y') = 'Y'
+		</if>
+		order by a.rgst_dt desc
+		<if test="type != 'menu'">		
+			<include refid="paging.pagingOffsetSQL" />  
+		</if>
+	</select>
+	
+	<select id="selectBbsListCount" resultType="int" parameterType="criteria">
+		 select  count(*)
+		from t_board_mng a
+		 left outer join t_user b
+		 on a.rgst_id = b.user_id 
+		where coalesce(a.del_yn,'N') = 'N'		  
+	</select>
+	
+	<select id="selectBbsDetail" resultType="bbsModel" parameterType="bbsModel">
+		select a.board_id
+			,a.board_nm
+			,a.typ_cd
+			,(select code_nm from t_code where group_id='TYP_CD' and code_id =  a.typ_cd) as typ_nm 
+			,a.description
+			,a.url_addr
+			,a.rgst_dt
+			,a.rgst_id
+			,a.use_yn
+			,a.kind_use_yn
+			,a.find_auth_yn
+			,a.wk_auth_yn
+			,a.wk_template
+			,a.mng_auth_yn
+			,b.user_nm as rgst_nm 	
+		from t_board_mng a
+		left outer join t_user b
+		 on a.rgst_id = b.user_id 
+		where coalesce(a.del_yn,'N') = 'N'
+		and board_id = #{boardId}
+	</select>
+	 
+	<insert id="insertBbs" parameterType="bbsModel">
+		insert into t_board_mng(
+				board_id
+				,board_nm
+				,typ_cd
+				,description
+				,url_addr
+				,wk_template
+				,use_yn
+				,kind_use_yn
+				,find_auth_yn
+				,wk_auth_yn
+				,mng_auth_yn
+				,company_code
+				,del_yn
+				,rgst_dt
+				,rgst_id
+				,modi_dt
+				,modi_id
+			)values(
+			    #{boardId}
+				,#{boardNm}
+				,#{typCd}
+				,#{description}
+				,#{urlAddr}
+				,#{wkTemplate}
+				,#{useYn}
+				,#{kindUseYn}
+				,#{findAuthYn}
+				,#{wkAuthYn}
+				,#{mngAuthYn}
+				,#{companyCode}
+				,#{delYn}
+				,now()
+				,#{rgstId}
+				,now()
+				,#{modiId}
+			)
+	</insert>	
+	
+	<update id="updateBbs" parameterType="bbsModel">
+		 update t_board_mng set board_nm = #{boardNm}
+							,typ_cd = #{typCd}
+							,description= #{description}
+							,wk_template= #{wkTemplate}
+							,use_yn =#{useYn}
+							,kind_use_yn=#{kindUseYn}
+							,find_auth_yn=#{findAuthYn}
+							,wk_auth_yn=#{wkAuthYn}
+							,mng_auth_yn=#{mngAuthYn}
+							,company_code=#{companyCode}
+							,modi_dt = now()
+							,modi_id= #{modiId}
+			where board_id = #{boardId}
+	</update>   
+	
+	<update id="deleteBbs" parameterType="bbsModel">
+		 update t_board_mng set del_yn = #{delYn}
+		 								,modi_dt = now()
+										,modi_id= #{modiId}
+		where board_id = #{boardId}
+	</update>
+	
+	<select id="selectBbsItemList" resultType="bbsModel" parameterType="bbsModel">
+		select a.board_item_id
+				     ,a.item_nm
+				     ,a.item_phy_nm
+			from  t_board_item a
+			where coalesce(a.del_yn,'N') = 'N'
+			order by a.board_item_id
+	</select>
+	
+	<select id="selectBbsItemMappList" resultType="bbsModel" parameterType="bbsModel">
+		select a.board_item_id
+				     ,b.board_id
+				     ,a.item_nm
+				     ,a.item_phy_nm
+				     ,b.item_use_yn
+					,b.item_mark_yn
+					,b.item_ess_yn
+			from  t_board_item a
+			left outer join t_board_item_mapp b
+			on a.board_item_id = b.board_item_id 
+			and  coalesce(b.del_yn,'N') = 'N'
+			where coalesce(a.del_yn,'N') = 'N'
+			<if test="boardId != null and boardId != ''">
+			 	and b.board_id = #{boardId}
+			</if>
+			order by a.board_item_id
+	</select>
+	
+	<insert id="upsertBbsItemMapping" parameterType="bbsModel">
+		 with upsert as (
+			    	update t_board_item_mapp set 
+										item_use_yn = #{itemUseYn}
+										,item_mark_yn = #{itemMarkYn}
+										,item_ess_yn = #{itemEssYn}
+							    	    ,modi_dt = now()
+										,modi_id = #{modiId}
+					where board_item_id = #{boardItemId}
+					and board_id = #{boardId}
+					returning *
+			)
+			insert into t_board_item_mapp(
+				board_item_id
+				,board_id
+				,item_use_yn
+				,item_mark_yn
+				,item_ess_yn
+				,del_yn
+				,rgst_dt
+				,rgst_id
+				,modi_dt
+				,modi_id
+			)select 
+				#{boardItemId}
+				,#{boardId}
+				,#{itemUseYn}
+				,#{itemMarkYn}
+				,#{itemEssYn}
+				,#{delYn}
+				,now()
+				,#{rgstId}
+				,now()
+				,#{modiId}
+			where not exists (select * from upsert)
+	</insert>
+	
+	<update id="deleteBbsItemMapping" parameterType="bbsModel">
+		 update t_board_item_mapp  set del_yn = #{delYn}
+						,modi_dt = now()
+						,modi_id= #{modiId}
+			where board_id = #{boardId}
+			<if test="boardItemId != '' and boardItemId != ''">
+					and board_item_id = #{boardItemId}
+			</if>
+	</update>
+	
+	<select id="selectBbsKindList" resultType="bbsModel" parameterType="bbsModel">
+		select board_kind_id
+				,board_id
+				,kind_nm
+				,kind_ord
+		from t_board_kind
+		where coalesce(del_yn,'N') = 'N'
+		and board_id = #{boardId}
+		order by kind_ord
+	</select>
+	
+	<insert id="upsertBbsKind" parameterType="bbsModel">
+		with upsert as (
+			    	update t_board_kind set kind_nm = #{kindNm}
+						,kind_ord = #{kindOrd}
+			    	    ,modi_dt = now()
+						,modi_id = #{modiId}
+					where board_kind_id = #{boardKindId}
+					and board_id = #{boardId}
+					returning *
+			)
+			insert into t_board_kind(
+					board_kind_id
+					,board_id
+					,kind_nm
+					,kind_ord
+					,del_yn
+					,rgst_dt
+					,rgst_id
+					,modi_dt
+					,modi_id
+			)select
+					#{boardKindId}
+					,#{boardId}
+					,#{kindNm}
+					,#{kindOrd}
+					,#{delYn}
+					,now()
+					,#{rgstId}
+					,now()
+					,#{modiId}
+			where not exists (select * from upsert)
+	</insert>
+	
+	<update id="deleteBbsKind" parameterType="bbsModel">
+		update t_board_kind  set del_yn = #{delYn}
+					,modi_dt = now()
+					,modi_id= #{modiId}
+		where board_id = #{boardId}
+		<if test="boardKindId != '' and boardKindId != ''">
+				and board_kind_id = #{boardKindId}
+		</if>
+			
+	</update>
+	
+	<select id="selectBbsAuthList" resultType="bbsModel" parameterType="bbsModel">
+		select a.board_auth_id
+					,a.board_id
+					,a.auth_div_cd 
+					,b.auth_nm 
+			from t_board_auth a
+			join t_user_sys_auth b
+			on a.board_auth_id = b.auth_id
+			where coalesce(a.del_yn,'N') = 'N'
+			and a.board_id= #{boardId}		
+			<if test="authDivCd != '' and authDivCd != ''">
+				and a.auth_div_cd =#{authDivCd}
+			</if>
+			order by a.rgst_dt
+	</select>
+	
+	<select id="selectBbsMngAuthList" resultType="bbsModel" parameterType="bbsModel">
+	select a.board_auth_id
+				,a.board_id
+				,a.auth_div_cd 
+				,b.auth_nm 
+		from t_board_auth a
+		join t_mgr_sys_auth b
+		on a.board_auth_id = b.auth_id
+		where coalesce(a.del_yn,'N') = 'N'
+		and a.board_id= #{boardId}		
+		<if test="authDivCd != '' and authDivCd != ''">
+			and a.auth_div_cd =#{authDivCd}
+		</if>
+		order by a.rgst_dt
+	</select>
+	
+	<insert id="upsertBbsAuth" parameterType="bbsModel">
+		with upsert as (
+			    		update t_board_auth set auth_div_cd =#{authDivCd}
+			    	    ,modi_dt = now()
+						,modi_id = #{modiId}
+						,del_yn = #{delYn}
+					where board_auth_id = #{boardAuthId}
+					and board_id = #{boardId}
+					and auth_div_cd = #{authDivCd}
+					returning *
+			)
+			insert into t_board_auth(
+					board_auth_id
+					,board_id
+					,auth_div_cd
+					,del_yn
+					,rgst_dt
+					,rgst_id
+					,modi_dt
+					,modi_id
+			)select
+					#{boardAuthId}
+					,#{boardId}	
+					,#{authDivCd}
+					,#{delYn}
+					,now()
+					,#{rgstId}
+					,now()
+					,#{modiId}
+			where not exists (select * from upsert)
+	</insert>
+	
+	<update id="deleteBbsAuth" parameterType="bbsModel">
+		 DELETE FROM T_BOARD_AUTH where board_id = #{boardId}				
+	</update>
+	
+	<select id="selectItemFieldList" resultType="string" parameterType="map">
+		select item_phy_nm||' '||item_typ
+		         ||case when item_size is null then '' else '('||item_size||') ' end
+		         ||case when item_null_yn ='N' then 'NULLL' else '' end as ITEM_FIELD_LIST 
+		from t_board_item
+		where board_item_id in 
+		<foreach item="item" index="index" collection="itemList" separator="," open="(" close=")">
+				#{item}
+		</foreach>
+		order by board_item_id
+	</select>
+	
+	<update id="createNomalTable" parameterType="map">
+		create table if not exists t_${tblNm}_bbs(
+				id varchar(32) NOT null,
+				sj varchar(100),
+				cn text,
+				view_cnt numeric(9),
+				start_dt timestamp,
+				end_dt timestamp,
+				<if test="fieldList != '' and fieldList !=null ">
+					<foreach item="item" index="index" collection="fieldList" separator="," close=",">
+						${item} 
+					</foreach>
+				</if>
+				del_yn char(1),
+				rgst_dt timestamp,
+				rgst_id varchar(32),
+				modi_dt timestamp,
+				modi_id varchar(32),				
+				CONSTRAINT t_${tblNm}_bbs_pk PRIMARY KEY (id)
+			)
+	</update>
+	
+	<update id="createReplyTable" parameterType="map">
+		create table if not exists t_${tblNm}_bbs(
+				id varchar(32) NOT null,
+				bf_id varchar(32),
+				sj varchar(100),
+				cn text,
+				view_cnt numeric(9),
+				start_dt timestamp,
+				end_dt timestamp,
+				<if test="fieldList != '' and fieldList !=null ">
+				<foreach item="item" index="index" collection="fieldList" separator="," close=",">
+					${item} 
+				</foreach>
+				</if>
+				del_yn char(1),
+				rgst_dt timestamp,
+				rgst_id varchar(32),
+				modi_dt timestamp,
+				modi_id varchar(32),				
+				CONSTRAINT t_${tblNm}_bbs_pk PRIMARY KEY (id)
+			)
+	</update>
+
+	<update id="createCommentTable" parameterType="map">
+		create table if not exists t_${tblNm}_bbs_comment(
+			comment_id varchar(32) NOT NULL,
+			bf_comment_id varchar(32) NULL,
+			cn text NULL,
+			ref_id varchar(32) NULL,
+			del_yn bpchar(1) NULL,
+			rgst_dt timestamp NULL,
+			rgst_id varchar(32) NULL,
+			modi_dt timestamp NULL,
+			modi_id varchar(32) NULL,			
+			CONSTRAINT t_${tblNm}_bbs_comment_pk PRIMARY KEY (comment_id)
+		)
+	</update>
+	
+	<update id="dropTable" parameterType="map">
+		drop table t_${tblNm}_bbs
+		<if test="comment != '01' and comment != '' and comment != null">
+			,t_${tblNm}_bbs_comment
+		</if>
+	</update>
+	
+</mapper>
