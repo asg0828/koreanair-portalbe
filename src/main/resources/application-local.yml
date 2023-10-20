@@ -11,9 +11,9 @@ spring:
     # PostgreSQL 연결
     first:
         datasource:  # Postgresql DB APP
-            jdbc-url: jdbc:postgresql://110.45.156.133:10214/postgres?currentSchema=ptl
+            jdbc-url: jdbc:log4jdbc:postgresql://110.45.156.133:10214/postgres?currentSchema=ptl
             #jdbc-url: jdbc:postgresql://postgres-shinhan.shinhan.svc:5432/postgres?currentSchema=ptl
-            driver-class-name: org.postgresql.Driver
+            driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
             type: com.zaxxer.hikari.HikariDataSource
             username: ptl_app
             #password: ptlapp#1
@@ -67,12 +67,18 @@ spring:
 
 debug: false
 logging:
-    level:
-        '[root]': info
-        '[com.bdp.ap]': debug
-        '[com.bdp.ap.app.mapper]': info
-        '[com.rathontech]': trace
-#        '[org.springframework]': trace
+    level: 
+        root: info
+        com.bdp.ap: info
+        com.bdp.ap.app.mapper: off
+        org.springframework: info
+        jdbc: 
+            sqlonly: off
+            sqltiming: debug
+            audit: off
+            resultset: error
+            resultsettable: info
+            connection: off
     pattern:
         console:  "%clr([%d{yyyy-MM-dd HH:mm:ss.SSS}]){faint} %clr([%5p]) %clr([%15.15t]){faint} %clr([%-40.40logger{39}]){cyan} [%4L] [PORTAL] [ADMIN] %m%n%wEx"
 

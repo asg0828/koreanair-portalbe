@@ -76,7 +76,7 @@ public class WebSecurityConfig<S extends Session> extends WebSecurityConfigurerA
 		//HR 연동 테스트 임시 허용
 		http.authorizeRequests().antMatchers("/test/**").permitAll();
 
-		http.authorizeRequests().antMatchers("/**").access("@authChecker.check(request,authentication)").and().httpBasic().authenticationEntryPoint(authEntryPoint);
+		//http.authorizeRequests().antMatchers("/**").access("@authChecker.check(request,authentication)").and().httpBasic().authenticationEntryPoint(authEntryPoint);
 
 	}
 
