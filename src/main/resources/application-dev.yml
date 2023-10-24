@@ -1,0 +1,31 @@
+# 개발 설정
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://110.45.156.133:10214/postgres?currentSchema=ptl
+    driver-class-name: org.postgresql.Driver
+    username: ptl_app
+    password: ptlapp#1
+  mvc:
+    pathmatch:
+      matching-strategy: 'ant_path_matcher'
+      
+mybatis:
+  type-aliases-package: com.cdp.ap
+  type-handlers-package: com.cdp.ap
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    jdbc-type-for-null: NULL
+    use-generated-keys: false
+  mapper-locations: classpath:mapper/**/*.xml
+    
+logging:
+  level:
+    root: info
+    org:
+      springframework: debug
+      
+    
