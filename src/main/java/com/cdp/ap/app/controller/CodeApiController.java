@@ -33,9 +33,8 @@ public class CodeApiController {
      */
     @Operation(summary = "코드 그룹 ID 전체 목록 조회 API", description = "코드 그룹 ID 전체 목록을 조회한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "SUCCESS", content = @Content(schema = @Schema(implementation = CodeResDtoResult.class))),
-            @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
-            }
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CodeResDtoResult.class)))
+        }
     )
     @GetMapping(value = "/code-groups/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCodeGroups() {
