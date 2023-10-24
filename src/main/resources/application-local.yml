@@ -4,10 +4,15 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: jdbc:log4jdbc:postgresql://110.45.156.133:10214/postgres?currentSchema=ptl
+    url: jdbc:log4jdbc:postgresql://cdpdb-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    username: ptl_app
-    password: ptlapp#1
+    #url: jdbc:postgresql://cdpdb-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
+    #driver-class-name: org.postgresql.Driver
+    username: cdpdevdb_app
+    password: efR-as0o
+    #url: jdbc:log4jdbc:postgresql://110.45.156.133:10214/postgres?currentSchema=ptl
+    #username: ptl_app
+    #password: ptlapp#1
   mvc:
     pathmatch:
       matching-strategy: 'ant_path_matcher'
