@@ -1,4 +1,4 @@
-package com.cdp.portal.app.admin.code.dto.response;
+package com.cdp.portal.app.bo.code.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;

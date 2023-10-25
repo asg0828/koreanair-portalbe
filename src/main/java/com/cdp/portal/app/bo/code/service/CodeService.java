@@ -1,11 +1,11 @@
-package com.cdp.portal.app.admin.code.service;
+package com.cdp.portal.app.bo.code.service;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.cdp.portal.app.admin.code.dto.response.CodeResDto;
-import com.cdp.portal.app.admin.code.mapper.CodeMapper;
+import com.cdp.portal.app.bo.code.dto.response.CodeResDto;
+import com.cdp.portal.app.bo.code.mapper.CodeMapper;
 
 import lombok.RequiredArgsConstructor;
 

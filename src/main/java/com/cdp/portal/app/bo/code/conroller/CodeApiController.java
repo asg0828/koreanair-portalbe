@@ -1,4 +1,4 @@
-package com.cdp.portal.app.admin.code.controller;
+package com.cdp.portal.app.bo.code.conroller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cdp.portal.app.admin.code.dto.response.CodeResDto.CodeResDtoResult;
-import com.cdp.portal.app.admin.code.service.CodeService;
+import com.cdp.portal.app.bo.code.dto.response.CodeResDto.CodeResDtoResult;
+import com.cdp.portal.app.bo.code.service.CodeService;
 import com.cdp.portal.common.dto.ApiResDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/admin/system")
+@RequestMapping(value = "/bo/system")
 @Tag(name = "code", description = "코드 관리 API")
 public class CodeApiController {
     
@@ -31,7 +31,7 @@ public class CodeApiController {
      * 코드 그룹 ID 전체 목록
      * @return
      */
-    @Operation(summary = "코드 그룹 ID 전체 목록 조회 API", description = "코드 그룹 ID 전체 목록을 조회한다.")
+    @Operation(summary = "코드 그룹 ID 전체 목록 조회 API", description = "코드 그룹 ID 전체 목록을 조회한다.", tags = { "code" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = CodeResDtoResult.class)))
         }
