@@ -4,17 +4,17 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:postgresql://110.45.156.133:10214/postgres?currentSchema=ptl
+    url: jdbc:postgresql://cdpdb-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
     driver-class-name: org.postgresql.Driver
-    username: ptl_app
-    password: ptlapp#1
+    username: cdpdevdb_app
+    password: efR-as0o
   mvc:
     pathmatch:
       matching-strategy: 'ant_path_matcher'
       
 mybatis:
-  type-aliases-package: com.cdp.ap
-  type-handlers-package: com.cdp.ap
+  type-aliases-package: com.cdp.portal
+  type-handlers-package: com.cdp.portal
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
