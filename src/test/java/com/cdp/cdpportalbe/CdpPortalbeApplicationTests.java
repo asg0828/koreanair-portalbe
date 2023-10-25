@@ -1,10 +1,10 @@
-package com.cdp.ap;
+package com.cdp.cdpportalbe;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CdpPortalApplicationTests {
+class CdpPortalbeApplicationTests {
 
 	@Test
 	void contextLoads() {

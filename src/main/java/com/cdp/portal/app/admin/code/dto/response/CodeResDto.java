@@ -1,17 +1,14 @@
-package com.cdp.ap.app.dto.response;
+package com.cdp.portal.app.admin.code.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.cdp.ap.common.dto.ApiResDto;
+import com.cdp.portal.common.dto.ApiResDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-/**
- * 코드 관리 응답
- */
 @Data
 @Schema(description = "코드 관리 응답")
 public class CodeResDto {

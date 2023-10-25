@@ -1,4 +1,4 @@
-package com.cdp.ap.common.dto;
+package com.cdp.portal.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -6,10 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * API 공통 응답 DTO
- * @param <T>
- */
 @Schema(description = "API 공통 응답")
 @Getter
 @AllArgsConstructor

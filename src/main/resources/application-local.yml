@@ -18,8 +18,8 @@ spring:
       matching-strategy: 'ant_path_matcher'
       
 mybatis:
-  type-aliases-package: com.cdp.ap
-  type-handlers-package: com.cdp.ap
+  type-aliases-package: com.cdp.portal
+  type-handlers-package: com.cdp.portal
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
@@ -34,7 +34,7 @@ logging:
       springframework: debug
     com:
       cdp:
-        ap: info
+        portal: info
     jdbc:
       sqlonly: off
       sqltiming: debug

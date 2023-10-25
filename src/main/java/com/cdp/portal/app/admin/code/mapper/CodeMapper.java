@@ -1,10 +1,10 @@
-package com.cdp.ap.app.mapper;
+package com.cdp.portal.app.admin.code.mapper;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.cdp.ap.app.dto.response.CodeResDto;
+import com.cdp.portal.app.admin.code.dto.response.CodeResDto;
 
 @Mapper
 public interface CodeMapper {

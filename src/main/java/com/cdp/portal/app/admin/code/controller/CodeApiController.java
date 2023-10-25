@@ -1,4 +1,4 @@
-package com.cdp.ap.app.controller;
+package com.cdp.portal.app.admin.code.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cdp.ap.app.dto.response.CodeResDto.CodeResDtoResult;
-import com.cdp.ap.app.service.CodeService;
-import com.cdp.ap.common.dto.ApiResDto;
+import com.cdp.portal.app.admin.code.dto.response.CodeResDto.CodeResDtoResult;
+import com.cdp.portal.app.admin.code.service.CodeService;
+import com.cdp.portal.common.dto.ApiResDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
