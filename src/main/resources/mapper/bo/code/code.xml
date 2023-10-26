@@ -1,7 +1,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cdp.portal.app.bo.code.mapper.CodeMapper">
 	
-	<select id="selectGroupIdAllList" resultType="CodeResDto">
+	<select id="selectCodeByGroupId" parameterType="String" resultType="CodeResDto">
 		SELECT
 			ROW_NUMBER() OVER (ORDER BY ORD_SEQ ASC) AS ROWNUM,
 			GROUP_ID,
@@ -47,7 +47,7 @@
 		)
 	</insert>
 	
-	<select id="selectGroupId" resultType="CodeResDto">
+	<select id="selectByGroupIdAndCodeId" parameterType="String" resultType="CodeResDto">
 		SELECT
 			GROUP_ID,
 			CODE_ID,

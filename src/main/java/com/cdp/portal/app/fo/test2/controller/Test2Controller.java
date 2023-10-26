@@ -23,7 +23,7 @@ public class Test2Controller {
     @Operation(summary = "test2 조회 API", description = "test2 조회한다.", tags = { "test2" })
     @GetMapping(value = "/datas", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDatas() {
-        return ResponseEntity.ok(ApiResDto.createSuccessWithNoContent());
+        return ResponseEntity.ok(ApiResDto.success());
     }
     
     @Operation(summary = "test2 등록 API", description = "test2 등록 한다.", tags = { "test2" })

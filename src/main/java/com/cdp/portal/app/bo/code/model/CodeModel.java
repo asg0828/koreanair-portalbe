@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 코드 모델(모델은 테이블 엔티티와 1:1 맵핑하는걸로)
+ * 코드 모델
  */
 @Getter
 @NoArgsConstructor
@@ -27,7 +27,7 @@ public class CodeModel {
     @Schema(description = "코드ID", example = "APPROVE_YN")
     private String codeId;
     
-    @Schema(description = "코드이름ID", example = "승인 여부")
+    @Schema(description = "코드이름", example = "승인 여부")
     private String codeNm;
     
     @Schema(description = "코드설명", example = "")

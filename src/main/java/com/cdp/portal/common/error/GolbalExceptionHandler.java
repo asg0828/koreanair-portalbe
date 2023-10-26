@@ -20,7 +20,7 @@ public class GolbalExceptionHandler {
     public ResponseEntity<ApiResDto<?>> handleValidationExceptions(MethodArgumentNotValidException e) {
         log.error("handleMethodArgumentNotValidException : {}", e);
         
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResDto.createFail(e.getBindingResult()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResDto.fail(e.getBindingResult()));
     }
     
     

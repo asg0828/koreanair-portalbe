@@ -21,7 +21,7 @@ public class Test1Controller {
     @Operation(summary = "test1 API", description = "test1 조회한다.", tags = { "test1" })
     @GetMapping(value = "/datas", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDatas() {
-        return ResponseEntity.ok(ApiResDto.createSuccessWithNoContent());
+        return ResponseEntity.ok(ApiResDto.success());
     }
 
 }
