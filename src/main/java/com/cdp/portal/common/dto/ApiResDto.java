@@ -1,5 +1,14 @@
 package com.cdp.portal.common.dto;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -30,6 +39,28 @@ public class ApiResDto<T> {
     
     public static ApiResDto<?> createSuccessWithNoContent() {
         return new ApiResDto<>(STATUS_SUCCESS, null, null);
+    }
+    
+    public static ApiResDto<?> createFail(BindingResult bindingResult) {
+        List<HashMap<String, Object>> fieldErrors = new ArrayList<>();
+        HashMap<String, Object> errors = null;
+
+        List<ObjectError> allErrors = bindingResult.getAllErrors();
+        for (ObjectError error : allErrors) {
+            errors = new HashMap<>();
+            
+            if (error instanceof FieldError) {
+                errors.put("field", ((FieldError) error).getField());
+                errors.put("value", error.getDefaultMessage());
+            } else {
+                errors.put("field", error.getObjectName());
+                errors.put("value", error.getDefaultMessage());
+            }
+            
+            fieldErrors.add(errors);
+            
+        }
+        return new ApiResDto<>(STATUS_FAIL, fieldErrors, null);
     }
      
 

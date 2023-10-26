@@ -1,24 +1,27 @@
-package com.cdp.portal.app.admin.code.dto.response;
+package com.cdp.portal.app.bo.code.model;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import com.cdp.portal.common.dto.ApiResDto;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
-@Schema(description = "코드 관리 응답")
-public class CodeResDto {
+/**
+ * 코드 모델(모델은 테이블 엔티티와 1:1 맵핑하는걸로)
+ */
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CodeModel {
     
-    public static class CodeResDtoResult extends ApiResDto<List<CodeResDto>> {}
-    
-    @Schema(description = "rownum", example = "1")
-    private String rownum;
-    
-    @Schema(description = "코드그룹ID", example = "GROUP_ID")
+    @Schema(description = "그룹ID", example = "GROUP_ID")
     private String groupId;
     
     @Schema(description = "코드ID", example = "APPROVE_YN")
@@ -30,6 +33,9 @@ public class CodeResDto {
     @Schema(description = "코드설명", example = "")
     private String codeDsc;
     
+    @Schema(description = "정렬순서", example = "")
+    private Integer ordSeq;
+    
     @Schema(description = "사용여부", example = "Y")
     private String useYn;
     
@@ -38,6 +44,7 @@ public class CodeResDto {
     
     @Schema(description = "등록일시", example = "2021-04-13 09:04:40")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime rgstDt;
     
     @Schema(description = "수정자ID", example = "admin")
@@ -45,6 +52,7 @@ public class CodeResDto {
     
     @Schema(description = "수정일시", example = "2021-04-13 09:04:40")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modiDt;
 
 }
