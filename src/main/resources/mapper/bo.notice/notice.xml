@@ -1,0 +1,41 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdp.portal.app.bo.notice.mapper.NoticeMapper">
+
+    <select id="selectNoticeList" resultType="NoticeResDto">
+        SELECT
+        *
+        FROM (
+        SELECT
+        row_number() over(order by TBN.important_yn desc, TBN.rgst_dt desc) as rownum
+        , TBN.NOTICE_ID		AS NOTICE_ID
+        , TBN.SJ			AS SJ
+        , TBN.CN			AS CN
+        , TBN.IMPORTANT_YN  AS IMPORTANT_YN
+        , (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'IMPORTANT_YN' AND CODE_ID = TBN.important_yn) AS IMPORTANT_YN_NM
+        , TBN.ORD_SEQ		AS ORD_SEQ
+        , TBN.USE_YN		AS USE_YN
+        , (CASE TBN.USE_YN WHEN 'Y' THEN '게시' ELSE '미게시' END) AS USE_YN_NM
+        <!-- , (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'USE_YN' AND CODE_ID = TBN.USE_YN) AS USE_YN_NM -->
+        , TBN.RGST_ID		AS RGST_ID
+        , TBN.RGST_DT		AS RGST_DT
+        , TBN.MODI_ID		AS MODI_ID
+        , TBN.MODI_DT		AS MODI_DT
+        , TBN.VIEW_CNT		AS VIEW_CNT
+        , tu.user_nm 		AS RGST_NM
+        , (select dept_nm from t_dept where dept_code = tu.dept_code) AS RGST_DEPT_NM
+        , TBN.POPUP_YN		AS POPUP_YN
+        , (CASE TBN.POPUP_YN WHEN 'Y' THEN '사용' ELSE '미사용' END) AS POPUP_YN_NM
+        , TBN.START_DT		AS START_DT
+        , TBN.END_DT		AS END_DT
+        , TBN.Del_YN		AS Del_YN
+        from
+        T_BBS_NOTICE TBN
+        LEFT OUTER JOIN T_USER tu ON TBN.RGST_ID = tu.user_id
+        ) A
+<!--        <include refid="where" />-->
+<!--        <include refid="order" />-->
+<!--        <include refid="paging.pagingOffsetSQL" />-->
+    </select>
+
+</mapper>
+
