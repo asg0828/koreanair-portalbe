@@ -4,13 +4,11 @@ import javax.validation.constraints.NotBlank;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import lombok.Setter;
 
 @Schema(description = "코드 관리 요청")
 public class CodeReqDto {
     
     @Getter
-    @Setter
     @Schema(description = "코드 그룹 등록")
     public static class CreateGroupCodeReq {
         
@@ -32,7 +30,6 @@ public class CodeReqDto {
     }
     
     @Getter
-    @Setter
     @Schema(description = "코드 등록")
     public static class CreateCodeReq {
         

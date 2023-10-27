@@ -29,11 +29,11 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = CommonConstants.API_BO_PREFIX + "/system")
+@RequestMapping(value = CommonConstants.API_BO_PREFIX)
 @Tag(name = "code", description = "코드 관리 API")
 public class CodeRestController {
     
-private final CodeService codeService;
+    private final CodeService codeService;
     
     /**
      * 코드 그룹 전체 목록
@@ -44,7 +44,7 @@ private final CodeService codeService;
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResCodeResDtos.class)))
         }
     )
-    @GetMapping(value = "/code-groups/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/v1/code-groups/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCodeGroupsAll() {
         return ResponseEntity.ok(ApiResDto.success(codeService.getCodes("GROUP_ID")));
     }
@@ -59,7 +59,7 @@ private final CodeService codeService;
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
         }
     )
-    @PostMapping(value = "/code-groups", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/v1/code-groups", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createCodeGroup(@Valid @RequestBody CodeReqDto.CreateGroupCodeReq dto) {
         codeService.saveCodeGroup(dto);
         
@@ -77,7 +77,7 @@ private final CodeService codeService;
         }
     )
     @Parameter(name ="groupId", required = true, description = "코드 그룹 ID", example = "USE_YN")
-    @GetMapping(value = "/code-groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/v1/code-groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCodeGroup(@PathVariable String groupId) {
         return ResponseEntity.ok(ApiResDto.success(codeService.getCode("GROUP_ID", groupId)));
     }
@@ -94,7 +94,7 @@ private final CodeService codeService;
         }
     )
     @Parameter(name ="groupId", required = true, description = "코드 그룹 ID", example = "USE_YN")
-    @PostMapping(value = "/code-groups/{groupId}/codes", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/v1/code-groups/{groupId}/codes", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createCode(@PathVariable String groupId, @Valid @RequestBody CodeReqDto.CreateCodeReq dto) {
         codeService.saveCode(groupId, dto);
         
@@ -114,7 +114,7 @@ private final CodeService codeService;
     )
     @Parameter(name ="groupId", required = true, description = "코드 그룹 ID", example = "USE_YN")
     @Parameter(name ="codeId", required = true, description = "코드 ID", example = "Y")
-    @GetMapping(value = "/code-groups/{groupId}/codes/{codeId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/v1/code-groups/{groupId}/codes/{codeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCode(@PathVariable String groupId, @PathVariable String codeId) {
         return ResponseEntity.ok(ApiResDto.success(codeService.getCode(groupId, codeId)));
     }
@@ -130,7 +130,7 @@ private final CodeService codeService;
         }
     )
     @Parameter(name ="groupId", required = true, description = "코드 그룹 ID", example = "USE_YN")
-    @GetMapping(value = "/code-groups/{groupId}/codes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/v1/code-groups/{groupId}/codes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCodes(@PathVariable String groupId) {
         return ResponseEntity.ok(ApiResDto.success(codeService.getCodes(groupId)));
     }

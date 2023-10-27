@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cdp.portal.app.bo.code.dto.request.CodeReqDto;
 import com.cdp.portal.app.bo.code.dto.response.CodeResDto;
@@ -31,6 +32,7 @@ public class CodeService {
      * 코드 그룹 저장
      * @param dto
      */
+    @Transactional
     public void saveCodeGroup(CodeReqDto.CreateGroupCodeReq dto) {
         CodeModel codeModel= null;
         
@@ -76,6 +78,7 @@ public class CodeService {
      * 코드 저장
      * @param dto
      */
+    @Transactional
     public void saveCode(final String groupId, CodeReqDto.CreateCodeReq dto) {
         CodeModel codeModel = null;
         
