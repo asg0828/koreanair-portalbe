@@ -3,12 +3,15 @@ package com.cdp.portal.app.bo.code.dto.request;
 import javax.validation.constraints.NotBlank;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Schema(description = "코드 관리 요청")
 public class CodeReqDto {
     
     @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Schema(description = "코드 그룹 등록")
     public static class CreateGroupCodeReq {
         
@@ -30,6 +33,7 @@ public class CodeReqDto {
     }
     
     @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Schema(description = "코드 등록")
     public static class CreateCodeReq {
         

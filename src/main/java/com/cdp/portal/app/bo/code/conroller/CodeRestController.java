@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = CommonConstants.API_BO_PREFIX)
+@RequestMapping(value = CommonConstants.API_BO_PREFIX + "/system")
 @Tag(name = "code", description = "코드 관리 API")
 public class CodeRestController {
     
@@ -39,7 +39,7 @@ public class CodeRestController {
      * 코드 그룹 전체 목록
      * @return
      */
-    @Operation(summary = "코드 그룹 전체 목록 조회 API", description = "코드 그룹 전체 목록을 조회한다.", tags = { "code" })
+    @Operation(summary = "코드 그룹 전체 목록 조회", description = "코드 그룹 전체 목록을 조회한다.", tags = { "code" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResCodeResDtos.class)))
         }
@@ -54,7 +54,7 @@ public class CodeRestController {
      * @param dto
      * @return
      */
-    @Operation(summary = "코드 그룹 저장 API", description = "코드 그룹을 신규 등록하거나 그룹아이디가 있으면 수정한다.", tags = { "code" })
+    @Operation(summary = "코드 그룹 저장", description = "코드 그룹을 신규 등록하거나 그룹아이디가 있으면 수정한다.", tags = { "code" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
         }
@@ -71,7 +71,7 @@ public class CodeRestController {
      * @param groupCodeId
      * @return
      */
-    @Operation(summary = "코드 그룹 조회 API", description = "코드 그룹을 조회한다.", tags = { "code" })
+    @Operation(summary = "코드 그룹 조회", description = "코드 그룹을 조회한다.", tags = { "code" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResCodeResDto.class)))
         }
@@ -88,7 +88,7 @@ public class CodeRestController {
      * @param dto
      * @return
      */
-    @Operation(summary = "코드 저장 API", description = "코드를 신규 등록하거나 등록된 코드가 있으면 수정한다.", tags = { "code" })
+    @Operation(summary = "코드 저장", description = "코드를 신규 등록하거나 등록된 코드가 있으면 수정한다.", tags = { "code" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
         }
@@ -107,7 +107,7 @@ public class CodeRestController {
      * @param codeId
      * @return
      */
-    @Operation(summary = "코드 조회 API", description = "코드를 조회한다.", tags = { "code" })
+    @Operation(summary = "코드 조회", description = "코드를 조회한다.", tags = { "code" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResCodeResDtos.class)))
         }
@@ -124,7 +124,7 @@ public class CodeRestController {
      * @param codeGroupId
      * @return
      */
-    @Operation(summary = "코드 목록 조회 API", description = "코드 목록을 조회한다.", tags = { "code" })
+    @Operation(summary = "코드 목록 조회", description = "코드 목록을 조회한다.", tags = { "code" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResCodeResDtos.class)))
         }

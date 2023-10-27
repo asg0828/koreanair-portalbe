@@ -62,6 +62,9 @@ public class ApiResDto<T> {
         }
         return new ApiResDto<>(STATUS_FAIL, fieldErrors, null);
     }
-     
+    
+    public static ApiResDto<?> error(String message) {
+        return new ApiResDto<>(STATUS_ERROR, null, message);
+    }
 
 }

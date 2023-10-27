@@ -6,13 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class HelthController {
+public class HealthController {
     
     @GetMapping(value = "/health", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> health() {
         return ResponseEntity.ok("check");
     }
-    
-    
 
 }
