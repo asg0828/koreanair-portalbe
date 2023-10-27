@@ -32,5 +32,12 @@ public interface CodeMapper {
      * @return
      */
     CodeResDto selectByGroupIdAndCodeId(@Param("groupId") String groupId, @Param("codeId") String codeId);
+    
+    /**
+     * 코드 수정
+     * @param codeModel
+     * @return
+     */
+    Long updateCode(CodeModel codeModel);
 
 }

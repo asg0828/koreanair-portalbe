@@ -6,6 +6,8 @@ server:
   error:
     whitelabel:
       enabled: false
+  servlet:
+    context-path: /pt
       
 springdoc:
   swagger-ui:

@@ -33,13 +33,13 @@ public class CodeModel {
     @Schema(description = "코드설명", example = "")
     private String codeDsc;
     
-    @Schema(description = "정렬순서", example = "")
+    @Schema(description = "정렬순서", example = "1")
     private Integer ordSeq;
     
     @Schema(description = "사용여부", example = "Y")
     private String useYn;
     
-    @Schema(description = "등록자ID", example = "SYSTEM")
+    @Schema(description = "등록자ID", example = "admin")
     private String rgstId;
     
     @Schema(description = "등록일시", example = "2021-04-13 09:04:40")

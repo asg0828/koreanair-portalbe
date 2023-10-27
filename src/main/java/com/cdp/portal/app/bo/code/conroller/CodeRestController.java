@@ -15,6 +15,7 @@ import com.cdp.portal.app.bo.code.dto.request.CodeReqDto;
 import com.cdp.portal.app.bo.code.dto.response.CodeResDto.ApiResCodeResDto;
 import com.cdp.portal.app.bo.code.dto.response.CodeResDto.ApiResCodeResDtos;
 import com.cdp.portal.app.bo.code.service.CodeService;
+import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.ApiResDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,14 +27,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/bo/system")
+@RequestMapping(value = CommonConstants.API_BO_PREFIX + "/system")
 @Tag(name = "code", description = "코드 관리 API")
-public class CodeApiController {
+public class CodeRestController {
     
-    private final CodeService codeService;
+private final CodeService codeService;
     
     /**
      * 코드 그룹 전체 목록
@@ -79,7 +79,7 @@ public class CodeApiController {
     @Parameter(name ="groupId", required = true, description = "코드 그룹 ID", example = "USE_YN")
     @GetMapping(value = "/code-groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCodeGroup(@PathVariable String groupId) {
-        return ResponseEntity.ok(ApiResDto.success(codeService.getByGroupIdAndCodeId("GROUP_ID", groupId)));
+        return ResponseEntity.ok(ApiResDto.success(codeService.getCode("GROUP_ID", groupId)));
     }
     
     /**
@@ -116,7 +116,7 @@ public class CodeApiController {
     @Parameter(name ="codeId", required = true, description = "코드 ID", example = "Y")
     @GetMapping(value = "/code-groups/{groupId}/codes/{codeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCode(@PathVariable String groupId, @PathVariable String codeId) {
-        return ResponseEntity.ok(ApiResDto.success(codeService.getByGroupIdAndCodeId(groupId, codeId)));
+        return ResponseEntity.ok(ApiResDto.success(codeService.getCode(groupId, codeId)));
     }
     
     /**
@@ -134,6 +134,5 @@ public class CodeApiController {
     public ResponseEntity<?> getCodes(@PathVariable String groupId) {
         return ResponseEntity.ok(ApiResDto.success(codeService.getCodes(groupId)));
     }
-    
 
 }

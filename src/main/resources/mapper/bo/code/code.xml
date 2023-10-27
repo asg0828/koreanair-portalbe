@@ -47,12 +47,29 @@
 		)
 	</insert>
 	
+	<update id="updateCode" parameterType="codeModel">
+		UPDATE 
+			T_CODE
+		SET
+			CODE_NM = #{codeNm}
+			, CODE_DSC = #{codeDsc}
+			, MODI_DT = now()
+			, MODI_ID = #{modiId}
+			, USE_YN = #{useYn}
+			, ORD_SEQ = #{ordSeq}
+		WHERE
+			GROUP_ID = #{groupId}
+		AND
+			CODE_ID = #{codeId}
+	</update>
+	
 	<select id="selectByGroupIdAndCodeId" parameterType="String" resultType="CodeResDto">
 		SELECT
 			GROUP_ID,
 			CODE_ID,
 			CODE_NM,
 			CODE_DSC,
+			ORD_SEQ,
 			USE_YN,
 			RGST_ID,
 			RGST_DT,
