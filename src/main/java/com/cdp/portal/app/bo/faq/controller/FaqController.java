@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/admin/board")
+@RequestMapping(value = "/board")
 @Tag(name = "faq", description = "FAQ 관리 API")
 public class FaqController {
 
@@ -32,6 +32,6 @@ public class FaqController {
     )
     @GetMapping(value = "/faq", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getFaqs() {
-        return ResponseEntity.ok(ApiResDto.createSuccess(faqService.getFaqAllList()));
+        return ResponseEntity.ok(ApiResDto.success(faqService.getFaqAllList()));
     }
 }

@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/admin/board")
+@RequestMapping(value = "/board")
 @Tag(name = "qna", description = "QNA 관리 API")
 public class QnaController {
     private final QnaService qnaService;
@@ -33,6 +33,6 @@ public class QnaController {
 
     @GetMapping(value = "/qna", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getNotices() {
-        return ResponseEntity.ok(ApiResDto.createSuccess(qnaService.getQnaAllList()));
+        return ResponseEntity.ok(ApiResDto.success(qnaService.getQnaAllList()));
     }
 }

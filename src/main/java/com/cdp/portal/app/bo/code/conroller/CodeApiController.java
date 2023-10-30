@@ -43,7 +43,7 @@ public class CodeApiController {
     )
     @GetMapping(value = "/code-groups/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCodeGroups() {
-        return ResponseEntity.ok(ApiResDto.createSuccess(codeService.getGroupIdAllList("GROUP_ID")));
+        return ResponseEntity.ok(ApiResDto.success(codeService.getGroupIdAllList("GROUP_ID")));
     }
     
     /**
@@ -61,7 +61,7 @@ public class CodeApiController {
         
         codeService.saveGroupId(dto);
         
-        return ResponseEntity.ok(ApiResDto.createSuccessWithNoContent());
+        return ResponseEntity.ok(ApiResDto.success());
     }
 
 }
