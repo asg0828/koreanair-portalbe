@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.common.mapper.IdMapper">
+
+    <select id="selectId" parameterType="map" resultType="string">
+		SELECT
+		  ID_TY||ID_SE||LPAD(ID_SN::varchar,9,'0') AS ID
+		FROM T_ID_SN
+		WHERE ID_TY = #{idTy} AND ID_SE = #{idSe}
+    </select>
+
+    <select id="selectTimeSeq" parameterType="map" resultType="string">
+		SELECT
+		  TO_CHAR(NOW(),'HH24MISS')||LPAD(ID_SN::varchar,9,'0') AS ID
+		FROM T_ID_SN
+		WHERE ID_TY = #{idTy} AND ID_SE = #{idSe}
+    </select>
+
+    <insert id="insertId" parameterType="map">
+		INSERT INTO T_ID_SN (ID_TY, ID_SE, ID_SN, MODI_DT) VALUES (#{idTy}, #{idSe}, 1, NOW())
+		ON CONFLICT (ID_TY, ID_SE) DO UPDATE SET ID_SN = T_ID_SN.ID_SN + 1 , MODI_DT = NOW()
+    </insert>
+
+</mapper>

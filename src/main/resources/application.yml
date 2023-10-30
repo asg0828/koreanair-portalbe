@@ -7,7 +7,7 @@ server:
     whitelabel:
       enabled: false
   servlet:
-    context-path: /pt/api
+    context-path: /pt
       
 springdoc:
   swagger-ui:
