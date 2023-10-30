@@ -1,0 +1,87 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdp.portal.app.facade.code.mapper.CodeMapper">
+	
+	<select id="selectCodeByGroupId" parameterType="String" resultType="CodeResDto">
+		SELECT
+			ROW_NUMBER() OVER (ORDER BY ORD_SEQ ASC) AS ROWNUM,
+			GROUP_ID,
+			CODE_ID,
+			CODE_NM,
+			CODE_DSC,
+			ORD_SEQ,
+			USE_YN,
+			RGST_ID,
+			RGST_DT,
+			MODI_ID,
+			MODI_DT
+		FROM
+			T_CODE
+		WHERE
+			GROUP_ID = #{groupId}
+		ORDER BY ROWNUM
+	</select>
+	
+	<insert id="insertCode" parameterType="codeModel">
+		INSERT INTO T_CODE (
+			GROUP_ID
+			, CODE_ID
+			, CODE_NM
+			, CODE_DSC
+			, USE_YN
+			, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+			, ORD_SEQ
+		) VALUES (
+			#{groupId}
+			, #{codeId}
+			, #{codeNm}
+			, #{codeDsc}
+			, #{useYn}
+			, #{rgstId}
+			, now()
+			, #{modiId}
+			, now()
+			, #{ordSeq}
+		)
+	</insert>
+	
+	<update id="updateCode" parameterType="codeModel">
+		UPDATE 
+			T_CODE
+		SET
+			CODE_NM = #{codeNm}
+			, CODE_DSC = #{codeDsc}
+			, MODI_DT = now()
+			, MODI_ID = #{modiId}
+			, USE_YN = #{useYn}
+			, ORD_SEQ = #{ordSeq}
+		WHERE
+			GROUP_ID = #{groupId}
+		AND
+			CODE_ID = #{codeId}
+	</update>
+	
+	<select id="selectByGroupIdAndCodeId" parameterType="String" resultType="CodeResDto">
+		SELECT
+			GROUP_ID,
+			CODE_ID,
+			CODE_NM,
+			CODE_DSC,
+			ORD_SEQ,
+			USE_YN,
+			RGST_ID,
+			RGST_DT,
+			MODI_ID,
+			MODI_DT
+		FROM
+			T_CODE
+		WHERE
+			GROUP_ID = #{groupId}
+		AND
+			CODE_ID = #{codeId}
+	</select>
+
+</mapper>
+

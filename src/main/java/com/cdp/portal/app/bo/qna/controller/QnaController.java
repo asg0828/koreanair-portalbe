@@ -1,7 +1,7 @@
 package com.cdp.portal.app.bo.qna.controller;
 
-import com.cdp.portal.app.bo.qna.dto.response.QnaResDto;
-import com.cdp.portal.app.bo.qna.service.QnaService;
+import com.cdp.portal.app.facade.qna.dto.response.QnaResDto;
+import com.cdp.portal.app.facade.qna.service.QnaService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

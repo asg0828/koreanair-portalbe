@@ -7,10 +7,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.cdp.portal.app.bo.notice.dto.request.NoticeReqDto;
-import com.cdp.portal.app.bo.notice.dto.response.NoticeResDto;
+import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
+import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 
-import com.cdp.portal.app.bo.notice.service.NoticeService;
+import com.cdp.portal.app.facade.notice.service.NoticeService;
 import com.cdp.portal.common.dto.ApiResDto;
 
 import io.swagger.v3.oas.annotations.Operation;
