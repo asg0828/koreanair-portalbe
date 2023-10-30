@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdp.portal.common.dto.ApiResDto;
+import com.cdp.portal.common.error.exception.CdpPortalException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,9 +31,15 @@ public class GolbalExceptionHandler {
     }
     
     @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<ApiResDto<?>> handlerException(Exception e) {
+    public ResponseEntity<ApiResDto<?>> handleException(Exception e) {
         log.error("handlerException : {}", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResDto.error(e.getMessage()));
+    }
+    
+    @ExceptionHandler(value = CdpPortalException.class)
+    public ResponseEntity<ApiResDto<?>> handleCdpPortalException(CdpPortalException e) {
+        log.error("handlerCdpPortalException : {}", e);
+        return ResponseEntity.status(e.getError().getStatus()).body(ApiResDto.error(e.getMessage()));
     }
 
 }

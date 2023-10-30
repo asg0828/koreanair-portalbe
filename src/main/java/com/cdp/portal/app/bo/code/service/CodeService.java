@@ -10,6 +10,7 @@ import com.cdp.portal.app.bo.code.dto.request.CodeReqDto;
 import com.cdp.portal.app.bo.code.dto.response.CodeResDto;
 import com.cdp.portal.app.bo.code.mapper.CodeMapper;
 import com.cdp.portal.app.bo.code.model.CodeModel;
+import com.cdp.portal.common.enumeration.CdpPortalError;
 
 import lombok.RequiredArgsConstructor;
 
@@ -61,7 +62,6 @@ public class CodeService {
             
             codeMapper.updateCode(codeModel);
         }
-        
     }
     
     /**
@@ -109,7 +109,30 @@ public class CodeService {
             
             codeMapper.updateCode(codeModel);
         }
+    }
+    
+    /**
+     * 코드 수정
+     * @param groupId
+     * @param dto
+     */
+    public void updateCode(final String groupId, final String codeId, CodeReqDto.CreateCodeReq dto) {
+        CodeResDto codeResDto = this.getCode(groupId, codeId);
+        if (Objects.isNull(codeResDto)) {
+            throw CdpPortalError.CODE_NOT_FOUND.exception(codeId, groupId); 
+        }
         
+        CodeModel codeModel = CodeModel.builder()
+                .groupId(groupId)
+                .codeId(codeId)
+                .codeNm(dto.getCodeNm())
+                .codeDsc(dto.getCodeDsc())
+                .ordSeq(dto.getOrdSeq())
+                .useYn(dto.getUseYn())
+                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .build();
+        
+        codeMapper.updateCode(codeModel);
     }
 
 }
