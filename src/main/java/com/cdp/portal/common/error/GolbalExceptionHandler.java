@@ -39,7 +39,7 @@ public class GolbalExceptionHandler {
     @ExceptionHandler(value = CdpPortalException.class)
     public ResponseEntity<ApiResDto<?>> handleCdpPortalException(CdpPortalException e) {
         log.error("handlerCdpPortalException : {}", e);
-        return ResponseEntity.status(e.getError().getStatus()).body(ApiResDto.error(e.getMessage()));
+        return ResponseEntity.status(e.getError().getStatus()).body(ApiResDto.fail(e.getMessage()));
     }
 
 }

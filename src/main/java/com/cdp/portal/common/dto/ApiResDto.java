@@ -3,7 +3,6 @@ package com.cdp.portal.common.dto;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -61,6 +60,10 @@ public class ApiResDto<T> {
             
         }
         return new ApiResDto<>(STATUS_FAIL, fieldErrors, null);
+    }
+    
+    public static ApiResDto<?> fail(String message) {
+        return new ApiResDto<>(STATUS_FAIL, null, message);
     }
     
     public static ApiResDto<?> error(String message) {
