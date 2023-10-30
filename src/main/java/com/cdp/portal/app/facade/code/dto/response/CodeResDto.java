@@ -1,8 +1,8 @@
-package com.cdp.portal.app.bo.code.dto.response;
+package com.cdp.portal.app.facade.code.dto.response;
 
 import java.util.List;
 
-import com.cdp.portal.app.bo.code.model.CodeModel;
+import com.cdp.portal.app.facade.code.model.CodeModel;
 import com.cdp.portal.common.dto.ApiResDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;

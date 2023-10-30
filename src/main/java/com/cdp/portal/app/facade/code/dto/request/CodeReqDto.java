@@ -1,4 +1,4 @@
-package com.cdp.portal.app.bo.code.dto.request;
+package com.cdp.portal.app.facade.code.dto.request;
 
 import javax.validation.constraints.NotBlank;
 

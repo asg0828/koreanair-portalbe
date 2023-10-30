@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cdp.portal.app.bo.code.dto.request.CodeReqDto;
-import com.cdp.portal.app.bo.code.dto.response.CodeResDto.ApiResCodeResDto;
-import com.cdp.portal.app.bo.code.dto.response.CodeResDto.ApiResCodeResDtos;
-import com.cdp.portal.app.bo.code.service.CodeService;
+import com.cdp.portal.app.facade.code.dto.request.CodeReqDto;
+import com.cdp.portal.app.facade.code.dto.response.CodeResDto.ApiResCodeResDto;
+import com.cdp.portal.app.facade.code.dto.response.CodeResDto.ApiResCodeResDtos;
+import com.cdp.portal.app.facade.code.service.CodeService;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.ApiResDto;
 
@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping(value = CommonConstants.API_BO_PREFIX + "/system")
 @Tag(name = "code", description = "코드 관리 API")
-public class CodeRestController {
+public class BoCodeRestController {
     
     private final CodeService codeService;
     
