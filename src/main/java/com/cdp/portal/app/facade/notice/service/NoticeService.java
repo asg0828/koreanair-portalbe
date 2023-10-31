@@ -1,10 +1,9 @@
 package com.cdp.portal.app.facade.notice.service;
 
 import java.util.List;
+import java.util.Objects;
 
-import com.cdp.portal.app.bo.code.dto.request.CodeReqDto;
-import com.cdp.portal.app.bo.code.dto.response.CodeResDto;
-import com.cdp.portal.app.bo.code.model.CodeModel;
+import com.cdp.portal.common.enumeration.CdpPortalError;
 import org.springframework.stereotype.Service;
 import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
 import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
@@ -30,6 +29,19 @@ public class NoticeService {
     }
 
     /**
+     * 공지사항 상세 화면
+     * @param noticeId
+     * @return
+     */
+
+    public void selectNotice(String noticeId){
+        NoticeModel noticeModel = NoticeModel.builder()
+                .noticeId(noticeId)
+                .build();
+        noticeMapper.selectNotice(noticeModel);
+    }
+    
+    /**
      * 공지사항 등록
      * @param dto
      */
@@ -39,6 +51,10 @@ public class NoticeService {
                 .sj(dto.getSj())
                 .cn(dto.getCn())
                 .importantYn(dto.getImportantYn())
+                .popupYn(dto.getPopupYn())
+                .useYn(dto.getUseYn())
+                .startDt(dto.getStartDt())
+                .endDt(dto.getEndDt())
                 .rgstId("admin")
                 .modiId("admin")
                 .build();
@@ -47,14 +63,19 @@ public class NoticeService {
     }
 
     /**
+     * 공지사항 조회
+     * @param noticeId
+     * @return
+     */
+    public NoticeResDto getNotice(String noticeId) {
+        return noticeMapper.selectByNoticeId(noticeId);
+    }
+
+    /**
      * 공지사항 삭제
      * @param noticeId
      */
     public void deleteNotice(String noticeId) {
-        NoticeModel noticeModel = NoticeModel.builder()
-                .delYn("N")
-                .build();
-
         noticeMapper.deleteNotice(noticeId);
     }
 
@@ -63,21 +84,28 @@ public class NoticeService {
      * @param noticeId
      * @param dto
      */
-    public void updateNotice(final String noticeId, NoticeReqDto.CreateNoticeReq dto) {
-//        NoticeResDto noticeResDto = this.getNotice(noticeId);
-//        if (Objects.isNull(codeResDto)) {
-//            throw CdpPortalError.CODE_NOT_FOUND.exception(noticeId);
-//        }
+    public void updateNotice(final String noticeId, NoticeReqDto.UpdateNoticeReq dto) {
+        NoticeResDto noticeResDto = this.getNotice(noticeId);
+       if (Objects.isNull(noticeResDto)) {
+            throw CdpPortalError.CODE_NOT_FOUND.exception(noticeId);
+        }
 
         NoticeModel noticeModel = NoticeModel.builder()
                 .noticeId(noticeId)
                 .sj(dto.getSj())
                 .cn(dto.getCn())
-//                .ordSeq(dto.getOrdSeq())
-//                .useYn(dto.getUseYn())
+                .popupYn(dto.getPopupYn())
+                .importantYn(dto.getImportantYn())
+                .useYn(dto.getUseYn())
+                .startDt(dto.getStartDt())
+                .endDt(dto.getEndDt())
                 .modiId("admin")    // TODO: 로그인한 사용자 세팅
                 .build();
 
         noticeMapper.updateNotice(noticeModel);
+    }
+
+    public void addViewCntNotice(String noticeId) {
+        noticeMapper.addViewCntNotice(noticeId);
     }
 }
