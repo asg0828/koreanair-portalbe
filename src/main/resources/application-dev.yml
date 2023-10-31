@@ -10,6 +10,12 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: 'ant_path_matcher'
+  devtools:
+    livereload:
+      enabled: false
+    remote:
+      restart:
+        enabled: false
       
 mybatis:
   type-aliases-package: com.cdp.portal
