@@ -1,0 +1,42 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdp.portal.app.facade.qna.mapper.QnaMapper">
+
+    <select id="selectQnaList" resultType="qnaResDto">
+        select
+        *
+        from (
+        SELECT
+        row_number() over(order by tbq.rgst_dt ASC) as rownum,
+        tbq.qna_id,
+        tbq.cl_code,
+        tbq.sj,
+        tbq.cn,
+        tbq.answ,
+        tbq.answ_rgst_id,
+        (select file_url from t_user where user_id = tbq.answ_rgst_id) as answ_photo_url,
+        tbq.answ_rgst_dt,
+        tbq.bf_qna_id,
+        tbq.use_yn,
+        tbq.del_yn,
+        tbq.rgst_id,
+        tbq.rgst_dt,
+        tbq.modi_id,
+        tbq.modi_dt,
+        tbq.qna_stat,
+        tbq.open_yn,
+        tbq.view_cnt,
+        tu.user_nm as rgst_nm,
+        tu.file_url as rgst_photo_url
+        FROM
+        t_bbs_qna tbq
+        left outer join t_user tu on tbq.rgst_id = tu.user_id
+        WHERE coalesce(tbq.bf_qna_id,'')=''
+        ) a
+<!--        <include refid="where" />-->
+<!--        <include refid="order" />-->
+<!--        <include refid="paging.pagingOffsetSQL" />-->
+    </select>
+
+
+</mapper>
+
