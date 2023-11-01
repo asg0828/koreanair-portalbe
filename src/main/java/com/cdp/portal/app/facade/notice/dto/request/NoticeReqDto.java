@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 
 public class NoticeReqDto {
 
@@ -17,7 +16,6 @@ public class NoticeReqDto {
     public static class CreateNoticeReq {
 
         @Schema(description = "공지사항 ID", example = "1", nullable = false)
-        @NotBlank(message = "공지사항 ID는 필수 항목입니다.")
         private String noticeId;
 
         @Schema(description = "제목", example = "제목", nullable = false)
@@ -86,7 +84,16 @@ public class NoticeReqDto {
         @NotNull(message = "종료일시는 필수 항목입니다.")
         @Schema(description = "종료일시", example = "2023-10-26 10:04:45.868000", nullable = false)
         private Timestamp endDt;
-
-
     }
-}
+
+        @Getter
+        @Setter
+        public static class DeleteNoticeReq {
+            @Schema(description = "공지사항 ID", example = "", nullable = false)
+            @NotBlank(message = "공지사항 ID는 필수 항목입니다.")
+            private String noticeId;
+
+            @Schema(description = "수정자 ID", example = "제목", nullable = false)
+            private String modiId;
+        }
+    }

@@ -15,11 +15,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class NoticeService {
-
     private final NoticeMapper noticeMapper;
 
     /**
-     * 공지사항 전체 목록
+     * 공지사항 전체 목록 조회
      * @param
      * @return
      */
@@ -29,15 +28,12 @@ public class NoticeService {
     }
 
     /**
-     * 공지사항 상세 화면
-     * @param noticeId
+     * 공지사항 상세 조회
+     * @param noticeModel
      * @return
      */
 
-    public void selectNotice(String noticeId){
-        NoticeModel noticeModel = NoticeModel.builder()
-                .noticeId(noticeId)
-                .build();
+    public void selectNotice(NoticeModel noticeModel){
         noticeMapper.selectNotice(noticeModel);
     }
     
@@ -63,7 +59,7 @@ public class NoticeService {
     }
 
     /**
-     * 공지사항 조회
+     * 공지사항 상세조회
      * @param noticeId
      * @return
      */
@@ -73,10 +69,14 @@ public class NoticeService {
 
     /**
      * 공지사항 삭제
-     * @param noticeId
+     * @param dto
      */
-    public void deleteNotice(String noticeId) {
-        noticeMapper.deleteNotice(noticeId);
+
+    public void deleteNotice(NoticeReqDto.DeleteNoticeReq dto) {
+        noticeMapper.deleteNotice(dto);
+    }
+    public void deleteNotice2(NoticeReqDto.DeleteNoticeReq dto) {
+        noticeMapper.deleteNotice2(dto);
     }
 
     /**

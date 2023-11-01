@@ -3,17 +3,11 @@ package com.cdp.portal.app.bo.notice.controller;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
-import com.cdp.portal.app.facade.notice.model.NoticeModel;
+import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.constants.CommonConstants;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
 import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
@@ -36,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class NoticeRestController {
 
     @Resource
-//    private IdUtil idUtil;
+    private IdUtil idUtil;
     private final NoticeService noticeService;
 
     @Operation(summary = "공지사항 전체 목록 조회 API", description = "공지사항 전체 목록을 조회한다.")
@@ -45,60 +39,69 @@ public class NoticeRestController {
     }
     )
 
-    @GetMapping(value = "/notice", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/v1/notice/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getNotices() {
         return ResponseEntity.ok(ApiResDto.success(noticeService.getNoticeAllList()));
     }
 
-    @Operation(summary = "공지사항 상세 API", description = "공지사항 상세를 조회한다.")
+    @Operation(summary = "공지사항 상세 조회 API", description = "공지사항 상세를 조회한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = NoticeResDto.NoticeResDtoResult.class)))
     }
     )
-    @GetMapping(value = "/notice/detail/{noticeId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/v1/notice/{noticeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> selectNotice(@PathVariable String noticeId){
-        noticeService.selectNotice(noticeId);
         noticeService.addViewCntNotice(noticeId);
 
-        return ResponseEntity.ok(ApiResDto.success());
+        return ResponseEntity.ok(ApiResDto.success(noticeService.getNotice(noticeId)));
     }
 
-    @PostMapping(value = "/notice/insert", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "공지사항 등록 API", description = "공지사항을 등록한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = NoticeResDto.NoticeResDtoResult.class)))
+    }
+    )
+    @PostMapping(value = "/v1/notice", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createNotice(@Valid @RequestBody NoticeReqDto.CreateNoticeReq dto) {
-
+        String noticeId = idUtil.getNoticeId();
+        dto.setNoticeId(noticeId);
         noticeService.createNotice(dto);
 
+        return ResponseEntity.ok(ApiResDto.success(noticeId));
+    }
+
+    @Operation(summary = "공지사항 삭제 API", description = "공지사항을 SOFT 삭제한다.(del_yn)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = NoticeResDto.NoticeResDtoResult.class)))
+    }
+    )
+    @PostMapping(value = "/v1/notice/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteNotice(@Valid @RequestBody NoticeReqDto.DeleteNoticeReq dto) {
+        dto.setModiId("admin"); // 사용자 정보 받아오기 전까지 일단 하드코딩
+        noticeService.deleteNotice(dto);
+
         return ResponseEntity.ok(ApiResDto.success());
     }
 
-    /**
-     * 공지사항 삭제
-     * @param noticeId
-     * @return
-     */
-
-    @PostMapping(value = "notice/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteNotice(@Valid @RequestBody String noticeId) {
-
-        noticeService.deleteNotice(noticeId);
+    @Operation(summary = "공지사항 삭제 API", description = "공지사항을 완전 삭제한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = NoticeResDto.NoticeResDtoResult.class)))
+    }
+    )
+    @DeleteMapping(value = "/v1/notice", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteNotice1(@Valid @RequestBody NoticeReqDto.DeleteNoticeReq dto) {
+        noticeService.deleteNotice2(dto);
 
         return ResponseEntity.ok(ApiResDto.success());
     }
 
-
-    /**
-     * 공지사항 수정
-     * @param noticeId
-     * @param dto
-     * @return
-     */
     @Operation(summary = "공지사항 수정", description = "공지사항을 수정한다.", tags = { "notice" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
     }
     )
     @Parameter(name ="noticeId", required = true, description = "공지사항 ID", example = "1")
-    @PutMapping(value = "/notice/{noticeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/v1/notice/{noticeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateNotice(@PathVariable String noticeId, @Valid @RequestBody NoticeReqDto.UpdateNoticeReq dto) {
         noticeService.updateNotice(noticeId, dto);
 

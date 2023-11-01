@@ -2,6 +2,8 @@ package com.cdp.portal.app.facade.notice.mapper;
 
 import java.util.List;
 
+import com.cdp.portal.app.facade.code.model.CodeModel;
+import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
 import com.cdp.portal.app.facade.notice.model.NoticeModel;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -20,7 +22,6 @@ public interface NoticeMapper {
 
     /**
      * 공지사항 상세
-//     * @param noticeId
      * @param noticeModel
      * @return
      */
@@ -49,9 +50,10 @@ public interface NoticeMapper {
 
     /**
      * 공지사항 삭제
-     * @param noticeId
+     * @param dto
      * @return
      */
-    void deleteNotice(String noticeId);
+    void deleteNotice(NoticeReqDto.DeleteNoticeReq dto);
+    void deleteNotice2(NoticeReqDto.DeleteNoticeReq dto);
     void addViewCntNotice(String noticeId);
 }

@@ -14,7 +14,6 @@
         , (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'IMPORTANT_YN' AND CODE_ID = TBN.important_yn) AS IMPORTANT_YN_NM
         , TBN.ORD_SEQ		AS ORD_SEQ
         , TBN.USE_YN		AS USE_YN
-        , (CASE TBN.USE_YN WHEN 'Y' THEN '게시' ELSE '미게시' END) AS USE_YN_NM
         <!-- , (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'USE_YN' AND CODE_ID = TBN.USE_YN) AS USE_YN_NM -->
         , TBN.RGST_ID		AS RGST_ID
         , TBN.RGST_DT		AS RGST_DT
@@ -24,7 +23,7 @@
         , tu.user_nm 		AS RGST_NM
         , (select dept_nm from t_dept where dept_code = tu.dept_code) AS RGST_DEPT_NM
         , TBN.POPUP_YN		AS POPUP_YN
-        , (CASE TBN.POPUP_YN WHEN 'Y' THEN '사용' ELSE '미사용' END) AS POPUP_YN_NM
+        /*, (CASE TBN.POPUP_YN WHEN 'Y' THEN '사용' ELSE '미사용' END) AS POPUP_YN_NM*/
         , TBN.START_DT		AS START_DT
         , TBN.END_DT		AS END_DT
         , TBN.Del_YN		AS Del_YN
@@ -60,10 +59,6 @@
                      , TBN.POPUP_YN		AS POPUP_YN
                      , TBN.START_DT		AS START_DT
                      , TBN.END_DT		AS END_DT
-                     , LEAD(TBN.NOTICE_ID) OVER (ORDER BY TBN.NOTICE_ID) AS NEXT_ID
-                     , LEAD(TBN.SJ)		  OVER (ORDER BY TBN.NOTICE_ID) AS NEXT_SJ
-                     , LAG(TBN.NOTICE_ID)  OVER (ORDER BY TBN.NOTICE_ID) AS PRE_ID
-                     , LAG(TBN.SJ) 		  OVER (ORDER BY TBN.NOTICE_ID) AS PRE_SJ
                 FROM
                     T_BBS_NOTICE TBN
                         LEFT OUTER JOIN T_USER TU ON TBN.RGST_ID = TU.USER_ID
@@ -72,32 +67,6 @@
             ) A
         WHERE
             A.NOTICE_ID = #{noticeId}
-
-    </select>
-
-    <select id="selectByNoticeId" parameterType="String" resultType="NoticeResDto">
-        SELECT
-            ROW_NUMBER() OVER (ORDER BY ORD_SEQ ASC) AS ROWNUM,
-            NOTICE_ID,
-            SJ,
-            CN,
-            IMPORTANT_YN,
-            ORD_SEQ,
-            VIEW_CNT,
-            POPUP_YN,
-            START_DT,
-            END_DT,
-            USE_YN,
-            RGST_ID,
-            RGST_DT,
-            MODI_ID,
-            MODI_DT,
-            DEL_YN
-        FROM
-            T_BBS_NOTICE
-        WHERE
-            NOTICE_ID = #{noticeId}
-        ORDER BY ROWNUM
     </select>
 
     <insert id="insertNotice" parameterType="noticeReqDto">
@@ -164,14 +133,41 @@
             NOTICE_ID = #{noticeId}
     </update>
 
+    <delete id="deleteNotice2" parameterType="noticeModel">
+        DELETE FROM
+            T_BBS_NOTICE
+        WHERE
+            NOTICE_ID = #{noticeId}
+    </delete>
+
     <update id="addViewCntNotice" parameterType="noticeModel">
         UPDATE
             T_BBS_NOTICE
-        SET
-            VIEW_CNT = (COALESCE(VIEW_CNT, 0) + 1)
-        WHERE
-            NOTICE_ID = #{noticeId}
+        SET VIEW_CNT = (COALESCE(VIEW_CNT, 0) + 1)
+        WHERE NOTICE_ID = #{noticeId}
     </update>
+
+    <select id="selectByNoticeId" parameterType="String" resultType="NoticeResDto">
+        SELECT ROW_NUMBER() OVER (ORDER BY ORD_SEQ ASC) AS ROWNUM,
+               NOTICE_ID,
+               SJ,
+               CN,
+               IMPORTANT_YN,
+               ORD_SEQ,
+               VIEW_CNT,
+               POPUP_YN,
+               START_DT,
+               END_DT,
+               USE_YN,
+               RGST_ID,
+               RGST_DT,
+               MODI_ID,
+               MODI_DT,
+               DEL_YN
+        FROM T_BBS_NOTICE
+        WHERE NOTICE_ID = #{noticeId}
+        ORDER BY ROWNUM
+    </select>
 
 </mapper>
 
