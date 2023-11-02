@@ -42,13 +42,4 @@ public class QnaModel {
     private String qnaStat;
     private String openYn;
     private int viewCnt;
-    private int rownum;             // 화면 순번
-
-    private String rgstPhotoUrl;	//등록자 사진
-    private String answPhotoUrl;	//답변자 사진
-
-    private String[] fileIds;
-
-    private int lv; // 레벨
-    private String deptCd;
 }

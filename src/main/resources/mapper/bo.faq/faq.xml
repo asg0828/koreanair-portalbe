@@ -1,5 +1,5 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cdp.portal.app.bo.faq.mapper.FaqMapper">
+<mapper namespace="com.cdp.portal.app.facade.faq.mapper.FaqMapper">
 
     <select id="selectFaqList" resultType="FaqResDto">
         SELECT
@@ -27,6 +27,118 @@
 <!--        <include refid="order" />-->
 <!--        <include refid="paging.pagingOffsetSQL" />-->
     </select>
+
+    <select id="selectFaq" parameterType="faqModel" resultType="faqModel">
+        SELECT
+            faq.faq_id,
+            faq.cl_code,
+            (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'FAQ_CAT' AND CODE_ID = faq.cl_code) AS faq_cate_nm,
+            faq.qstn,
+            faq.answ,
+            faq.ord_seq,
+            faq.use_yn,
+            faq.del_yn,
+            faq.rgst_id,
+            faq.rgst_dt,
+            faq.modi_id,
+            faq.modi_dt,
+            faq.view_cnt
+        FROM
+            t_bbs_faq faq
+        WHERE
+            faq.faq_id = #{faqId}
+          AND faq.del_yn = 'N'
+    </select>
+
+    <insert id="insertFaq" parameterType="faqModel">
+        INSERT INTO t_bbs_faq (
+            faq_id,
+            cl_code,
+            qstn,
+            answ,
+            ord_seq,
+            use_yn,
+            del_yn,
+            rgst_id,
+            rgst_dt,
+            modi_id,
+            modi_dt,
+            view_cnt
+        ) VALUES (
+                     #{faqId},
+                     #{clCode},
+                     #{qstn},
+                     #{answ},
+                     #{ordSeq},
+                     #{useYn},
+                     'N',
+                     #{rgstId},
+                     now(),
+                     #{modiId},
+                     now(),
+                     0
+                 )
+    </insert>
+
+
+    <select id="selectByFaqId" parameterType="String" resultType="FaqResDto">
+        SELECT ROW_NUMBER() OVER (ORDER BY ORD_SEQ ASC) AS ROWNUM,
+               FAQ_ID,
+               CL_CODE,
+               QSTN,
+               ANSW,
+               ORD_SEQ,
+               VIEW_CNT,
+               USE_YN,
+               RGST_ID,
+               RGST_DT,
+               MODI_ID,
+               MODI_DT,
+               DEL_YN
+        FROM T_BBS_FAQ
+        WHERE FAQ_ID = #{faqId}
+        ORDER BY ROWNUM
+    </select>
+
+    <update id="updateFaq" parameterType="faqModel">
+        UPDATE
+            t_bbs_faq
+        SET
+            cl_code = #{clCode}
+          , qstn = #{qstn}
+          , answ = #{answ}
+          , ord_seq = #{ordSeq}
+          , use_yn = #{useYn}
+          , modi_dt = now()
+          , modi_id = #{modiId}
+        WHERE
+            faq_id = #{faqId}
+    </update>
+
+    <update id="deleteFaq" parameterType="faqModel">
+        UPDATE
+            t_bbs_faq
+        SET
+            del_yn = 'Y'
+          , modi_dt = now()
+          , modi_id = #{modiId}
+        WHERE
+            faq_id = #{faqId}
+    </update>
+
+    <delete id="deleteFaq2" parameterType="faqModel">
+        DELETE FROM
+            T_BBS_FAQ
+        WHERE
+            FAQ_ID = #{faqId}
+    </delete>
+
+    <update id="addViewCntFaq" parameterType="faqModel">
+        UPDATE
+            T_BBS_FAQ
+        SET VIEW_CNT = (COALESCE(VIEW_CNT, 0) + 1)
+        WHERE FAQ_ID = #{faqId}
+    </update>
 
 </mapper>
 
