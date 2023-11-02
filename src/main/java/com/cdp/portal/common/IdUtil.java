@@ -127,6 +127,13 @@ public class IdUtil {
 	}
 	
 	/**
+     * 메타테이블 컬럼ID
+     */
+    public String getMetaTblColId() {
+        return service.getId(CommonConstants.ID.META_TBL_COL_ID);
+    }
+	
+	/**
 	 * 관리부서ID
 	 */
 	public String getDeptCd() {

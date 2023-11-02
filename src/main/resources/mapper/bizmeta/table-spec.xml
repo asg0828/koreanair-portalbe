@@ -1,0 +1,149 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdp.portal.app.facade.bizmeta.mapper.TableSpecMapper">
+
+	<insert id="insert" parameterType="TableSpecModel">
+		INSERT INTO T_META_TB_SPEC (
+			MTS_ID
+			, MTS_KO_NM
+			, MTS_EN_NM
+			, MTS_DEF
+			, SRC_SYS
+			, SRC_TB_NM
+			, SRC_DB_CD
+			, MTS_DSC
+			, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+		) VALUES (
+			#{mtsId}
+			, #{mtsKoNm}
+			, #{mtsEnNm}
+			, #{mtsDef}
+			, #{srcSys}
+			, #{srcTbNm}
+			, #{srcDbCd}
+			, #{mtsDsc}
+			, #{rgstId}
+			, now()
+			, #{modiId}
+			, now()
+		)
+	</insert>
+	
+	<select id="isExistsByMtsEnNm" parameterType="String" resultType="Boolean">
+		SELECT EXISTS 
+			(
+				SELECT 1
+				FROM 
+					T_META_TB_SPEC
+				WHERE
+					MTS_EN_NM = #{mtsEnNm}
+				AND DEL_YN = 'N'
+				LIMIT 1
+			)
+	</select>
+	
+	<select id="selectAll" resultType="com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto$TableSpecs">
+		SELECT
+			MTS_ID
+			, MTS_KO_NM
+			, MTS_EN_NM
+			, MTS_DEF
+			, SRC_SYS
+			, SRC_TB_NM
+			, SRC_DB_CD
+			, MTS_DSC
+			, DEL_YN
+			, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+		FROM
+			T_META_TB_SPEC
+		<include refid="selectWhere"/>
+		<include refid="paging.pagingOffsetSQL" />
+	</select>
+	
+	<select id="selectCount" resultType="int">
+		SELECT
+			COUNT(*) AS cnt
+		FROM
+			T_META_TB_SPEC
+		<include refid="selectWhere"/>
+	</select>
+	
+	<sql id="selectWhere">
+		<where>
+			<if test="search.searchTable != null and search.searchTable != ''">
+				<foreach collection="search.dataSetConditions" item="dataSet" index="index">
+					<if test="dataSet != null and dataSet == 'mtsEnNm'">
+                		MTS_EN_NM LIKE '%' || #{search.searchTable} || '%'
+                	</if>
+                	<if test="dataSet != null and dataSet == 'mtsKoNm'">
+                		OR MTS_KO_NM LIKE '%' || #{search.searchTable} || '%'
+                	</if>
+                	<if test="dataSet != null and dataSet == 'mtsDef'">
+                		OR MTS_DEF LIKE '%' || #{search.searchTable} || '%'
+                	</if>
+                	<if test="dataSet != null and dataSet == 'srcTbNm'">
+                		OR SRC_TB_NM LIKE '%' || #{search.searchTable} || '%'
+                	</if>
+                	<if test="dataSet != null and dataSet == 'srcDbCd'">
+                		OR SRC_DB_CD LIKE '%' || #{search.searchTable} || '%'
+                	</if>
+				</foreach>
+            </if>
+		</where>
+	</sql>
+	
+	<select id="selectById" resultType="com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto$TableSpec">
+		SELECT
+			MTS_ID
+			, MTS_KO_NM
+			, MTS_EN_NM
+			, MTS_DEF
+			, SRC_SYS
+			, SRC_TB_NM
+			, SRC_DB_CD
+			, MTS_DSC
+			, DEL_YN
+			, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+		FROM
+			T_META_TB_SPEC
+		WHERE
+			MTS_ID = #{mtsId}
+	</select>
+	
+	<update id="update" parameterType="TableSpecModel">
+		UPDATE
+			T_META_TB_SPEC
+		SET
+			MTS_KO_NM = #{mtsKoNm}
+			, MTS_EN_NM = #{mtsEnNm}
+			, MTS_DEF = #{mtsDef}
+			, SRC_SYS = #{srcSys}
+			, SRC_TB_NM = #{srcTbNm}
+			, SRC_DB_CD = #{srcDbCd}
+			, MTS_DSC = #{mtsDsc}
+			, MODI_ID = #{modiId}
+			, MODI_DT = now()
+		WHERE
+			MTS_ID = #{mtsId}
+	</update>
+	
+	<update id="updateYnById" parameterType="String">
+		UPDATE
+			T_META_TB_SPEC
+		SET
+			DEL_YN = 'Y'
+			, MODI_ID = #{modiId}
+			, MODI_DT = now()
+		WHERE
+			MTS_ID = #{mtsId}
+	</update>
+
+</mapper>

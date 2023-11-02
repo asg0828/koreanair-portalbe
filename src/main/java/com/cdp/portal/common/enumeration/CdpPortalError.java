@@ -24,8 +24,9 @@ public enum CdpPortalError {
     CODE_NOT_FOUND("E0101", "Request (codeId: {0}) on (groupId: {1}) is not found", HttpStatus.NOT_FOUND),
     GROUP_NOT_FOUND("E0102", "(groupId: {0}) is duplicated", HttpStatus.BAD_REQUEST),
     
-    // feature
-    FEATURE_NOT_FOUND("E0201", "(featureId: {0}) is not found", HttpStatus.NOT_FOUND),
+    // biz-meta
+    MTS_EN_NM_DUPLICATED("E0201", "(mtsEnNm: {0}) is duplicated", HttpStatus.BAD_REQUEST),
+    TABLE_SPEC_NOT_FOUND("E0202", "(mtsId: {0}) is not found", HttpStatus.NOT_FOUND)
     ;
     
     private String code;

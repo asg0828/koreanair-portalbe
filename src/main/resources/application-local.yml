@@ -34,7 +34,8 @@ logging:
       springframework: debug
     com:
       cdp:
-        portal: debug
+        portal:
+          app: debug
     jdbc:
       sqlonly: off
       sqltiming: debug

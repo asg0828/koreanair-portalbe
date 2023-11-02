@@ -1,0 +1,72 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdp.portal.app.facade.bizmeta.mapper.TableColumnSpecMapper">
+
+	<insert id="insert" parameterType="TableColumnSpecModel">
+		INSERT INTO T_META_TB_CL_SPEC (
+			MTS_ID
+			, MCS_ID
+			, MCS_KO_NM
+			, MCS_EN_NM
+			, MCS_DEF
+			, SRC_CL_NM
+			, CL_FM
+			, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+		) VALUES (
+			#{mtsId}
+			, #{mcsId}
+			, #{mcsKoNm}
+			, #{mcsEnNm}
+			, #{mcsDef}
+			, #{srcClNm}
+			, #{clFm}
+			, #{rgstId}
+			, now()
+			, #{modiId}
+			, now()
+		)
+	</insert>
+	
+	<select id="selectByMtsId" parameterType="String" resultType="TableColumnSpecResDto">
+		SELECT
+			MTS_ID
+			, MCS_ID
+			, MCS_KO_NM
+			, MCS_EN_NM
+			, MCS_DEF
+			, SRC_CL_NM
+			, CL_FM
+			, DEL_YN
+			, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+		FROM
+			T_META_TB_CL_SPEC
+		WHERE
+			MTS_ID = #{mtsId}
+	</select>
+	
+	<delete id="deleteByMtsId" parameterType="String">
+		DELETE
+		FROM
+			T_META_TB_CL_SPEC
+		WHERE
+			MTS_ID = #{mtsId}
+	</delete>
+	
+	<update id="updateYnByMtsId" parameterType="String">
+		UPDATE 
+			T_META_TB_CL_SPEC
+		SET
+			DEL_YN = 'Y'
+			, MODI_ID = #{modiId}
+			, MODI_DT = now()
+		WHERE
+			MTS_ID = #{mtsId}
+	</update>
+	
+
+</mapper>
