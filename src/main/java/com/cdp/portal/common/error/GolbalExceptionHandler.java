@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdp.portal.common.dto.ApiResDto;
+import com.cdp.portal.common.enumeration.CdpPortalError;
 import com.cdp.portal.common.error.exception.CdpPortalException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ public class GolbalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResDto<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("handleMethodArgumentNotValidException : {}", e);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResDto.fail(e.getBindingResult()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResDto.fail(e.getBindingResult(), CdpPortalError.INVALID_INPUT_VALUE.getMessage()));
     }
     
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

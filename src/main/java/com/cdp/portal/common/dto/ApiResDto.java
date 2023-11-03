@@ -52,7 +52,7 @@ public class ApiResDto<T> {
         return new ApiResDto<>(STATUS_SUCCESS, null, null);
     }
     
-    public static ApiResDto<?> fail(BindingResult bindingResult) {
+    public static ApiResDto<?> fail(BindingResult bindingResult, String message) {
         List<HashMap<String, Object>> fieldErrors = new ArrayList<>();
         HashMap<String, Object> errors = null;
 
@@ -71,7 +71,7 @@ public class ApiResDto<T> {
             fieldErrors.add(errors);
             
         }
-        return new ApiResDto<>(STATUS_FAIL, fieldErrors, null);
+        return new ApiResDto<>(STATUS_FAIL, fieldErrors, message);
     }
 
     public static ApiResDto<?> fail(String message) {
