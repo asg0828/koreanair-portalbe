@@ -27,7 +27,7 @@ public class TableSpecReqDto {
         private String mtsKoNm;
         
         @NotBlank
-        @Pattern(regexp = "^[a-zA-Z_]*$", message = "테이블 정의 영문명은 영문만 입력 가능합니다")
+        @Pattern(regexp = "^[a-zA-Z_]*$", message = "테이블 정의 영문명은 영문, '-'만 입력 가능합니다")
         @Schema(description = "테이블정의영문명", example = "OneID", nullable = false)
         private String mtsEnNm;
         
@@ -63,7 +63,7 @@ public class TableSpecReqDto {
         private String mtsKoNm;
         
         @NotBlank
-        @Pattern(regexp = "^[a-zA-Z_]*$", message = "테이블 정의 영문명은 영문만 입력 가능합니다")
+        @Pattern(regexp = "^[a-zA-Z_]*$", message = "테이블 정의 영문명은 영문, '-'만 입력 가능합니다")
         @Schema(description = "테이블정의영문명", example = "OneID", nullable = false)
         private String mtsEnNm;
         
@@ -99,7 +99,7 @@ public class TableSpecReqDto {
         private String mcsKoNm;
         
         @NotBlank
-        @Pattern(regexp = "^[a-zA-Z_]*$", message = "테이블 컬럼 정의 영문명은 영문만 입력 가능합니다")
+        @Pattern(regexp = "^[a-zA-Z_]*$", message = "테이블 컬럼 정의 영문명은 영문, '-'만 입력 가능합니다")
         @Schema(description = "컬럼정의영문명", example = "route_id", nullable = false)
         private String mcsEnNm;
         

@@ -62,8 +62,8 @@
 			, TB_SPEC.MODI_DT
 		FROM
 			T_META_TB_SPEC TB_SPEC INNER JOIN T_CODE CODE ON TB_SPEC.SRC_DB_CD = CODE.CODE_ID
-			
 		<include refid="selectWhere"/>
+		ORDER BY TB_SPEC.RGST_DT DESC
 		<include refid="paging.pagingOffsetSQL" />
 	</select>
 	
@@ -77,10 +77,12 @@
 	
 	<sql id="selectWhere">
 		<where>
+			DEL_YN = 'N'
 			<if test="search.searchTable != null and search.searchTable != ''">
+				AND (1 != 1
 				<foreach collection="search.dataSetConditions" item="dataSet" index="index">
 					<if test="dataSet != null and dataSet == 'mtsEnNm'">
-                		MTS_EN_NM LIKE '%' || #{search.searchTable} || '%'
+                		OR MTS_EN_NM LIKE '%' || #{search.searchTable} || '%'
                 	</if>
                 	<if test="dataSet != null and dataSet == 'mtsKoNm'">
                 		OR MTS_KO_NM LIKE '%' || #{search.searchTable} || '%'
@@ -92,6 +94,7 @@
                 		OR SRC_TB_NM LIKE '%' || #{search.searchTable} || '%'
                 	</if>
 				</foreach>
+				)
             </if>
             <if test="search.srcDbCd != null and search.srcDbCd != ''">
             	AND SRC_DB_CD = #{search.srcDbCd}

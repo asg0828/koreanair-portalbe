@@ -29,7 +29,7 @@
 		)
 	</insert>
 	
-	<select id="selectByMtsId" parameterType="String" resultType="TableColumnSpecResDto">
+	<select id="selectByMtsId" parameterType="String" resultType="com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto$TableColumnSpec">
 		SELECT
 			MTS_ID
 			, MCS_ID

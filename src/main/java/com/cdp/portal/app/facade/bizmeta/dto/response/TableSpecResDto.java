@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cdp.portal.app.facade.bizmeta.dto.request.TableSpecReqDto;
+import com.cdp.portal.app.facade.bizmeta.model.TableColumnSpecModel;
 import com.cdp.portal.app.facade.bizmeta.model.TableSpecModel;
 import com.cdp.portal.common.dto.ApiResDto;
 import com.cdp.portal.common.dto.PagingDto;
@@ -20,10 +21,7 @@ import lombok.ToString;
 @Schema(description = "테이블 정의서 응답")
 public class TableSpecResDto {
     
-    @Schema(description = "API 응답(테이블 정의서 목록 결과)")
     public static class ApiResTableSpecs extends ApiResDto<TableSpecsResult> {}
-    
-    @Schema(description = "API 응답(테이블 정의서 상세)")
     public static class ApiResTableSpec extends ApiResDto<TableSpec> {}
     
     @Getter
@@ -44,8 +42,11 @@ public class TableSpecResDto {
     @Schema(description = "테이블 정의서 상세")
     public static class TableSpec extends TableSpecModel {
         
-        private List<TableColumnSpecResDto> columnSpecs = new ArrayList<>();
+        private List<TableColumnSpec> columnSpecs = new ArrayList<>();
     }
+    
+    @Schema(description = "테이블 컬럼 정의서 응답")
+    public static class TableColumnSpec extends TableColumnSpecModel {}
     
     @Getter
     @ToString

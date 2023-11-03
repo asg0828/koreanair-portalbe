@@ -8,14 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cdp.portal.app.facade.bizmeta.dto.request.TableSpecReqDto;
 import com.cdp.portal.app.facade.bizmeta.dto.request.TableSpecReqDto.CreateTableColumnSpec;
 import com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto;
-import com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto.TableSpecsResult;
 import com.cdp.portal.app.facade.bizmeta.mapper.TableColumnSpecMapper;
 import com.cdp.portal.app.facade.bizmeta.mapper.TableSpecMapper;
 import com.cdp.portal.app.facade.bizmeta.model.TableColumnSpecModel;
 import com.cdp.portal.app.facade.bizmeta.model.TableSpecModel;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
-import com.cdp.portal.common.dto.ResourcesDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 
 import lombok.RequiredArgsConstructor;

@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.cdp.portal.app.facade.bizmeta.dto.response.TableColumnSpecResDto;
+import com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto;
 import com.cdp.portal.app.facade.bizmeta.model.TableColumnSpecModel;
 
 @Mapper
@@ -13,7 +13,7 @@ public interface TableColumnSpecMapper {
     
     Long insert(TableColumnSpecModel tableColumnSpecModel);
     
-    List<TableColumnSpecResDto> selectByMtsId(String mtsId);
+    List<TableSpecResDto.TableColumnSpec> selectByMtsId(String mtsId);
     
     Long deleteByMtsId(String mtsId);
     
