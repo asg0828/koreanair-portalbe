@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = CommonConstants.API_BO_PREFIX + "/test")
-@Tag(name = "code", description = "샘플 코드 테스트 API")
+@Tag(name = "sample", description = "샘플 코드 테스트 API")
 public class BoTestController {
 	
 	@Resource

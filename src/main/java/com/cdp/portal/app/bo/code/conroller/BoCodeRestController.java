@@ -120,25 +120,25 @@ public class BoCodeRestController {
         return ResponseEntity.ok(ApiResDto.success(codeService.getCode(groupId, codeId)));
     }
     
-    /**
-     * 코드 수정
-     * @param groupId
-     * @param dto
-     * @return
-     */
-    @Operation(summary = "코드 수정", description = "코드를 수정한다.", tags = { "code" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
-        }
-    )
-    @Parameter(name ="groupId", required = true, description = "코드 그룹 ID", example = "USE_YN")
-    @Parameter(name ="codeId", required = true, description = "코드 ID", example = "Y")
-    @PutMapping(value = "/v1/code-groups/{groupId}/codes/{codeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateCode(@PathVariable String groupId, @PathVariable String codeId, @Valid @RequestBody CodeReqDto.CreateCodeReq dto) {
-        codeService.updateCode(groupId, codeId, dto);
-        
-        return ResponseEntity.ok(ApiResDto.success());
-    }
+//    /**
+//     * 코드 수정
+//     * @param groupId
+//     * @param dto
+//     * @return
+//     */
+//    @Operation(summary = "코드 수정", description = "코드를 수정한다.", tags = { "code" })
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+//        }
+//    )
+//    @Parameter(name ="groupId", required = true, description = "코드 그룹 ID", example = "USE_YN")
+//    @Parameter(name ="codeId", required = true, description = "코드 ID", example = "Y")
+//    @PutMapping(value = "/v1/code-groups/{groupId}/codes/{codeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<?> updateCode(@PathVariable String groupId, @PathVariable String codeId, @Valid @RequestBody CodeReqDto.CreateCodeReq dto) {
+//        codeService.updateCode(groupId, codeId, dto);
+//        
+//        return ResponseEntity.ok(ApiResDto.success());
+//    }
     
     /**
      * 코드 목록 조회
