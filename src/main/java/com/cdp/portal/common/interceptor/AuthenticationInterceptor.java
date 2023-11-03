@@ -41,11 +41,12 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
 			SessionDto sessionUser = authenticationService.getSession(sessionId);
 
-			if (sessionUser == null) {
-				throw new CdpPortalException(CdpPortalError.SESSION_EXPIRE);
-			} else {
-				SessionScopeUtil.setContextSession(sessionUser);
-			}
+			//임시 주석 (로그인 없이 API 개발용)
+//			if (sessionUser == null) {
+//				throw new CdpPortalException(CdpPortalError.SESSION_EXPIRE);
+//			} else {
+//				SessionScopeUtil.setContextSession(sessionUser);
+//			}
 		}
 
 		return true;
