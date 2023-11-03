@@ -1,0 +1,126 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdp.portal.app.facade.dataroom.mapper.DataRoomMapper">
+
+    <sql id="where">
+        <where>
+            <if test="searchValue != '' ">
+                <bind
+                        name="searchValue"
+                        value='@com.bdp.ap.common.EscapeHelper@escape(searchValue)'
+                />
+            </if>
+            <if test="searchKey != '' and searchKey == 'ALL' and searchValue != ''">
+                AND (UPPER(sj) LIKE CONCAT('%',UPPER(#{searchValue}),'%') OR UPPER(cn) LIKE CONCAT('%',UPPER(#{searchValue}),'%'))
+            </if>
+            <if test="searchKey != '' and searchKey == 'sj' and searchValue != ''">
+                AND UPPER(sj) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+            </if>
+            <if test="searchKey != '' and searchKey == 'cn' and searchValue != ''">
+                AND UPPER(cn) LIKE CONCAT('%',UPPER(#{searchValue}),'%')
+            </if>
+            AND DEL_YN = 'N'
+        </where>
+    </sql>
+
+    <select id="selectDataRoomList" resultType="DataRoomModel">
+        SELECT
+        DT.DATA_ID     AS DATA_ID
+        , DT.SJ          AS SJ
+        , DT.CN          AS CN
+        , DT.VIEW_CNT    AS VIEW_CNT
+        , DT.RGST_ID     AS RGST_ID
+        , DT.RGST_DT     AS RGST_DT
+        , DT.MODI_ID     AS MODI_ID
+        , DT.MODI_DT     AS MODI_DT
+        , DT.USE_YN      AS USE_YN
+        , (CASE DT.USE_YN WHEN 'Y' THEN '게시' ELSE '미게시' END) AS USE_YN_NM
+        , DT.DEL_YN      AS DEL_YN
+        , TU.USER_NM     AS RGST_NM
+        , (SELECT DEPT_NM FROM T_DEPT WHERE DEPT_CODE = TU.DEPT_CODE) AS RGST_DEPT_NM
+        FROM
+        T_BBS_DATA DT
+        LEFT OUTER JOIN T_USER TU ON DT.RGST_ID = TU.USER_ID
+<!--        <include refid="where" />-->
+<!--        ORDER BY DT.RGST_DT DESC-->
+<!--        <include refid="paging.pagingOffsetSQL" />-->
+    </select>
+
+    <select id="selectByDataId" parameterType="String" resultType="DataRoomResDto">
+        SELECT DATA_ID,
+               SJ,
+               CN,
+               VIEW_CNT,
+               USE_YN,
+               RGST_ID,
+               RGST_DT,
+               MODI_ID,
+               MODI_DT,
+               DEL_YN
+        FROM T_BBS_DATA
+        WHERE DATA_ID = #{dataId}
+    </select>
+
+    <insert id="insertDataRoom" parameterType="DataRoomModel">
+        INSERT INTO
+            T_BBS_DATA(
+                        DATA_ID
+                      , SJ
+                      , CN
+                      , VIEW_CNT
+                      , USE_YN
+                      , RGST_ID
+                      , RGST_DT
+                      , MODI_ID
+                      , MODI_DT
+        )
+        VALUES(
+                  #{dataId}
+              , #{sj}
+              , #{cn}
+              , 0
+              , #{useYn}
+              , #{rgstId}
+              , now()
+              , #{modiId}
+              , now()
+              )
+    </insert>
+
+    <update id="updateDataRoom" parameterType="DataRoomModel">
+        UPDATE
+            T_BBS_DATA
+        SET
+            SJ      = #{sj}
+          , CN      = #{cn}
+          , USE_YN  = #{useYn}
+          , MODI_ID = #{modiId}
+          , MODI_DT = now()
+        WHERE
+            DATA_ID = #{dataId}
+    </update>
+
+    <update id="addViewCntData" parameterType="DataRoomModel">
+        UPDATE
+            T_BBS_DATA
+        SET VIEW_CNT = (COALESCE(VIEW_CNT, 0) + 1)
+        WHERE DATA_ID = #{dataId}
+    </update>
+
+    <update id="deleteDataRoom" parameterType="DataRoomModel">
+        UPDATE
+            T_BBS_DATA
+        SET
+            DEL_YN  = 'Y'
+          , MODI_ID = #{modiId}
+          , MODI_DT = now()
+        WHERE
+            DATA_ID = #{dataId}
+    </update>
+
+    <delete id="deleteDataRoom2" parameterType="DataRoomModel">
+        DELETE FROM
+            T_BBS_DATA
+        WHERE
+            DATA_ID = #{dataId}
+    </delete>
+</mapper>
