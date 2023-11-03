@@ -34,6 +34,16 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.3.1'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	
+	// google
+    implementation 'com.google.api-client:google-api-client:2.2.0'
+    implementation 'com.google.api-client:google-api-client-jackson2:1.20.0'
+    
+    // aws
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.154')
+    implementation 'com.amazonaws:aws-java-sdk-s3'
+    implementation 'com.amazonaws:aws-java-sdk-sts'
 }
 
 tasks.named('test') {

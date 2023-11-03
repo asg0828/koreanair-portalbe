@@ -19,6 +19,10 @@ public enum CdpPortalError {
     RESOURCE_NOT_FOUND("E0003", "Resource not found", HttpStatus.NOT_FOUND),
     METHOD_NOT_ALLOWED("E0004", "Method Not Allowed", HttpStatus.METHOD_NOT_ALLOWED),
     INTERNAL_SERVER_ERROR("E0005", "Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR),
+    GOOGLE_ACCESS_TOKEN_REQUIRED("E0007", "GOOGLE_ACCESS_TOKEN_REQUIRED", HttpStatus.UNAUTHORIZED),
+    GOOGLE_ID_TOKEN_REQUIRED("E0008", "GOOGLE_ID_TOKEN_REQUIRED", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED("E0009", "SESSION_EXPIRE", HttpStatus.UNAUTHORIZED),
+    SESSION_EXPIRE("E0010", "SESSION_EXPIRE", HttpStatus.FORBIDDEN),
     
     // code
     CODE_NOT_FOUND("E0101", "Request (codeId: {0}) on (groupId: {1}) is not found", HttpStatus.NOT_FOUND),

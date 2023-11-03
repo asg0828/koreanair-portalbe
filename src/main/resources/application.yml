@@ -17,4 +17,9 @@ springdoc:
   api-docs:
     path: /api-docs
     resolveSchemaProperties: true
-  
+
+api:
+  cdp:
+    client_id: 894018941704-2gn88c8qugmjhcar020usr9cr6vqft2q.apps.googleusercontent.com
+  googleSpreadSheets:
+    url: https://sheets.googleapis.com

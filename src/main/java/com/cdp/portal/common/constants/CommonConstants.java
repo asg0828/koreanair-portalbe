@@ -11,6 +11,29 @@ public class CommonConstants {
     public static final String EMPTY_STRING = "";
 	public static final String UNKNOWN = "unknown";
 
+	//session
+	public static final String SESSION_NAME = "sessionInfo";
+	public static final String SECURE_SHA1 = "SHA-1";
+	public static final String SECURE_SHA1PRNG = "SHA1PRNG";
+//	public static final String APIGEE_ERROR_ACTOR = "cdp-portal";
+	
+	//HttpHeader
+	public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+	public static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
+	public static final String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
+	public static final String ACCEPT = "Accept";
+	public static final String ORIGIN = "Origin";
+	public static final String CONTENT_TYPE_KEY = "Content-Type";
+	public static final String CONTENT_LENGTH = "Content-Length";
+	public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+	public static final String CHARSET_UTF8 = "charset=UTF-8";
+	public static final String CONTENTS_TYPE_JSON = "application/json";
+	public static final String CONTENTS_TYPE_MULTIPART = "multipart/form-data";
+	public static final String X_SESSION_ID = "x-session-id";
+	public static final String X_CORRELATION_ID = "x-correlation-id";
+	public static final String SOAP_ACTION = "SOAPAction";
+	public static final String X_FORWARDED_FOR = "X-Forwarded-For";
+	
 	//ID 생성
 	public static interface ID {
 		//ID 타입 키, ID 구분 키
