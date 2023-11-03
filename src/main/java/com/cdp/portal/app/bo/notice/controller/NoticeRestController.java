@@ -65,9 +65,23 @@ public class NoticeRestController {
     public ResponseEntity<?> createNotice(@Valid @RequestBody NoticeReqDto.CreateNoticeReq dto) {
         String noticeId = idUtil.getNoticeId();
         dto.setNoticeId(noticeId);
+        dto.setModiId("admin");
         noticeService.createNotice(dto);
 
         return ResponseEntity.ok(ApiResDto.success(noticeId));
+    }
+
+    @Operation(summary = "공지사항 수정", description = "공지사항을 수정한다.", tags = { "notice" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+    }
+    )
+    @Parameter(name ="noticeId", required = true, description = "공지사항 ID", example = "1")
+    @PutMapping(value = "/v1/notice/{noticeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateNotice(@PathVariable String noticeId, @Valid @RequestBody NoticeReqDto.UpdateNoticeReq dto) {
+        noticeService.updateNotice(noticeId, dto);
+
+        return ResponseEntity.ok(ApiResDto.success());
     }
 
     @Operation(summary = "공지사항 삭제 API", description = "공지사항을 SOFT 삭제한다.(del_yn)")
@@ -91,19 +105,6 @@ public class NoticeRestController {
     @DeleteMapping(value = "/v1/notice", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteNotice1(@Valid @RequestBody NoticeReqDto.DeleteNoticeReq dto) {
         noticeService.deleteNotice2(dto);
-
-        return ResponseEntity.ok(ApiResDto.success());
-    }
-
-    @Operation(summary = "공지사항 수정", description = "공지사항을 수정한다.", tags = { "notice" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
-    }
-    )
-    @Parameter(name ="noticeId", required = true, description = "공지사항 ID", example = "1")
-    @PutMapping(value = "/v1/notice/{noticeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateNotice(@PathVariable String noticeId, @Valid @RequestBody NoticeReqDto.UpdateNoticeReq dto) {
-        noticeService.updateNotice(noticeId, dto);
 
         return ResponseEntity.ok(ApiResDto.success());
     }

@@ -1,4 +1,4 @@
-package com.cdp.portal.app.bo.faq.model;
+package com.cdp.portal.app.facade.faq.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
