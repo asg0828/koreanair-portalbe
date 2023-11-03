@@ -2,13 +2,13 @@ package com.cdp.portal.app.facade.notice.mapper;
 
 import java.util.List;
 
-import com.cdp.portal.app.facade.code.model.CodeModel;
-import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
-import com.cdp.portal.app.facade.notice.model.NoticeModel;
 import org.apache.ibatis.annotations.Mapper;
-
-import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 import org.apache.ibatis.annotations.Param;
+
+import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
+import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
+import com.cdp.portal.app.facade.notice.model.NoticeModel;
+import com.cdp.portal.common.dto.PagingDto;
 
 @Mapper
 public interface NoticeMapper {
@@ -18,7 +18,7 @@ public interface NoticeMapper {
      * @param
      * @return
      */
-    List<NoticeResDto> selectNoticeList();
+    List<NoticeResDto> selectNotices();
 
     /**
      * 공지사항 상세
@@ -33,6 +33,10 @@ public interface NoticeMapper {
      * @return
      */
     Long insertNotice(NoticeModel noticeModel);
+
+    List<NoticeResDto> selectAll(@Param("paging") PagingDto pagingDto, @Param("search") NoticeReqDto.SearchNotice searchDto);
+
+    int selectCount(@Param("search") NoticeReqDto.SearchNotice searchDto);
 
     /**
      * 공지사항 조회
@@ -50,10 +54,10 @@ public interface NoticeMapper {
 
     /**
      * 공지사항 삭제
-     * @param dto
+     * @param noticeId
      * @return
      */
-    void deleteNotice(NoticeReqDto.DeleteNoticeReq dto);
+    void deleteNotice(String noticeId);
     void deleteNotice2(NoticeReqDto.DeleteNoticeReq dto);
     void addViewCntNotice(String noticeId);
 }

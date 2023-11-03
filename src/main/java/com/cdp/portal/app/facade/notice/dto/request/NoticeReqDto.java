@@ -4,8 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
@@ -86,14 +85,26 @@ public class NoticeReqDto {
         private Timestamp endDt;
     }
 
-        @Getter
-        @Setter
-        public static class DeleteNoticeReq {
-            @Schema(description = "공지사항 ID", example = "", nullable = false)
-            @NotBlank(message = "공지사항 ID는 필수 항목입니다.")
-            private String noticeId;
+    @Getter
+    @Setter
+    public static class DeleteNoticeReq {
+        @Schema(description = "공지사항 ID", example = "", nullable = false)
+        @NotBlank(message = "공지사항 ID는 필수 항목입니다.")
+        private String noticeId;
 
-            @Schema(description = "수정자 ID", example = "제목", nullable = false)
-            private String modiId;
-        }
+        @Schema(description = "수정자 ID", example = "제목", nullable = false)
+        private String modiId;
     }
+
+    @Getter
+    @Schema(description = "공지사항 검색")
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    @Builder
+    public static class SearchNotice {
+
+        @Schema(description = "검색 공지", example = "")
+        private String searchNotice;
+
+    }
+}
