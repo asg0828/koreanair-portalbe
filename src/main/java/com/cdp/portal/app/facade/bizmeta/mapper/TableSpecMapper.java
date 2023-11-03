@@ -17,7 +17,7 @@ public interface TableSpecMapper {
     
     Boolean isExistsByMtsEnNm(String mtsEnNm);
     
-    List<TableSpecResDto> selectAll(@Param("paging") PagingDto pagingDto, @Param("search") TableSpecReqDto.SearchTableColumnSpec searchDto);
+    List<TableSpecResDto.TableSpecs> selectAll(@Param("paging") PagingDto pagingDto, @Param("search") TableSpecReqDto.SearchTableColumnSpec searchDto);
     
     int selectCount(@Param("search") TableSpecReqDto.SearchTableColumnSpec searchDto);
     

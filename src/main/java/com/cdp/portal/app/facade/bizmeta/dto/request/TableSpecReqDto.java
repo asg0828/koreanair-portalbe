@@ -128,6 +128,9 @@ public class TableSpecReqDto {
         @Schema(description = "테이터셋 조건", example = "")
         private String[] dataSetConditions;
         
+        @Schema(description = "DB코드(코드 그룹 ID: DBMS)", example = "")
+        private String srcDbCd;
+        
     }
 
 }

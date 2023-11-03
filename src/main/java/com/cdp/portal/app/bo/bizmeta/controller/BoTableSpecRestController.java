@@ -59,14 +59,16 @@ public class BoTableSpecRestController {
     )
     @Parameter(name ="page", required = false, description = "페이지", example = "1")
     @Parameter(name ="pageSize", required = false, description = "페이지 사이즈", example = "10")
-    @Parameter(name ="searchTable", required = false, description = "검색 테이블", example = "고객")
-    @Parameter(name ="dataSetConditions", required = false, description = "테이터셋 조건(mtsEnNm: 테이블정의영문명, mtsKoNm: 테이블정의한글명, mtsDef: 테이블정의, srcTbNm: 원천테이블명, srcDbCd: DB코드)", example = "")
+    @Parameter(name ="searchTable", required = false, description = "검색 테이블", example = "")
+    @Parameter(name ="dataSetConditions", required = false, description = "테이터셋 조건(mtsEnNm: 테이블정의영문명, mtsKoNm: 테이블정의한글명, mtsDef: 테이블정의, srcTbNm: 원천테이블명)", example = "")
+    @Parameter(name ="srcDbCd", required = false, description = "DB코드(코드 그룹 ID: DBMS)", example = "POSTGRESQL")
     @GetMapping(value = "/v1/table-specs", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getTableSpecs(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "searchTable", required = false, defaultValue = "") String searchTable,
-            @RequestParam(value = "dataSetConditions", required = false, defaultValue = "") String[] dataSetConditions) {
+            @RequestParam(value = "dataSetConditions", required = false, defaultValue = "") String[] dataSetConditions,
+            @RequestParam(value = "srcDbCd", required = false, defaultValue = "") String srcDbCd) {
         
         PagingDto pagingDto = PagingDto.builder()
                 .page(page)
@@ -76,6 +78,7 @@ public class BoTableSpecRestController {
         TableSpecReqDto.SearchTableColumnSpec searchDto = TableSpecReqDto.SearchTableColumnSpec.builder()
                 .searchTable(searchTable)
                 .dataSetConditions(dataSetConditions)
+                .srcDbCd(srcDbCd)
                 .build();
         
         return ResponseEntity.ok(ApiResDto.success(tableSpecService.getTableSpecs(pagingDto, searchDto)));

@@ -46,21 +46,23 @@
 	
 	<select id="selectAll" resultType="com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto$TableSpecs">
 		SELECT
-			MTS_ID
-			, MTS_KO_NM
-			, MTS_EN_NM
-			, MTS_DEF
-			, SRC_SYS
-			, SRC_TB_NM
-			, SRC_DB_CD
-			, MTS_DSC
-			, DEL_YN
-			, RGST_ID
-			, RGST_DT
-			, MODI_ID
-			, MODI_DT
+			TB_SPEC.MTS_ID
+			, TB_SPEC.MTS_KO_NM
+			, TB_SPEC.MTS_EN_NM
+			, TB_SPEC.MTS_DEF
+			, TB_SPEC.SRC_SYS
+			, TB_SPEC.SRC_TB_NM
+			, TB_SPEC.SRC_DB_CD
+			, CODE.CODE_NM AS SRC_DB_NM
+			, TB_SPEC.MTS_DSC
+			, TB_SPEC.DEL_YN
+			, TB_SPEC.RGST_ID
+			, TB_SPEC.RGST_DT
+			, TB_SPEC.MODI_ID
+			, TB_SPEC.MODI_DT
 		FROM
-			T_META_TB_SPEC
+			T_META_TB_SPEC TB_SPEC INNER JOIN T_CODE CODE ON TB_SPEC.SRC_DB_CD = CODE.CODE_ID
+			
 		<include refid="selectWhere"/>
 		<include refid="paging.pagingOffsetSQL" />
 	</select>
@@ -89,10 +91,10 @@
                 	<if test="dataSet != null and dataSet == 'srcTbNm'">
                 		OR SRC_TB_NM LIKE '%' || #{search.searchTable} || '%'
                 	</if>
-                	<if test="dataSet != null and dataSet == 'srcDbCd'">
-                		OR SRC_DB_CD LIKE '%' || #{search.searchTable} || '%'
-                	</if>
 				</foreach>
+            </if>
+            <if test="search.srcDbCd != null and search.srcDbCd != ''">
+            	AND SRC_DB_CD = #{search.srcDbCd}
             </if>
 		</where>
 	</sql>

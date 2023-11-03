@@ -1,7 +1,5 @@
 package com.cdp.portal.app.facade.bizmeta.service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -10,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cdp.portal.app.facade.bizmeta.dto.request.TableSpecReqDto;
 import com.cdp.portal.app.facade.bizmeta.dto.request.TableSpecReqDto.CreateTableColumnSpec;
 import com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto;
+import com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto.TableSpecsResult;
 import com.cdp.portal.app.facade.bizmeta.mapper.TableColumnSpecMapper;
 import com.cdp.portal.app.facade.bizmeta.mapper.TableSpecMapper;
 import com.cdp.portal.app.facade.bizmeta.model.TableColumnSpecModel;
@@ -75,10 +74,10 @@ public class TableSpecService {
         }
     }
     
-    public ResourcesDto<Object> getTableSpecs(PagingDto pagingDto, TableSpecReqDto.SearchTableColumnSpec searchDto) {
+    public TableSpecResDto.TableSpecsResult getTableSpecs(PagingDto pagingDto, TableSpecReqDto.SearchTableColumnSpec searchDto) {
         pagingDto.setPaging(tableSpecMapper.selectCount(searchDto));
         
-        return ResourcesDto.builder()
+        return TableSpecResDto.TableSpecsResult.builder()
                 .page(pagingDto)
                 .search(searchDto)
                 .contents(tableSpecMapper.selectAll(pagingDto, searchDto))
