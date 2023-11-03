@@ -16,18 +16,18 @@ public class CodeReqDto {
     public static class CreateGroupCodeReq {
         
         @Schema(description = "코드그룹ID", example = "USE_YN", nullable = false)
-        @NotBlank(message = "코드그룹ID는 필수 항목입니다.")
+        @NotBlank
         private String groupId;
         
         @Schema(description = "코드그룹명", example = "사용 여부", nullable = false)
-        @NotBlank(message = "코드그룹명은 필수 항목입니다.")
+        @NotBlank
         private String groupNm;
         
         @Schema(description = "코드그룹비고", example = "", nullable = true)
         private String groupDsc;
         
         @Schema(description = "사용여부", example = "Y|N", nullable = false)
-        @NotBlank(message = "사용여부는 필수 항목입니다.")
+        @NotBlank
         private String groupUseYn;
         
     }
@@ -38,11 +38,11 @@ public class CodeReqDto {
     public static class CreateCodeReq {
         
         @Schema(description = "코드ID", example = "Y")
-        @NotBlank(message = "코드ID는 필수 항목입니다.")
+        @NotBlank
         private String codeId;
         
         @Schema(description = "코드이름", example = "사용")
-        @NotBlank(message = "코드이름은 필수 항목입니다.")
+        @NotBlank
         private String codeNm;
         
         @Schema(description = "코드설명", example = "")
@@ -52,7 +52,7 @@ public class CodeReqDto {
         private Integer ordSeq;
         
         @Schema(description = "사용여부", example = "Y")
-        @NotBlank(message = "사용여부는 필수 항목입니다.")
+        @NotBlank
         private String useYn;
 
     }
