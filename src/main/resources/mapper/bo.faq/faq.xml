@@ -1,54 +1,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cdp.portal.app.facade.faq.mapper.FaqMapper">
 
-    <select id="selectFaqList" resultType="FaqResDto">
-        SELECT
-        *
-        FROM (
-        SELECT
-        faq.faq_id,
-        faq.cl_code,
-        faq.qstn,
-        faq.answ,
-        faq.ord_seq,
-        faq.use_yn,
-        faq.del_yn,
-        faq.rgst_id,
-        faq.rgst_dt,
-        faq.modi_id,
-        faq.modi_dt,
-        faq.view_cnt,
-        tu.user_nm 		AS RGST_NM
-        FROM
-        t_bbs_faq faq
-        LEFT OUTER JOIN T_USER tu ON faq.RGST_ID = tu.user_id
-        ) A
-<!--        <include refid="where" />-->
-<!--        <include refid="order" />-->
-<!--        <include refid="paging.pagingOffsetSQL" />-->
-    </select>
-
-    <select id="selectFaq" parameterType="faqModel" resultType="faqModel">
-        SELECT
-            faq.faq_id,
-            faq.cl_code,
-            (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'FAQ_CAT' AND CODE_ID = faq.cl_code) AS faq_cate_nm,
-            faq.qstn,
-            faq.answ,
-            faq.ord_seq,
-            faq.use_yn,
-            faq.del_yn,
-            faq.rgst_id,
-            faq.rgst_dt,
-            faq.modi_id,
-            faq.modi_dt,
-            faq.view_cnt
-        FROM
-            t_bbs_faq faq
-        WHERE
-            faq.faq_id = #{faqId}
-          AND faq.del_yn = 'N'
-    </select>
+    <sql id="selectWhere">
+        <where>
+            <if test="search.searchFaq != null and search.searchFaq != ''">
+                <foreach collection="search.category" item="category" index="index">
+                    <if test="category != null and category == 'sj'">
+                        SJ LIKE '%' || #{search.searchFaq} || '%'
+                    </if>
+                    <if test="category != null and category == 'cn'">
+                        OR CN LIKE '%' || #{search.searchFaq} || '%'
+                    </if>
+                </foreach>
+            </if>
+        </where>
+    </sql>
 
     <insert id="insertFaq" parameterType="faqModel">
         INSERT INTO t_bbs_faq (
@@ -80,6 +46,39 @@
                  )
     </insert>
 
+    <select id="selectAll" resultType="FaqResDto">
+        SELECT
+        *
+        FROM (
+        SELECT
+        faq.faq_id,
+        faq.cl_code,
+        faq.qstn,
+        faq.answ,
+        faq.ord_seq,
+        faq.use_yn,
+        faq.del_yn,
+        faq.rgst_id,
+        faq.rgst_dt,
+        faq.modi_id,
+        faq.modi_dt,
+        faq.view_cnt,
+        tu.user_nm 		AS RGST_NM
+        FROM
+        t_bbs_faq faq
+        LEFT OUTER JOIN T_USER tu ON faq.RGST_ID = tu.user_id
+        ) A
+        <include refid="selectWhere"/>
+        <include refid="paging.pagingOffsetSQL" />
+    </select>
+
+    <select id="selectCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM
+        T_BBS_FAQ
+        <include refid="selectWhere"/>
+    </select>
 
     <select id="selectByFaqId" parameterType="String" resultType="FaqResDto">
         SELECT ROW_NUMBER() OVER (ORDER BY ORD_SEQ ASC) AS ROWNUM,
@@ -115,7 +114,14 @@
             faq_id = #{faqId}
     </update>
 
-    <update id="deleteFaq" parameterType="faqModel">
+    <delete id="deleteFaq" parameterType="faqModel">
+        DELETE FROM
+            T_BBS_FAQ
+        WHERE
+            FAQ_ID = #{faqId}
+    </delete>
+
+    <update id="deleteFaq2" parameterType="String">
         UPDATE
             t_bbs_faq
         SET
@@ -125,13 +131,6 @@
         WHERE
             faq_id = #{faqId}
     </update>
-
-    <delete id="deleteFaq2" parameterType="faqModel">
-        DELETE FROM
-            T_BBS_FAQ
-        WHERE
-            FAQ_ID = #{faqId}
-    </delete>
 
     <update id="addViewCntFaq" parameterType="faqModel">
         UPDATE

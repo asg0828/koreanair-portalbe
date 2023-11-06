@@ -43,8 +43,8 @@ public class NoticeService {
                 .useYn(dto.getUseYn())
                 .startDt(dto.getStartDt())
                 .endDt(dto.getEndDt())
-                .rgstId("admin") // TODO: 로그인한 사용자 세팅
-                .modiId("admin") // TODO: 로그인한 사용자 세팅
+                .rgstId(dto.getRgstId())
+                .modiId(dto.getModiId()) // TODO: 로그인한 사용자 세팅
                 .build();
 
         noticeMapper.insertNotice(noticeModel);
@@ -55,7 +55,6 @@ public class NoticeService {
      * @param
      * @return
      */
-
     public NoticeResDto.NoticesResult getNotices (PagingDto pagingDto, NoticeReqDto.SearchNotice searchDto) {
         pagingDto.setPaging(noticeMapper.selectCount(searchDto));
 
@@ -71,21 +70,9 @@ public class NoticeService {
      * @param noticeId
      * @return
      */
+    @Transactional
     public NoticeResDto getNotice(String noticeId) {
-
         return noticeMapper.selectByNoticeId(noticeId);
-    }
-
-    /**
-     * 공지사항 삭제
-     * @param noticeId
-     */
-
-    public void deleteNotice(String noticeId) {
-        noticeMapper.deleteNotice(noticeId);
-    }
-    public void deleteNotice2(NoticeReqDto.DeleteNoticeReq dto) {
-        noticeMapper.deleteNotice2(dto);
     }
 
     /**
@@ -93,9 +80,11 @@ public class NoticeService {
      * @param noticeId
      * @param dto
      */
+    @Transactional
     public void updateNotice(final String noticeId, NoticeReqDto.UpdateNoticeReq dto) {
         NoticeResDto noticeResDto = this.getNotice(noticeId);
-       if (Objects.isNull(noticeResDto)) {
+
+        if (Objects.isNull(noticeResDto)) {
             throw CdpPortalError.CODE_NOT_FOUND.exception(noticeId);
         }
 
@@ -108,12 +97,26 @@ public class NoticeService {
                 .useYn(dto.getUseYn())
                 .startDt(dto.getStartDt())
                 .endDt(dto.getEndDt())
-                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .modiId(dto.getModiId())    // TODO: 로그인한 사용자 세팅
                 .build();
 
         noticeMapper.updateNotice(noticeModel);
     }
+    /**
+     * 공지사항 삭제
+     * @param noticeId
+     */
+    public void deleteNotice(String noticeId) {
+        noticeMapper.deleteNotice(noticeId);
+    }
+    public void deleteNotice2(NoticeReqDto.DeleteNoticeReq dto) {
+        noticeMapper.deleteNotice2(dto);
+    }
 
+    /**
+     * 조회수 증가
+     * @param noticeId
+     */
     public void addViewCntNotice(String noticeId) {
         noticeMapper.addViewCntNotice(noticeId);
     }

@@ -27,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping(value = CommonConstants.API_BO_PREFIX + "/board")
 @Tag(name = "board", description = "게시물 관리 API")
 public class NoticeRestController {
-
     private final NoticeService noticeService;
 
     @Operation(summary = "공지사항 등록", description = "공지사항을 등록한다.")
@@ -38,6 +37,8 @@ public class NoticeRestController {
     )
     @PostMapping(value = "/v1/notice", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createNotice(@Valid @RequestBody NoticeReqDto.CreateNoticeReq dto) {
+        dto.setRgstId("admin");
+        dto.setModiId("admin");
         noticeService.createNotice(dto);
 
         return ResponseEntity.ok(ApiResDto.success());
@@ -52,13 +53,11 @@ public class NoticeRestController {
     @Parameter(name ="page", required = false, description = "페이지", example = "1")
     @Parameter(name ="pageSize", required = false, description = "페이지 사이즈", example = "10")
     @Parameter(name ="searchNotice", required = false, description = "검색 테이블", example = "")
-    @Parameter(name ="srcDbCd", required = false, description = "DB코드(코드 그룹 ID: DBMS)", example = "POSTGRESQL")
     @GetMapping(value = "/v1/notice", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getNotices(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-            @RequestParam(value = "searchNotice", required = false, defaultValue = "") String searchNotice,
-            @RequestParam(value = "srcDbCd", required = false, defaultValue = "") String srcDbCd) {
+            @RequestParam(value = "searchNotice", required = false, defaultValue = "") String searchNotice) {
 
         PagingDto pagingDto = PagingDto.builder()
                 .page(page)
@@ -95,6 +94,7 @@ public class NoticeRestController {
     @Parameter(name ="noticeId", required = true, description = "공지사항 ID", example = "nt23000000005")
     @PutMapping(value = "/v1/notice/{noticeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateNotice(@PathVariable String noticeId, @Valid @RequestBody NoticeReqDto.UpdateNoticeReq dto) {
+        dto.setModiId("admin");
         noticeService.updateNotice(noticeId, dto);
 
         return ResponseEntity.ok(ApiResDto.success());

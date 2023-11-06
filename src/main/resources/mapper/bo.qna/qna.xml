@@ -1,91 +1,20 @@
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cdp.portal.app.facade.qna.mapper.QnaMapper">
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+        <mapper namespace="com.cdp.portal.app.facade.qna.mapper.QnaMapper">
 
-    <select id="selectQnaList" resultType="qnaResDto">
-        select
-        *
-        from (
-        SELECT
-        row_number() over(order by tbq.rgst_dt ASC) as rownum,
-        tbq.qna_id,
-        tbq.cl_code,
-        tbq.sj,
-        tbq.cn,
-        tbq.answ,
-        tbq.answ_rgst_id,
-        (select file_url from t_user where user_id = tbq.answ_rgst_id) as answ_photo_url,
-        tbq.answ_rgst_dt,
-        tbq.bf_qna_id,
-        tbq.use_yn,
-        tbq.del_yn,
-        tbq.rgst_id,
-        tbq.rgst_dt,
-        tbq.modi_id,
-        tbq.modi_dt,
-        tbq.qna_stat,
-        tbq.open_yn,
-        tbq.view_cnt,
-        tu.user_nm as rgst_nm,
-        tu.file_url as rgst_photo_url
-        FROM
-        t_bbs_qna tbq
-        left outer join t_user tu on tbq.rgst_id = tu.user_id
-        WHERE coalesce(tbq.bf_qna_id,'')=''
-        ) a
-<!--        <include refid="where" />-->
-<!--        <include refid="order" />-->
-<!--        <include refid="paging.pagingOffsetSQL" />-->
-    </select>
-
-    <select id="selectQna" resultType="qnaModel" parameterType="qnaModel">
-        select * from
-            (
-                SELECT
-                    tbq.qna_id
-                     , tbq.cl_code
-                     , (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'QNA_CAT' AND CODE_ID = tbq.cl_code) 						AS qna_cate_nm
-                     , tbq.sj 																									AS sj
-                     , lag(tbq.qna_id) over(order by tbq.rgst_dt ASC) 															AS pre_qna_id
-                     , lag(tbq.sj) over(order by tbq.rgst_dt ASC) as pre_sj
-                     , lead(tbq.qna_id) over(order by tbq.rgst_dt ASC) as next_qna_id
-                     , lead(tbq.sj) over(order by tbq.rgst_dt ASC) as next_sj
-                     , tbq.cn
-                     , tbq.answ
-                     , tbq.answ_rgst_id
-                     , tuu.user_nm as answ_rgst_nm
-                     , (select dept_nm from t_dept where dept_code = tuu.dept_code) as answ_dept_nm
-                     , (select pstn_nm from t_pstn where pstn_code = tuu.pstn_code) as answ_pstn_nm
-                     , tbq.answ_rgst_dt
-                     , tbq.bf_qna_id
-                     , tbq.use_yn
-                     , (CASE tbq.USE_YN WHEN 'Y' THEN '게시' ELSE '미게시' END) AS USE_YN_NM
-                     , tbq.rgst_id
-                     , tbq.rgst_dt
-                     , tbq.modi_id
-                     , tbq.modi_dt
-                     , tbq.qna_stat
-                     , (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'QNA_STAT_CODE' AND CODE_ID = tbq.qna_stat) AS qna_stat_nm
-                     , tbq.open_yn
-                     , (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'OPEN_YN' AND CODE_ID = tbq.open_yn) AS open_yn_nm
-                     , tbq.view_cnt
-                     , tu.user_nm as rgst_nm
-                     , (select dept_nm from t_dept where dept_code = tu.dept_code) as rgst_dept_nm
-                     , (select pstn_nm from t_pstn where pstn_code = tu.pstn_code) as rgst_pstn_nm
-                     , (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'COMPANY_CODE' AND CODE_ID = TU.COMPANY_CODE) AS COMPANY_NM
-                     , tu.file_url as rgst_photo_url
-                     , tuu.file_url as answ_photo_url
-                FROM
-                    t_bbs_qna tbq
-                        left outer join t_user tu on tbq.rgst_id = tu.user_id
-                        left outer join t_user tuu on tbq.answ_rgst_id = tuu.user_id
-                        left outer join t_file tf on tu.file_url = tf.file_id
-                where 1=1
-                  and coalesce(tbq.DEL_YN,'N') = 'N'
-                  AND coalesce(tbq.bf_qna_id,'')=''
-            ) z
-        where 1=1
-          and z.qna_id = #{qnaId}
-    </select>
+    <sql id="selectWhere">
+        <where>
+            <if test="search.searchQna != null and search.searchQna != ''">
+                <foreach collection="search.category" item="category" index="index">
+                    <if test="category != null and category == 'sj'">
+                        SJ LIKE '%' || #{search.searchQna} || '%'
+                    </if>
+                    <if test="category != null and category == 'cn'">
+                        OR CN LIKE '%' || #{search.searchQna} || '%'
+                    </if>
+                </foreach>
+            </if>
+        </where>
+    </sql>
 
     <insert id="insertQna" parameterType="qnaModel">
         INSERT INTO T_BBS_QNA (
@@ -129,52 +58,48 @@
         )
     </insert>
 
-    <update id="updateQna" parameterType="qnaModel">
-        UPDATE
-        t_bbs_qna
-        SET
-        sj = #{sj},
-        cn = #{cn},
-        cl_code = #{clCode},
-        <if test="answRgstId != null and !('').equals(answRgstId)">
-            answ_rgst_id = #{answRgstId},
-        </if>
-        <if test="answ != null and !('').equals(answ)">
-            ANSW = #{answ},
-        </if>
-        answ_rgst_dt= now(),
-        use_yn = #{useYn},
-        modi_id = #{modiId},
-        modi_dt = now(),
-        open_yn = #{openYn}
-        WHERE
-        qna_id = #{qnaId}
-    </update>
+    <select id="selectAll" resultType="qnaResDto">
+        select
+        *
+        from (
+        SELECT
+        row_number() over(order by tbq.rgst_dt ASC) as rownum,
+        tbq.qna_id,
+        tbq.cl_code,
+        tbq.sj,
+        tbq.cn,
+        tbq.answ,
+        tbq.answ_rgst_id,
+        (select file_url from t_user where user_id = tbq.answ_rgst_id) as answ_photo_url,
+        tbq.answ_rgst_dt,
+        tbq.bf_qna_id,
+        tbq.use_yn,
+        tbq.del_yn,
+        tbq.rgst_id,
+        tbq.rgst_dt,
+        tbq.modi_id,
+        tbq.modi_dt,
+        tbq.qna_stat,
+        tbq.open_yn,
+        tbq.view_cnt,
+        tu.user_nm as rgst_nm,
+        tu.file_url as rgst_photo_url
+        FROM
+        t_bbs_qna tbq
+        left outer join t_user tu on tbq.rgst_id = tu.user_id
+        WHERE coalesce(tbq.bf_qna_id,'')=''
+        ) a
+        <include refid="selectWhere"/>
+        <include refid="paging.pagingOffsetSQL" />
+    </select>
 
-    <update id="deleteQna" parameterType="qnaModel">
-        UPDATE
-            t_bbs_qna
-        SET
-            del_YN = 'Y',
-            modi_id = #{modiId},
-            modi_dt = now()
-        WHERE
-            qna_id = #{qnaId}
-    </update>
-
-    <delete id="deleteQna2" parameterType="qnaModel">
-        DELETE FROM
-            T_BBS_QNA
-        WHERE
-            QNA_ID = #{qnaId}
-    </delete>
-
-    <update id="addViewCntQna" parameterType="qnaModel">
-        UPDATE
-            T_BBS_QNA
-        SET VIEW_CNT = (COALESCE(VIEW_CNT, 0) + 1)
-        WHERE QNA_ID = #{qnaId}
-    </update>
+    <select id="selectCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM
+        T_BBS_QNA
+        <include refid="selectWhere"/>
+    </select>
 
     <select id="selectByQnaId" parameterType="String" resultType="QnaResDto">
         SELECT QNA_ID,
@@ -197,6 +122,55 @@
         FROM T_BBS_QNA
         WHERE QNA_ID = #{qnaId}
     </select>
+
+    <update id="updateQna" parameterType="qnaModel">
+        UPDATE
+        t_bbs_qna
+        SET
+        sj = #{sj},
+        cn = #{cn},
+        cl_code = #{clCode},
+        <if test="answRgstId != null and !('').equals(answRgstId)">
+            answ_rgst_id = #{answRgstId},
+        </if>
+        <if test="answ != null and !('').equals(answ)">
+            ANSW = #{answ},
+        </if>
+        answ_rgst_dt= now(),
+        use_yn = #{useYn},
+        modi_id = #{modiId},
+        modi_dt = now(),
+        open_yn = #{openYn}
+        WHERE
+        qna_id = #{qnaId}
+    </update>
+
+    <delete id="deleteQna" parameterType="String">
+        DELETE FROM
+            T_BBS_QNA
+        WHERE
+            QNA_ID = #{qnaId}
+    </delete>
+
+    <update id="deleteQna2" parameterType="qnaModel">
+        UPDATE
+            t_bbs_qna
+        SET
+            del_YN = 'Y',
+            modi_id = #{modiId},
+            modi_dt = now()
+        WHERE
+            qna_id = #{qnaId}
+    </update>
+
+
+    <update id="addViewCntQna" parameterType="qnaModel">
+        UPDATE
+            T_BBS_QNA
+        SET VIEW_CNT = (COALESCE(VIEW_CNT, 0) + 1)
+        WHERE QNA_ID = #{qnaId}
+    </update>
+
 
 </mapper>
 

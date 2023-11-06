@@ -1,0 +1,126 @@
+package com.cdp.portal.app.bo.qna.controller;
+
+import com.cdp.portal.app.facade.qna.dto.request.QnaReqDto;
+import com.cdp.portal.app.facade.qna.dto.response.QnaResDto;
+
+import com.cdp.portal.app.facade.qna.service.QnaService;
+import com.cdp.portal.common.constants.CommonConstants;
+import com.cdp.portal.common.dto.PagingDto;
+import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.cdp.portal.common.dto.ApiResDto;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
+import javax.validation.Valid;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping(value = CommonConstants.API_BO_PREFIX + "/board")
+@Tag(name = "qna", description = "QNA 관리 API")
+public class QnaRestController {
+    private final QnaService qnaService;
+
+    @Operation(summary = "Q&A 등록 API", description = "Q&A를 등록한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+    }
+    )
+    @PostMapping(value = "/v1/qna", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createQna(@Valid @RequestBody QnaReqDto.CreateQnaReq dto) {
+        dto.setRgstId("admin");
+        dto.setModiId("admin");
+        qnaService.createQna(dto);
+
+        return ResponseEntity.ok(ApiResDto.success());
+    }
+
+    @Operation(summary = "Q&A 목록 조회", description = "Q&A 목록을 조회한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+        }
+    )
+
+    @Parameter(name ="page", required = false, description = "페이지", example = "1")
+    @Parameter(name ="pageSize", required = false, description = "페이지 사이즈", example = "10")
+    @Parameter(name ="searchQna", required = false, description = "검색 테이블", example = "")
+    @GetMapping(value = "/v1/qna", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getQnas(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+            @RequestParam(value = "searchQna", required = false, defaultValue = "") String searchQna) {
+
+        PagingDto pagingDto = PagingDto.builder()
+                .page(page)
+                .pageSize(pageSize)
+                .build();
+
+        QnaReqDto.SearchQna searchDto = QnaReqDto.SearchQna.builder()
+                .searchQna(searchQna)
+                .build();
+
+        return ResponseEntity.ok(ApiResDto.success(qnaService.getQnas(pagingDto, searchDto)));
+    }
+
+    @Operation(summary = "Q&A 조회", description = "Q&A를 조회한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+    }
+    )
+    @GetMapping(value = "/v1/qna/{qnaId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> selectQna(@PathVariable String qnaId){
+        qnaService.addViewCntQna(qnaId);
+
+        return ResponseEntity.ok(ApiResDto.success(qnaService.getQna(qnaId)));
+    }
+
+    @Operation(summary = "Q&A 수정", description = "Q&A를 수정한다.", tags = { "qna" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+    }
+    )
+    @Parameter(name ="qnaId", required = true, description = "Q&A ID", example = "1")
+    @PutMapping(value = "/v1/qna/{qnaId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateQna(@PathVariable String qnaId, @Valid @RequestBody QnaReqDto.UpdateQnaReq dto) {
+        qnaService.updateQna(qnaId, dto);
+
+        return ResponseEntity.ok(ApiResDto.success());
+    }
+
+    @Operation(summary = "Q&A 삭제", description = "Q&A을 완전 삭제한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = QnaResDto.QnaResDtoResult.class)))
+    }
+    )
+    @DeleteMapping(value = "/v1/qna/{qnaId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteQna(@PathVariable String qnaId) {
+        qnaService.deleteQna(qnaId);
+
+        return ResponseEntity.ok(ApiResDto.success());
+    }
+
+    @Operation(summary = "Q&A SOFT 삭제", description = "Q&A을 SOFT 삭제한다.(del_yn)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = QnaResDto.QnaResDtoResult.class)))
+    }
+    )
+    @PostMapping(value = "/v1/qna/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteQna2(@Valid @RequestBody QnaReqDto.DeleteQnaReq dto) {
+        dto.setModiId("admin"); // 사용자 정보 받아오기 전까지 일단 하드코딩
+        qnaService.deleteQna2(dto);
+
+        return ResponseEntity.ok(ApiResDto.success());
+    }
+}

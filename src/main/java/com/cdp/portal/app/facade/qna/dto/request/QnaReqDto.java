@@ -1,8 +1,7 @@
 package com.cdp.portal.app.facade.qna.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,7 +13,7 @@ public class QnaReqDto {
     @Setter
     public static class CreateQnaReq {
 
-        @Schema(description = "Q&A ID", example = "1", nullable = false)
+        @Schema(description = "Q&A ID", example = "qn23000000002", nullable = false)
         private String qnaId;
         
         @Schema(description = "분류 코드", example = "1", nullable = false)
@@ -39,7 +38,10 @@ public class QnaReqDto {
         @Schema(description = "답변상태", example = "UNREAD", nullable = false)
         private String qnaStat;
 
-        @Schema(description = "수정 ID", example = "admin", nullable = false)
+        @Schema(description = "등록 ID", example = "admin", nullable = false)
+        private String rgstId;
+
+        @Schema(description = "수정자 ID", example = "admin", nullable = false)
         private String modiId;
 
     }
@@ -56,6 +58,7 @@ public class QnaReqDto {
         @NotBlank(message = "제목은 필수 항목입니다.")
         private String sj;
 
+        @NotBlank(message = "내용은 필수 항목입니다.")
         @Schema(description = "내용", example = "내용", nullable = false)
         private String cn;
 
@@ -82,4 +85,16 @@ public class QnaReqDto {
             @Schema(description = "수정자 ID", example = "제목", nullable = false)
             private String modiId;
         }
+
+    @Getter
+    @Schema(description = "Q&A 검색")
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    @Builder
+    public static class SearchQna {
+
+        @Schema(description = "검색", example = "")
+        private String searchQna;
+
+    }
     }

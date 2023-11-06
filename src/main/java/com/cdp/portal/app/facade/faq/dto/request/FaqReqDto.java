@@ -5,8 +5,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
@@ -16,18 +15,27 @@ public class FaqReqDto {
     @Setter
     public static class CreateFaqReq {
 
-        @Schema(description = "FAQ ID", example = "1", nullable = false)
+        @Schema(description = "FAQ ID", example = "fq23000000002", nullable = false)
         private String faqId;
+        @NotBlank(message = "분류 코드는 필수 항목입니다.")
         @Schema(description = "분류 코드", example = "1", nullable = false)
         private String clCode;
 
-        @Schema(description = "질문", example = "1", nullable = false)
+        @NotBlank(message = "질문은 필수 항목입니다.")
+        @Schema(description = "질문", example = "질문", nullable = false)
         private String qstn;
 
-        @Schema(description = "답변", example = "1", nullable = false)
+        @NotBlank(message = "답변은 필수 항목입니다.")
+        @Schema(description = "답변", example = "답변", nullable = false)
         private String answ;
-        @Schema(description = "게시 여부", example = "Y|N", nullable = false)
+        @NotBlank(message = "사용 여부는 필수 항목입니다.")
+        @Schema(description = "사용 여부", example = "Y|N", nullable = false)
         private String useYn;
+        @Schema(description = "등록 ID", example = "admin", nullable = false)
+        private String rgstId;
+
+        @Schema(description = "수정자 ID", example = "admin", nullable = false)
+        private String modiId;
     }
 
     @Getter
@@ -61,7 +69,20 @@ public class FaqReqDto {
         @NotBlank(message = "Faq ID는 필수 항목입니다.")
         private String faqId;
 
-        @Schema(description = "수정자 ID", example = "제목", nullable = false)
+        @Schema(description = "수정자 ID", example = "admin", nullable = false)
+        @NotBlank(message = "수정자 ID는 필수 항목입니다.")
         private String modiId;
+    }
+
+    @Getter
+    @Schema(description = "FAQ 검색")
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    @Builder
+    public static class SearchFaq {
+
+        @Schema(description = "검색", example = "")
+        private String searchFaq;
+
     }
 }
