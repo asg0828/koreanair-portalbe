@@ -16,6 +16,10 @@
         </where>
     </sql>
 
+    <sql id="order">
+        ORDER BY a.rownum ASC
+    </sql>
+
     <insert id="insertNotice" parameterType="NoticeModel">
         INSERT INTO
             T_BBS_NOTICE (
@@ -80,6 +84,7 @@
         LEFT OUTER JOIN T_USER tu ON TBN.RGST_ID = tu.user_id
         ) A
         <include refid="selectWhere"/>
+        <include refid="order"/>
         <include refid="paging.pagingOffsetSQL" />
     </select>
 
