@@ -3,6 +3,7 @@ package com.cdp.portal.app.facade.dataroom.mapper;
 import com.cdp.portal.app.facade.dataroom.dto.request.DataRoomReqDto;
 import com.cdp.portal.app.facade.dataroom.dto.response.DataRoomResDto;
 import com.cdp.portal.app.facade.dataroom.model.DataRoomModel;
+import com.cdp.portal.common.dto.PagingDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,18 +13,20 @@ import java.util.List;
 public interface DataRoomMapper {
 
     /**
+     * 자료실 등록
+     * @param dataRoomModel
+     * @return
+     */
+    Long insertDataRoom(DataRoomModel dataRoomModel);
+
+    /**
      * 자료실 전체 목록
      * @param
      * @return
      */
-    List<DataRoomResDto> selectDataRoomList();
+    List<DataRoomResDto> selectAll(@Param("paging") PagingDto pagingDto, @Param("search") DataRoomReqDto.SearchDataRoom searchDto);
 
-    /**
-     * 자료실 상세
-     * @param dataRoomModel
-     * @return
-     */
-    void selectData(DataRoomModel dataRoomModel);
+    int selectCount(@Param("search") DataRoomReqDto.SearchDataRoom searchDto);
 
     /**
      * 자료실 조회
@@ -31,13 +34,6 @@ public interface DataRoomMapper {
      * @return
      */
     DataRoomResDto selectByDataId(@Param("dataId") String dataId);
-
-    /**
-     * 자료실 등록
-     * @param dataRoomModel
-     * @return
-     */
-    Long insertDataRoom(DataRoomModel dataRoomModel);
 
 
     /**
@@ -49,10 +45,10 @@ public interface DataRoomMapper {
 
     /**
      * 자료 삭제
-     * @param dto
+     * @param dataId
      * @return
      */
-    void deleteDataRoom(DataRoomReqDto.DeleteDataRoomReq dto);
+    void deleteDataRoom(String dataId);
     void deleteDataRoom2(DataRoomReqDto.DeleteDataRoomReq dto);
 
     /**

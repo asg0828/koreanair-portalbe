@@ -4,11 +4,10 @@ import com.cdp.portal.app.facade.dataroom.service.DataRoomService;
 import com.cdp.portal.app.facade.dataroom.dto.response.DataRoomResDto;
 import com.cdp.portal.app.facade.dataroom.dto.request.DataRoomReqDto;
 
-import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
 import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
-import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.ApiResDto;
+import com.cdp.portal.common.dto.PagingDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,23 +28,50 @@ import javax.validation.Valid;
 @RequestMapping(value = CommonConstants.API_BO_PREFIX + "/board")
 @Tag(name = "board", description = "자료실 관리 API")
 public class DataRoomRestController {
-
-    @Resource
-    private IdUtil idUtil;
     private final DataRoomService dataRoomService;
 
-    @Operation(summary = "자료실 전체 목록 조회 API", description = "자료실 전체 목록을 조회한다.")
+    @Operation(summary = "자료실 등록 API", description = "자료를 등록한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = DataRoomResDto.DataRoomResDtoResult.class)))
     }
     )
+    @PostMapping(value = "/v1/dataroom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createData(@Valid @RequestBody DataRoomReqDto.CreateDataRoomReq dto) {
+        dto.setRgstId("admin");
+        dto.setModiId("admin");
+        dataRoomService.createData(dto);
 
-    @GetMapping(value = "/v1/dataroom/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDataRooms() {
-        return ResponseEntity.ok(ApiResDto.success(dataRoomService.getDataRoomAllList()));
+        return ResponseEntity.ok(ApiResDto.success());
     }
 
-    @Operation(summary = "자료실 상세 조회 API", description = "자료실 상세를 조회한다.")
+    @Operation(summary = "자료실 목록 조회", description = "자료실 목록을 조회한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+    }
+    )
+    @Parameter(name ="page", required = false, description = "페이지", example = "1")
+    @Parameter(name ="pageSize", required = false, description = "페이지 사이즈", example = "10")
+    @Parameter(name ="searchDataroom", required = false, description = "검색", example = "")
+    @GetMapping(value = "/v1/dataroom", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getDataRooms(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+            @RequestParam(value = "searchDataRoom", required = false, defaultValue = "") String searchDataRoom) {
+
+        PagingDto pagingDto = PagingDto.builder()
+                .page(page)
+                .pageSize(pageSize)
+                .build();
+
+        DataRoomReqDto.SearchDataRoom searchDto = DataRoomReqDto.SearchDataRoom.builder()
+                .searchDataRoom(searchDataRoom)
+                .build();
+
+        return ResponseEntity.ok(ApiResDto.success(dataRoomService.getDataRooms(pagingDto,searchDto)));
+    }
+
+    @Operation(summary = "자료실 조회", description = "자료실을 조회한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = DataRoomResDto.DataRoomResDtoResult.class)))
     }
@@ -55,21 +81,6 @@ public class DataRoomRestController {
         dataRoomService.addViewCntData(dataId);
 
         return ResponseEntity.ok(ApiResDto.success(dataRoomService.getData(dataId)));
-    }
-
-    @Operation(summary = "자료실 등록 API", description = "자료를 등록한다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = DataRoomResDto.DataRoomResDtoResult.class)))
-    }
-    )
-    @PostMapping(value = "/v1/dataroom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createData(@Valid @RequestBody DataRoomReqDto.CreateDataRoomReq dto) {
-        String dataId = idUtil.getDataId();
-        dto.setDataId(dataId);
-        dto.setModiId("admin");
-        dataRoomService.createData(dto);
-
-        return ResponseEntity.ok(ApiResDto.success(dataId));
     }
 
     @Operation(summary = "자료실 수정", description = "자료를 수정한다.", tags = { "dataroom" })
@@ -85,26 +96,26 @@ public class DataRoomRestController {
         return ResponseEntity.ok(ApiResDto.success());
     }
 
-    @Operation(summary = "자료실 SOFT 삭제 API", description = "공지사항을 SOFT 삭제한다.(del_yn)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = NoticeResDto.NoticeResDtoResult.class)))
-    }
-    )
-    @PostMapping(value = "/v1/dataroom/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteData(@Valid @RequestBody DataRoomReqDto.DeleteDataRoomReq dto) {
-        dto.setModiId("admin"); // 사용자 정보 받아오기 전까지 일단 하드코딩
-        dataRoomService.deleteDataRoom(dto);
-
-        return ResponseEntity.ok(ApiResDto.success());
-    }
-
     @Operation(summary = "자료실 삭제 API", description = "자료를 완전 삭제한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = NoticeResDto.NoticeResDtoResult.class)))
     }
     )
-    @DeleteMapping(value = "/v1/dataroom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteDataRoom2(@Valid @RequestBody DataRoomReqDto.DeleteDataRoomReq dto) {
+    @DeleteMapping(value = "/v1/dataroom/{dataId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteDataRoom(@PathVariable String dataId) {
+        dataRoomService.deleteDataRoom(dataId);
+
+        return ResponseEntity.ok(ApiResDto.success());
+    }
+
+    @Operation(summary = "자료실 SOFT 삭제 API", description = "공지사항을 SOFT 삭제한다.(del_yn)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = NoticeResDto.NoticeResDtoResult.class)))
+    }
+    )
+    @PostMapping(value = "/v1/dataroom/delete/{dataId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteData(@Valid @RequestBody DataRoomReqDto.DeleteDataRoomReq dto) {
+        dto.setModiId("admin");
         dataRoomService.deleteDataRoom2(dto);
 
         return ResponseEntity.ok(ApiResDto.success());

@@ -32,5 +32,6 @@ public class DataRoomModel {
     private Timestamp modiDt;
     @Schema(description = "삭제여부", example = "Y|N")
     private String delYn;
-
+    @Schema(description = "화면 순번")
+    private int rownum;
 }

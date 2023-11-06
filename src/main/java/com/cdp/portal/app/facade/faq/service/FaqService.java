@@ -5,54 +5,38 @@ import java.util.Objects;
 
 import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
 import com.cdp.portal.app.facade.faq.model.FaqModel;
+import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
+import com.cdp.portal.app.facade.faq.model.FaqModel;
 import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
-import com.cdp.portal.common.IdUtil;
+import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
+import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
+import com.cdp.portal.app.facade.faq.model.FaqModel;
+import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
+import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
+import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
+import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
+import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
 import com.cdp.portal.app.facade.faq.mapper.FaqMapper;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FaqService {
 
     private final FaqMapper faqMapper;
-    private final IdUtil idUtil;
-
-    /**
-     * Faq 등록
-     * @param dto
-     */
-    @Transactional
-    public void createFaq(FaqReqDto.CreateFaqReq dto) {
-
-        final String faqId = idUtil.getFaqId();
-        log.debug("##### createFaq faqId: {}", faqId);
-
-        FaqModel faqModel = FaqModel.builder()
-                .faqId(faqId)
-                .clCode(dto.getClCode())
-                .qstn(dto.getQstn())
-                .answ(dto.getAnsw())
-                .useYn(dto.getUseYn())
-                .rgstId(dto.getRgstId()) // TODO: 로그인한 사용자 세팅
-                .modiId(dto.getModiId())
-                .build();
-
-        faqMapper.insertFaq(faqModel);
-    }
 
     /**
      * FAQ 목록 조회
      * @param
      * @return
      */
+
     public FaqResDto.FaqsResult getFaqs (PagingDto pagingDto, FaqReqDto.SearchFaq searchDto) {
         pagingDto.setPaging(faqMapper.selectCount(searchDto));
 
@@ -64,12 +48,30 @@ public class FaqService {
     }
 
     /**
-     * FAQ 조회
+     * FAQ 상세조회
      * @param faqId
      * @return
      */
     public FaqResDto getFaq(String faqId) {
         return faqMapper.selectByFaqId(faqId);
+    }
+
+    /**
+     * 공지사항 등록
+     * @param dto
+     */
+    public void createFaq(FaqReqDto.CreateFaqReq dto) {
+        FaqModel faqModel = FaqModel.builder()
+                .faqId(dto.getFaqId())
+                .clCode(dto.getClCode())
+                .qstn(dto.getQstn())
+                .answ(dto.getAnsw())
+                .useYn(dto.getUseYn())
+                .rgstId("admin")
+                .modiId("admin")
+                .build();
+
+        faqMapper.insertFaq(faqModel);
     }
 
     /**
@@ -79,7 +81,6 @@ public class FaqService {
      */
     public void updateFaq(final String faqId, FaqReqDto.UpdateFaqReq dto) {
         FaqResDto faqResDto = this.getFaq(faqId);
-
         if (Objects.isNull(faqResDto)) {
             throw CdpPortalError.CODE_NOT_FOUND.exception(faqId);
         }
@@ -90,15 +91,12 @@ public class FaqService {
                 .qstn(dto.getQstn())
                 .answ(dto.getAnsw())
                 .useYn(dto.getUseYn())
-                .modiId(dto.getModiId())    // TODO: 로그인한 사용자 세팅
+                .modiId("admin")    // TODO: 로그인한 사용자 세팅
                 .build();
 
         faqMapper.updateFaq(faqModel);
     }
-    /**
-     * Faq 삭제
-     * @param faqId
-     */
+
     public void deleteFaq(String faqId) {
         faqMapper.deleteFaq(faqId);
     }

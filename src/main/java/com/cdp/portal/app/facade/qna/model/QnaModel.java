@@ -42,4 +42,6 @@ public class QnaModel {
     private String qnaStat;
     private String openYn;
     private int viewCnt;
+    @Schema(description = "화면 순번")
+    private int rownum;
 }

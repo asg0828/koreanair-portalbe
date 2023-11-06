@@ -46,6 +46,8 @@ public class FaqModel {
     private LocalDateTime modiDt;
     @Schema(description = "뷰 건수")
     private int viewCnt;
+    @Schema(description = "화면 순번")
+    private int rownum;
 
     //faq특성상 목록에서 각 글의 파일목록도 같이 보여줘야 함
 //    private List<FileModel> fileList;

@@ -1,8 +1,7 @@
 package com.cdp.portal.app.facade.dataroom.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,9 +21,11 @@ public class DataRoomReqDto {
         private String cn;
         @Schema(description = "사용여부", example = "Y|N", nullable = false)
         private String useYn;
+        @Schema(description = "등록자 ID", example = "admin", nullable = false)
+        private String rgstId;
         @Schema(description = "수정자 ID", example = "admin", nullable = false)
         private String modiId;
-        
+
 
     }
 
@@ -44,6 +45,9 @@ public class DataRoomReqDto {
         @NotBlank(message = "사용여부는 필수 항목입니다.")
         private String useYn;
 
+        @Schema(description = "수정자 ID", example = "admin", nullable = false)
+        private String modiId;
+
 
     }
 
@@ -56,5 +60,17 @@ public class DataRoomReqDto {
 
         @Schema(description = "수정자 ID", example = "제목", nullable = false)
         private String modiId;
+    }
+
+    @Getter
+    @Schema(description = "자료실 검색")
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    @Builder
+    public static class SearchDataRoom {
+
+        @Schema(description = "검색", example = "")
+        private String searchDataRoom;
+
     }
 }

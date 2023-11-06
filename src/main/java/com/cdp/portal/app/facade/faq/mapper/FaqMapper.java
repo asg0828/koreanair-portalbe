@@ -5,6 +5,8 @@ import java.util.List;
 import com.cdp.portal.app.facade.faq.model.FaqModel;
 import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
 import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
+import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
+import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 import com.cdp.portal.common.dto.PagingDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -13,19 +15,14 @@ import org.apache.ibatis.annotations.Param;
 public interface FaqMapper {
 
     /**
-     * FAQ 등록
-     * @param faqModel
-     * @return
-     */
-    Long insertFaq(FaqModel faqModel);
-
-    /**
      * FAQ 전체 목록
      * @param
      * @return
      */
-    List<FaqResDto> selectAll();
 
+    List<FaqResDto> selectAll(@Param("paging") PagingDto pagingDto, @Param("search") FaqReqDto.SearchFaq searchDto);
+
+    int selectCount(@Param("search") FaqReqDto.SearchFaq searchDto);
     /**
      * FAQ 조회
      * @param faqId
@@ -34,9 +31,12 @@ public interface FaqMapper {
      */
     FaqResDto selectByFaqId(@Param("faqId") String faqId);
 
-    List<FaqResDto> selectAll(@Param("paging") PagingDto pagingDto, @Param("search") FaqReqDto.SearchFaq searchDto);
-
-    int selectCount(@Param("search") FaqReqDto.SearchFaq searchDto);
+    /**
+     * FAQ 등록
+     * @param faqModel
+     * @return
+     */
+    Long insertFaq(FaqModel faqModel);
 
     /**
      * FAQ 수정
@@ -53,10 +53,5 @@ public interface FaqMapper {
     void deleteFaq(String faqId);
     void deleteFaq2(FaqReqDto.DeleteFaqReq dto);
 
-    /**
-     * 조회수 증가
-     * @param faqId
-     * @return
-     */
     void addViewCntFaq(String faqId);
 }

@@ -5,20 +5,43 @@ import com.cdp.portal.app.facade.dataroom.dto.response.DataRoomResDto;
 import com.cdp.portal.app.facade.dataroom.mapper.DataRoomMapper;
 import com.cdp.portal.app.facade.dataroom.model.DataRoomModel;
 
-import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
-import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
-import com.cdp.portal.app.facade.notice.model.NoticeModel;
+import com.cdp.portal.common.IdUtil;
+import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DataRoomService {
     private final DataRoomMapper dataRoomMapper;
+    private final IdUtil idUtil;
+
+    /**
+     * 자료실 등록
+     * @param dto
+     */
+    public void createData(DataRoomReqDto.CreateDataRoomReq dto) {
+
+        final String dataId = idUtil.getDataId();
+
+        DataRoomModel dataRoomModel = DataRoomModel.builder()
+                .dataId(dataId)
+                .sj(dto.getSj())
+                .cn(dto.getCn())
+                .useYn(dto.getUseYn())
+                .rgstId(dto.getRgstId())
+                .modiId(dto.getModiId())
+                .build();
+
+        dataRoomMapper.insertDataRoom(dataRoomModel);
+    }
 
     /**
      * 자료실 전체 목록 조회
@@ -26,21 +49,18 @@ public class DataRoomService {
      * @return
      */
 
-    public List<DataRoomResDto> getDataRoomAllList() {
-        return dataRoomMapper.selectDataRoomList();
+    public DataRoomResDto.DataRoomsResult getDataRooms(PagingDto pagingDto, DataRoomReqDto.SearchDataRoom searchDto) {
+        pagingDto.setPaging(dataRoomMapper.selectCount(searchDto));
+
+        return DataRoomResDto.DataRoomsResult.builder()
+                .page(pagingDto)
+                .search(searchDto)
+                .contents(dataRoomMapper.selectAll(pagingDto,searchDto))
+                .build();
     }
 
     /**
-     * 자료실 상세 조회
-     * @param DataRoomModel
-     * @return
-     */
-    public void selectData(DataRoomModel dataRoomModel){
-        dataRoomMapper.selectData(dataRoomModel);
-    }
-
-    /**
-     * 자료실 상세조회 v2
+     * 자료실 조회
      * @param dataId
      * @return
      */
@@ -49,29 +69,14 @@ public class DataRoomService {
     }
 
     /**
-     * 자료실 등록
-     * @param dto
-     */
-    public void createData(DataRoomReqDto.CreateDataRoomReq dto) {
-        DataRoomModel dataRoomModel = DataRoomModel.builder()
-                .dataId(dto.getDataId())
-                .sj(dto.getSj())
-                .cn(dto.getCn())
-                .useYn(dto.getUseYn())
-                .rgstId("admin")
-                .modiId("admin")
-                .build();
-
-        dataRoomMapper.insertDataRoom(dataRoomModel);
-    }
-
-    /**
      * 자료실 수정
      * @param dataId
      * @param dto
      */
+    @Transactional
     public void updateDataRoom(final String dataId, DataRoomReqDto.UpdateDataRoomReq dto) {
         DataRoomResDto dataRoomResDto = this.getData(dataId);
+
         if (Objects.isNull(dataRoomResDto)) {
             throw CdpPortalError.CODE_NOT_FOUND.exception(dataId);
         }
@@ -81,14 +86,18 @@ public class DataRoomService {
                 .sj(dto.getSj())
                 .cn(dto.getCn())
                 .useYn(dto.getUseYn())
-                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .modiId(dto.getModiId())    // TODO: 로그인한 사용자 세팅
                 .build();
 
         dataRoomMapper.updateDataRoom(dataRoomModel);
     }
 
-    public void deleteDataRoom(DataRoomReqDto.DeleteDataRoomReq dto) {
-        dataRoomMapper.deleteDataRoom(dto);
+    /**
+     * 자료실 삭제
+     * @param dataId
+     */
+    public void deleteDataRoom(String dataId) {
+        dataRoomMapper.deleteDataRoom(dataId);
     }
     public void deleteDataRoom2(DataRoomReqDto.DeleteDataRoomReq dto) {
         dataRoomMapper.deleteDataRoom2(dto);

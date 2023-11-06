@@ -16,6 +16,10 @@
         </where>
     </sql>
 
+    <sql id="order">
+        ORDER BY a.rownum ASC
+    </sql>
+
     <insert id="insertFaq" parameterType="faqModel">
         INSERT INTO t_bbs_faq (
             faq_id,
@@ -51,6 +55,7 @@
         *
         FROM (
         SELECT
+        row_number() over(order by faq.rgst_dt ASC) as rownum,
         faq.faq_id,
         faq.cl_code,
         faq.qstn,
@@ -69,6 +74,7 @@
         LEFT OUTER JOIN T_USER tu ON faq.RGST_ID = tu.user_id
         ) A
         <include refid="selectWhere"/>
+        <include refid="order"/>
         <include refid="paging.pagingOffsetSQL" />
     </select>
 

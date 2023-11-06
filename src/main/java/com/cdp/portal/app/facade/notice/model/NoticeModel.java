@@ -55,4 +55,6 @@ public class NoticeModel {
     private Timestamp modiDt;
     @Schema(description = "삭제 여부")
     private String delYn;
+    @Schema(description = "화면 순번")
+    private int rownum;
 }
