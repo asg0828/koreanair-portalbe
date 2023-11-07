@@ -81,8 +81,10 @@ public class FaqReqDto {
     @Builder
     public static class SearchFaq {
 
-        @Schema(description = "검색", example = "")
-        private String searchFaq;
+        @Schema(description = "검색 테이블", example = "")
+        private String searchTable;
 
+        @Schema(description = "검색 조건", example = "")
+        private String[] searchConditions;
     }
 }

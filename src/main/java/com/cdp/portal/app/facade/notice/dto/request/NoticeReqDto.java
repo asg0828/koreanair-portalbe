@@ -109,8 +109,10 @@ public class NoticeReqDto {
     @Builder
     public static class SearchNotice {
 
-        @Schema(description = "검색", example = "")
-        private String searchNotice;
+        @Schema(description = "검색 테이블", example = "")
+        private String searchTable;
 
+        @Schema(description = "검색 조건", example = "")
+        private String[] searchConditions;
     }
 }

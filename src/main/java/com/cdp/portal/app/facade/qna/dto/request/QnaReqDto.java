@@ -93,8 +93,10 @@ public class QnaReqDto {
     @Builder
     public static class SearchQna {
 
-        @Schema(description = "검색", example = "")
-        private String searchQna;
+        @Schema(description = "검색 테이블", example = "")
+        private String searchTable;
 
+        @Schema(description = "검색 조건", example = "")
+        private String[] searchConditions;
     }
     }
