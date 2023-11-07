@@ -3,15 +3,26 @@
 
     <sql id="selectWhere">
         <where>
-            <if test="search.searchQna != null and search.searchQna != ''">
-                <foreach collection="search.category" item="category" index="index">
-                    <if test="category != null and category == 'sj'">
-                        SJ LIKE '%' || #{search.searchQna} || '%'
-                    </if>
-                    <if test="category != null and category == 'cn'">
-                        OR CN LIKE '%' || #{search.searchQna} || '%'
-                    </if>
-                </foreach>
+            DEL_YN = 'N'
+            <if test="search != null">
+                <if test="search.searchTable != null and search.searchTable != ''">
+                    AND (
+                    <foreach collection="search.searchConditions" item="condition" separator="OR">
+                        <choose>
+                            <when test="condition == 'all'">
+                                (SJ LIKE '%' || #{search.searchTable} || '%'
+                                OR CN LIKE '%' || #{search.searchTable} || '%')
+                            </when>
+                            <when test="condition == 'sj'">
+                                SJ LIKE '%' || #{search.searchTable} || '%'
+                            </when>
+                            <when test="condition == 'cn'">
+                                CN LIKE '%' || #{search.searchTable} || '%'
+                            </when>
+                        </choose>
+                    </foreach>
+                    )
+                </if>
             </if>
         </where>
     </sql>

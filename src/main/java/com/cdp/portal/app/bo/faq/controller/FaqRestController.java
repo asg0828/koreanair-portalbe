@@ -52,12 +52,14 @@ public class FaqRestController {
     )
     @Parameter(name = "page", required = false, description = "페이지", example = "1")
     @Parameter(name = "pageSize", required = false, description = "페이지 사이즈", example = "10")
-    @Parameter(name = "searchFaq", required = false, description = "검색", example = "")
+    @Parameter(name ="searchTable", required = false, description = "검색 테이블", example = "")
+    @Parameter(name ="searchConditions", required = false, description = "검색 조건", example = "")
     @GetMapping(value = "/v1/faq", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getFaqs(
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-            @RequestParam(value = "searchFaq", required = false, defaultValue = "") String searchFaq) {
+            @RequestParam(value = "searchTable", required = false, defaultValue = "") String searchTable,
+            @RequestParam(value = "searchConditions", required = false, defaultValue = "") String[] searchConditions) {
 
         PagingDto pagingDto = PagingDto.builder()
                 .page(page)
@@ -65,7 +67,8 @@ public class FaqRestController {
                 .build();
 
         FaqReqDto.SearchFaq searchDto = FaqReqDto.SearchFaq.builder()
-                .searchFaq(searchFaq)
+                .searchTable(searchTable)
+                .searchConditions(searchConditions)
                 .build();
 
         return ResponseEntity.ok(ApiResDto.success(faqService.getFaqs(pagingDto,searchDto)));

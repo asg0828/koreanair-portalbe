@@ -69,8 +69,11 @@ public class DataRoomReqDto {
     @Builder
     public static class SearchDataRoom {
 
-        @Schema(description = "검색", example = "")
-        private String searchDataRoom;
+        @Schema(description = "검색 테이블", example = "")
+        private String searchTable;
+
+        @Schema(description = "검색 조건", example = "")
+        private String[] searchConditions;
 
     }
 }

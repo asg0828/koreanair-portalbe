@@ -54,12 +54,14 @@ public class QnaRestController {
 
     @Parameter(name ="page", required = false, description = "페이지", example = "1")
     @Parameter(name ="pageSize", required = false, description = "페이지 사이즈", example = "10")
-    @Parameter(name ="searchQna", required = false, description = "검색 테이블", example = "")
+    @Parameter(name ="searchTable", required = false, description = "검색 테이블", example = "")
+    @Parameter(name ="searchConditions", required = false, description = "검색 조건", example = "")
     @GetMapping(value = "/v1/qna", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getQnas(
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-            @RequestParam(value = "searchQna", required = false, defaultValue = "") String searchQna) {
+            @RequestParam(value = "searchTable", required = false, defaultValue = "") String searchTable,
+            @RequestParam(value = "searchConditions", required = false, defaultValue = "") String[] searchConditions) {
 
         PagingDto pagingDto = PagingDto.builder()
                 .page(page)
@@ -67,7 +69,8 @@ public class QnaRestController {
                 .build();
 
         QnaReqDto.SearchQna searchDto = QnaReqDto.SearchQna.builder()
-                .searchQna(searchQna)
+                .searchTable(searchTable)
+                .searchConditions(searchConditions)
                 .build();
 
         return ResponseEntity.ok(ApiResDto.success(qnaService.getQnas(pagingDto, searchDto)));
