@@ -52,12 +52,14 @@ public class NoticeRestController {
     )
     @Parameter(name ="page", required = false, description = "페이지", example = "1")
     @Parameter(name ="pageSize", required = false, description = "페이지 사이즈", example = "10")
-    @Parameter(name ="searchNotice", required = false, description = "검색 테이블", example = "")
+    @Parameter(name ="searchTable", required = false, description = "검색 테이블", example = "")
+    @Parameter(name ="searchConditions", required = false, description = "검색 조건", example = "")
     @GetMapping(value = "/v1/notice", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getNotices(
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-            @RequestParam(value = "searchNotice", required = false, defaultValue = "") String searchNotice) {
+            @RequestParam(value = "searchTable", required = false, defaultValue = "") String searchTable,
+            @RequestParam(value = "searchConditions", required = false, defaultValue = "") String[] searchConditions) {
 
         PagingDto pagingDto = PagingDto.builder()
                 .page(page)
@@ -65,7 +67,8 @@ public class NoticeRestController {
                 .build();
 
         NoticeReqDto.SearchNotice searchDto = NoticeReqDto.SearchNotice.builder()
-                .searchNotice(searchNotice)
+                .searchTable(searchTable)
+                .searchConditions(searchConditions)
                 .build();
 
         return ResponseEntity.ok(ApiResDto.success(noticeService.getNotices(pagingDto,searchDto)));
@@ -77,7 +80,7 @@ public class NoticeRestController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
     }
     )
-    @Parameter(name ="noticeId", required = true, description = "공지사항ID", example = "nt23000000005")
+    @Parameter(name ="noticeId" , required = true, description = "공지사항ID", example = "nt23000000005")
     @GetMapping(value = "/v1/notice/{noticeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getNotice(@PathVariable String noticeId){
         noticeService.addViewCntNotice(noticeId);

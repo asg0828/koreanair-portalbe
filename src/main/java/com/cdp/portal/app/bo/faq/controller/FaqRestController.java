@@ -55,7 +55,7 @@ public class FaqRestController {
     @Parameter(name = "searchFaq", required = false, description = "검색", example = "")
     @GetMapping(value = "/v1/faq", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getFaqs(
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "searchFaq", required = false, defaultValue = "") String searchFaq) {
 

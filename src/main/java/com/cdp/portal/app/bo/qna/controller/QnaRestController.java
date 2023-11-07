@@ -57,7 +57,7 @@ public class QnaRestController {
     @Parameter(name ="searchQna", required = false, description = "검색 테이블", example = "")
     @GetMapping(value = "/v1/qna", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getQnas(
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "searchQna", required = false, defaultValue = "") String searchQna) {
 

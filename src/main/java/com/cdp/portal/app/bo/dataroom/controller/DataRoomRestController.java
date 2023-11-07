@@ -55,7 +55,7 @@ public class DataRoomRestController {
     @Parameter(name ="searchDataroom", required = false, description = "검색", example = "")
     @GetMapping(value = "/v1/dataroom", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDataRooms(
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
             @RequestParam(value = "searchDataRoom", required = false, defaultValue = "") String searchDataRoom) {
 
