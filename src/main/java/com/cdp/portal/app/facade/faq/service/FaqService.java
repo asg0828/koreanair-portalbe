@@ -15,8 +15,10 @@ import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
 import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
 import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
 import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
+import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +26,13 @@ import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
 import com.cdp.portal.app.facade.faq.mapper.FaqMapper;
 
 import lombok.RequiredArgsConstructor;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FaqService {
 
     private final FaqMapper faqMapper;
+    private final IdUtil idUtil;
 
     /**
      * FAQ 목록 조회
@@ -61,14 +64,18 @@ public class FaqService {
      * @param dto
      */
     public void createFaq(FaqReqDto.CreateFaqReq dto) {
+
+        final String faqId = idUtil.getFaqId();
+        log.debug("##### createFaq faqId: {}", faqId);
+
         FaqModel faqModel = FaqModel.builder()
-                .faqId(dto.getFaqId())
+                .faqId(faqId)
                 .clCode(dto.getClCode())
                 .qstn(dto.getQstn())
                 .answ(dto.getAnsw())
                 .useYn(dto.getUseYn())
-                .rgstId("admin")
-                .modiId("admin")
+                .rgstId(dto.getRgstId())
+                .modiId(dto.getModiId()) // TODO: 로그인한 사용자 세팅
                 .build();
 
         faqMapper.insertFaq(faqModel);
