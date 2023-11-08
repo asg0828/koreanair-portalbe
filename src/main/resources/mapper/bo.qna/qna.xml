@@ -96,7 +96,8 @@
         tbq.qna_stat,
         tbq.open_yn,
         tbq.view_cnt,
-        tu.user_nm as rgst_nm
+        tu.user_nm as rgst_nm,
+        (SELECT DEPT_NM FROM T_DEPT WHERE DEPT_CODE = TU.DEPT_CODE) AS RGST_DEPT_NM
         FROM
         t_bbs_qna tbq
         left outer join t_user tu on tbq.rgst_id = tu.user_id
@@ -104,7 +105,7 @@
         ) a
         <include refid="selectWhere"/>
         <include refid="order"/>
-        <include refid="paging.pagingOffsetSQL" />
+        <include refid="paging.pagingOffsetSQL"/>
     </select>
 
     <select id="selectCount" resultType="int">

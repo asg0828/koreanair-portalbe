@@ -48,6 +48,10 @@ public class FaqModel {
     private int viewCnt;
     @Schema(description = "화면 순번")
     private int rownum;
+    @Schema(description = "등록자 이름")
+    private String rgstNm;
+    @Schema(description = "부서 이름")
+    private String rgstDeptNm;
 
     //faq특성상 목록에서 각 글의 파일목록도 같이 보여줘야 함
 //    private List<FileModel> fileList;
