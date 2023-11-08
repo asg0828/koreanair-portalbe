@@ -176,5 +176,15 @@ public class IdUtil {
 	public String getStandardTerms() {
 		return service.getId(CommonConstants.ID.STANDARD_TERMS);
 	}
+	
+	/**
+	 * Feature ID
+	 * @return
+	 */
+	public String getFeatureId() {
+        return service.getId(CommonConstants.ID.FEATURE_ID);
+    }
+	
+	
 
 }

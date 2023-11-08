@@ -30,7 +30,12 @@ public enum CdpPortalError {
     
     // biz-meta
     MTS_EN_NM_DUPLICATED("E0201", "(mtsEnNm: {0}) is duplicated", HttpStatus.BAD_REQUEST),
-    TABLE_SPEC_NOT_FOUND("E0202", "(mtsId: {0}) is not found", HttpStatus.NOT_FOUND)
+    TABLE_SPEC_NOT_FOUND("E0202", "(mtsId: {0}) is not found", HttpStatus.NOT_FOUND),
+    
+    // feature
+    //FEATURE_NM_DUPLICATED("E0301", "(Feature: {0}) is already exist", HttpStatus.BAD_REQUEST),
+    FEATURE_NM_DUPLICATED("E0301", "Feature명({0})은 이미 등록되어있습니다)", HttpStatus.BAD_REQUEST),
+    FEATURE_NOT_FOUND("E0302", "(featureId: {0}) is not found", HttpStatus.NOT_FOUND),
     ;
     
     private String code;

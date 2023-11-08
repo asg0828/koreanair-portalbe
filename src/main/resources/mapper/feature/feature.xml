@@ -1,0 +1,104 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.feature.mapper.FeatureMapper">
+
+	<insert id="insert" parameterType="FeatureModel">
+		INSERT INTO T_FEATURE (
+			FEATURE_ID
+			, FEATURE_TYP
+			, FEATURE_SE
+			, FEATURE_KO_NM
+			, FEATURE_EN_NM
+			, CALC_UNT
+			, FEATURE_DEF
+			, FEATURE_FM
+			, ENR_USER_ID
+			, FEATURE_REL_TB
+			, FEATURE_DSC
+			, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+		) VALUES (
+			#{featureId}
+			, #{featureTyp}
+			, #{featureSe}
+			, #{featureKoNm}
+			, #{featureEnNm}
+			, #{calcUnt}
+			, #{featureDef}
+			, #{featureFm}
+			, #{enrUserId}
+			, #{featureRelTb}
+			, #{featureDsc}
+			, #{rgstId}
+			, now()
+			, #{modiId}
+			, now()
+		)
+	</insert>
+	
+	<select id="isExistsByFeatureKoNm" parameterType="String" resultType="Boolean">
+		SELECT EXISTS 
+			(
+				SELECT 1
+				FROM 
+					T_FEATURE
+				WHERE
+					FEATURE_KO_NM = #{featureKoNm}
+				AND DEL_YN = 'N'
+				LIMIT 1
+			)
+	</select>
+	
+	<select id="isExistsByFeatureEnNm" parameterType="String" resultType="Boolean">
+		SELECT EXISTS 
+			(
+				SELECT 1
+				FROM 
+					T_FEATURE
+				WHERE
+					FEATURE_EN_NM = #{featureEnNm}
+				AND DEL_YN = 'N'
+				LIMIT 1
+			)
+	</select>
+	
+	<select id="selectById" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
+		SELECT
+			F.FEATURE_ID
+			, F.FEATURE_TYP
+			, C.CODE_NM AS featureTypNm
+			, SE.SE_GRP_ID AS featureSeGrp
+			, F.FEATURE_SE
+			, SE.SE_NM AS featureSeNm
+			, F.FEATURE_KO_NM
+			, F.FEATURE_EN_NM
+			, F.CALC_UNT
+			, F.FEATURE_DEF
+			, F.FEATURE_FM
+			, F.ENR_USER_ID
+			, F.ENR_DEPT_CODE
+			, D.DEPT_NM AS enrDeptNm
+			, U.USER_NM AS enrUserNm
+			, F.FEATURE_REL_TB
+			, F.FEATURE_DSC
+			, F.DEL_YN
+			, F.RGST_ID
+			, F.RGST_DT
+			, F.MODI_ID
+			, F.MODI_DT
+		FROM
+			T_FEATURE F
+			LEFT JOIN T_USER U
+				ON F.ENR_USER_ID = U.USER_ID
+			LEFT JOIN T_DEPT D
+				ON F.ENR_DEPT_CODE = D.DEPT_CODE
+			LEFT JOIN T_FEATURE_SE SE 
+				ON F.FEATURE_SE = SE.SE_ID
+			LEFT JOIN T_CODE C 
+				ON F.FEATURE_TYP = C.CODE_ID
+		WHERE
+			F.FEATURE_ID = #{featureId}
+	</select>
+
+</mapper>
