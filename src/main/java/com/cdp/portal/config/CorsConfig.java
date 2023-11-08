@@ -10,7 +10,7 @@ public class CorsConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 
-		String[] allowedOrigins = { "http://localhost:3000", "https://localhost", "https://newstpcdev.koreanair.com",
+		String[] allowedOrigins = { "http://localhost:3000", "https://localhost", "https://cdpdev.koreanair.com",
 				"https://newstpcstg.koreanair.com", "https://newstpc.koreanair.com", "https://stpcdev.koreanair.com", "https://stpcstg.koreanair.com",
 				"https://stpc.koreanair.com", "https://apidev.koreanair.com", "https://apistg.koreanair.com", "https://api.koreanair.com",
 				"https://apim.koreanair.com", "https://apim.koreanair.com:3001" };
