@@ -87,12 +87,14 @@ public class DataRoomRestController {
 
     @Operation(summary = "자료실 수정", description = "자료를 수정한다.", tags = { "dataroom" })
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
     }
     )
     @Parameter(name ="dataId", required = true, description = "자료실 ID", example = "1")
     @PutMapping(value = "/v1/dataroom/{dataId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateDataRoom(@PathVariable String dataId, @Valid @RequestBody DataRoomReqDto.UpdateDataRoomReq dto) {
+        dto.setModiId("admin");
         dataRoomService.updateDataRoom(dataId, dto);
 
         return ResponseEntity.ok(ApiResDto.success());

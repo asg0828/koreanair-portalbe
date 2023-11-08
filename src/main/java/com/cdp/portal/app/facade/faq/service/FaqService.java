@@ -5,16 +5,7 @@ import java.util.Objects;
 
 import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
 import com.cdp.portal.app.facade.faq.model.FaqModel;
-import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
-import com.cdp.portal.app.facade.faq.model.FaqModel;
 import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
-import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
-import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
-import com.cdp.portal.app.facade.faq.model.FaqModel;
-import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
-import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
-import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
-import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
