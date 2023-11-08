@@ -44,4 +44,8 @@ public class QnaModel {
     private int viewCnt;
     @Schema(description = "화면 순번")
     private int rownum;
+    @Schema(description = "등록자 이름")
+    private String rgstNm;
+    @Schema(description = "부서 이름")
+    private String rgstDeptNm;
 }
