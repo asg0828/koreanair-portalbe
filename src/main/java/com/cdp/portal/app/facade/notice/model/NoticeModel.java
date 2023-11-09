@@ -44,13 +44,13 @@ public class NoticeModel {
     @Schema(description = "등록 ID")
     private String rgstId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+9")
     @Schema(description = "등록 일시")
     private Timestamp rgstDt;
     @Schema(description = "수정 ID")
     private String modiId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
     @Schema(description = "수정 일시")
     private Timestamp modiDt;
     @Schema(description = "삭제 여부")

@@ -32,6 +32,8 @@ public interface QnaMapper {
      */
     QnaResDto selectByQnaId(@Param("qnaId") String qnaId);
 
+    List<QnaResDto> selectQnaReplyList(String qnaId);
+
     /**
      * Q&A 등록
      * @param qnaModel
@@ -48,10 +50,12 @@ public interface QnaMapper {
 
     /**
      * Q&A 삭제
-     * @param dto
+     * @param
      * @return
      */
     void deleteQna(String qnaId);
     void deleteQna2(QnaReqDto.DeleteQnaReq dto);
     void addViewCntQna(String qnaId);
+    void updateQnaStat(String qnaId);
+
 }

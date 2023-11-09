@@ -73,6 +73,12 @@
         )
     </insert>
 
+    <select id="checkIfAnswered" parameterType="String" resultType="int">
+        SELECT COUNT(*) AS cnt
+        FROM T_BBS_QNA
+        WHERE BF_QNA_ID = #{qnaId} AND DEL_YN = 'N'
+    </select>
+
     <select id="selectAll" resultType="qnaResDto">
         select
         *
@@ -178,13 +184,65 @@
             qna_id = #{qnaId}
     </update>
 
-
     <update id="addViewCntQna" parameterType="qnaModel">
         UPDATE
             T_BBS_QNA
         SET VIEW_CNT = (COALESCE(VIEW_CNT, 0) + 1)
         WHERE QNA_ID = #{qnaId}
     </update>
+
+    <update id="updateQnaStat" parameterType="qnaModel">
+        UPDATE
+            T_BBS_QNA
+        SET QNA_STAT = 'READED'
+        WHERE QNA_ID = #{qnaId}
+    </update>
+
+    <select id="selectQnaReplyList" resultType="qnaModel" parameterType="qnaModel">
+        WITH RECURSIVE R AS (
+            select a.qna_id
+                 ,a.bf_qna_id
+                 ,a.answ
+                 ,a.answ_rgst_id
+                 ,a.answ_rgst_dt
+                 ,b.user_nm as rgst_nm
+                 ,(select dept_nm from t_dept where dept_code = b.dept_code) as rgst_dept_nm
+                 ,a.modi_dt
+                 , 0 AS lv
+            FROM t_bbs_qna a
+                     left outer join t_user b
+                                     on a.answ_rgst_id = b.user_id
+            where  a.qna_id =#{qnaId}
+            union all
+            select a.qna_id
+                 ,a.bf_qna_id
+                 ,a.answ
+                 ,a.answ_rgst_id
+                 ,a.answ_rgst_dt
+                 ,b.user_nm  as rgst_nm
+                 ,(select dept_nm from t_dept where dept_code = b.dept_code) as rgst_dept_nm
+                 ,a.modi_dt
+                 , R.lv + 1 AS lv
+            FROM R
+                     join t_bbs_qna a
+                          on R.qna_id = a.bf_qna_id
+                     left outer join t_user b
+                                     on a.answ_rgst_id = b.user_id
+            where  coalesce(a.DEL_YN,'N') = 'N'
+        )
+        select qna_id
+             ,bf_qna_id
+             ,answ
+             ,answ_rgst_id
+             ,answ_rgst_dt
+             ,rgst_nm
+             ,rgst_dept_nm
+             ,modi_dt
+             , lv
+        from R
+        where lv>0
+        order by answ_rgst_dt
+    </select>
 
 
 </mapper>

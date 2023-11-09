@@ -27,14 +27,14 @@ public class DataRoomModel {
     @Schema(description = "등록자 ID", example = "admin")
     private String rgstId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Schema(description = "등록일시", example = "2023-11-03")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
+    @Schema(description = "등록일시",example = "2021-04-13 09:04:40")
     private Timestamp rgstDt;
     @Schema(description = "수정자 ID", example = "admin")
     private String modiId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Schema(description = "수정일시", example = "2023-11-03")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
+    @Schema(description = "수정일시", example = "2021-04-13 09:04:40")
     private Timestamp modiDt;
     @Schema(description = "삭제여부", example = "Y|N")
     private String delYn;
