@@ -1,14 +1,19 @@
 package com.cdp.portal.app.facade.feature.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.cdp.portal.app.facade.feature.dto.request.FeatureReqDto;
 import com.cdp.portal.common.dto.ApiResDto;
+import com.cdp.portal.common.dto.PagingDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +22,7 @@ import lombok.ToString;
 @Schema(description = "Feature 응답")
 public class FeatureResDto {
     
+    public static class ApiResFeatures extends ApiResDto<FeatureResDto.FeaturesResult> {}
     public static class ApiResFeature extends ApiResDto<Feature> {}
     
     @Getter
@@ -35,16 +41,16 @@ public class FeatureResDto {
         @Schema(description = "피쳐타입명", example = "")
         private String featureTypNm;
         
-        @Schema(description = "피쳐구분(대구분)", example = "", nullable = false)
+        @Schema(description = "피쳐대구분", example = "", nullable = false)
         private String featureSeGrp;
         
-        @Schema(description = "피쳐구분명(대구분)", example = "")
+        @Schema(description = "피쳐대구분명", example = "")
         private String featureSeGrpNm;
         
-        @Schema(description = "피쳐구분(중구분)", example = "", nullable = false)
+        @Schema(description = "피쳐중구분", example = "", nullable = false)
         private String featureSe;
         
-        @Schema(description = "피쳐구분명(중구분)", example = "")
+        @Schema(description = "피쳐중구분명", example = "")
         private String featureSeNm;
         
         @Schema(description = "피쳐한글명", example = "", nullable = false)
@@ -98,6 +104,25 @@ public class FeatureResDto {
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime modiDt;
+        
+    }
+    
+    @Getter
+    @ToString
+    @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    @Schema(description = "Feature 목록 결과")
+    public static class FeaturesResult {
+        
+        @Schema(description = "컨텐츠 정보", nullable = false)
+        private List<Feature> contents;
+        
+        @Schema(description = "검색 정보", nullable = false)
+        private FeatureReqDto.SearchFeature search;
+        
+        @Schema(description = "페이지 정보", nullable = false)
+        private PagingDto page;
         
     }
 

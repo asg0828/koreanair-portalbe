@@ -63,30 +63,58 @@
 			)
 	</select>
 	
-	<select id="selectById" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
+	<select id="selectAll" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
+		SELECT 
+			row_number() OVER (ORDER BY Z.RGST_DT DESC) AS row_num
+			, Z.*
+			, Z.SE_GRP_ID AS featureSeGrp
+			, (SELECT SE_NM FROM T_FEATURE_SE WHERE SE_ID = Z.SE_GRP_ID) AS featureSeGrpNm
+			, Z.CODE_NM AS featureTypNm
+			, Z.SE_NM AS featureSeNm
+			, Z.USER_NM AS enrUserNm
+			, Z.DEPT_NM AS enrDeptNm
+		FROM (
+			SELECT
+				F.FEATURE_ID
+				, F.FEATURE_TYP
+				, C.CODE_NM
+				, SE.SE_GRP_ID
+				, F.FEATURE_SE
+				, SE.SE_NM
+				, F.FEATURE_KO_NM
+				, F.FEATURE_EN_NM
+				, F.CALC_UNT
+				, F.FEATURE_DEF
+				, F.FEATURE_FM
+				, F.ENR_USER_ID
+				, F.ENR_DEPT_CODE
+				, D.DEPT_NM
+				, U.USER_NM
+				, F.FEATURE_REL_TB
+				, F.FEATURE_DSC
+				, F.DEL_YN
+				, F.RGST_ID
+				, F.RGST_DT
+				, F.MODI_ID
+				, F.MODI_DT
+			FROM
+				T_FEATURE F
+				LEFT JOIN T_USER U
+					ON F.ENR_USER_ID = U.USER_ID
+				LEFT JOIN T_DEPT D
+					ON F.ENR_DEPT_CODE = D.DEPT_CODE
+				LEFT JOIN T_FEATURE_SE SE 
+					ON F.FEATURE_SE = SE.SE_ID
+				LEFT JOIN T_CODE C 
+					ON F.FEATURE_TYP = C.CODE_ID
+			<include refid="selectWhere"/>
+		) Z
+		<include refid="paging.pagingOffsetSQL" />
+	</select>
+	
+	<select id="selectCount" resultType="int">
 		SELECT
-			F.FEATURE_ID
-			, F.FEATURE_TYP
-			, C.CODE_NM AS featureTypNm
-			, SE.SE_GRP_ID AS featureSeGrp
-			, F.FEATURE_SE
-			, SE.SE_NM AS featureSeNm
-			, F.FEATURE_KO_NM
-			, F.FEATURE_EN_NM
-			, F.CALC_UNT
-			, F.FEATURE_DEF
-			, F.FEATURE_FM
-			, F.ENR_USER_ID
-			, F.ENR_DEPT_CODE
-			, D.DEPT_NM AS enrDeptNm
-			, U.USER_NM AS enrUserNm
-			, F.FEATURE_REL_TB
-			, F.FEATURE_DSC
-			, F.DEL_YN
-			, F.RGST_ID
-			, F.RGST_DT
-			, F.MODI_ID
-			, F.MODI_DT
+			COUNT(*) AS cnt
 		FROM
 			T_FEATURE F
 			LEFT JOIN T_USER U
@@ -97,8 +125,123 @@
 				ON F.FEATURE_SE = SE.SE_ID
 			LEFT JOIN T_CODE C 
 				ON F.FEATURE_TYP = C.CODE_ID
-		WHERE
-			F.FEATURE_ID = #{featureId}
+		<include refid="selectWhere"/>
 	</select>
+	
+	<sql id="selectWhere">
+		<where>
+			F.DEL_YN = 'N'
+			<if test="search.featureSeGrp != null and search.featureSeGrp != '' and (search.featureSe == null or search.featureSe == '')">
+            	AND FEATURE_SE IN (
+            		SELECT SE_ID 
+            		FROM T_FEATURE_SE 
+            		WHERE SE_GRP_ID = #{search.featureSeGrp}
+            	) 
+            </if>
+            <if test="search.featureSeGrp != null and search.featureSeGrp != '' and search.featureSe != null and search.featureSe != ''">
+            	AND FEATURE_SE = #{search.featureSe}
+            </if>
+			<if test="search.searchFeature != null and search.searchFeature != ''">
+				AND (1 != 1
+				<foreach collection="search.searchConditions" item="dataSet" index="index">
+					<if test="dataSet != null and dataSet == 'featureKoNm'">
+                		OR FEATURE_KO_NM LIKE '%' || #{search.searchFeature} || '%'
+                	</if>
+                	<if test="dataSet != null and dataSet == 'featureEnNm'">
+                		OR FEATURE_EN_NM LIKE '%' || #{search.searchFeature} || '%'
+                	</if>
+                	<if test="dataSet != null and dataSet == 'featureDef'">
+                		OR FEATURE_DEF LIKE '%' || #{search.searchFeature} || '%'
+                	</if>
+				</foreach>
+				)
+			</if>
+			<if test="search.enrUserId != null and search.enrUserId != ''">
+            	AND ENR_USER_ID = #{search.enrUserId}
+            </if>
+            <if test="search.enrDeptCode != null and search.enrDeptCode != ''">
+            	AND ENR_DEPT_CODE = #{search.enrDeptCode}
+            </if>
+		</where>
+	</sql>
+	
+	<select id="selectById" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
+		SELECT 
+			Z.*
+			, Z.SE_GRP_ID AS featureSeGrp
+			, (SELECT SE_NM FROM T_FEATURE_SE WHERE SE_ID = Z.SE_GRP_ID) AS featureSeGrpNm
+			, Z.CODE_NM AS featureTypNm
+			, Z.SE_NM AS featureSeNm
+			, Z.USER_NM AS enrUserNm
+			, Z.DEPT_NM AS enrDeptNm
+		FROM (
+			SELECT
+				F.FEATURE_ID
+				, F.FEATURE_TYP
+				, C.CODE_NM
+				, SE.SE_GRP_ID
+				, F.FEATURE_SE
+				, SE.SE_NM
+				, F.FEATURE_KO_NM
+				, F.FEATURE_EN_NM
+				, F.CALC_UNT
+				, F.FEATURE_DEF
+				, F.FEATURE_FM
+				, F.ENR_USER_ID
+				, F.ENR_DEPT_CODE
+				, D.DEPT_NM
+				, U.USER_NM
+				, F.FEATURE_REL_TB
+				, F.FEATURE_DSC
+				, F.DEL_YN
+				, F.RGST_ID
+				, F.RGST_DT
+				, F.MODI_ID
+				, F.MODI_DT
+			FROM
+				T_FEATURE F
+				LEFT JOIN T_USER U
+					ON F.ENR_USER_ID = U.USER_ID
+				LEFT JOIN T_DEPT D
+					ON F.ENR_DEPT_CODE = D.DEPT_CODE
+				LEFT JOIN T_FEATURE_SE SE 
+					ON F.FEATURE_SE = SE.SE_ID
+				LEFT JOIN T_CODE C 
+					ON F.FEATURE_TYP = C.CODE_ID
+			WHERE
+				F.FEATURE_ID = #{featureId}
+		) Z
+	</select>
+	
+	<update id="update" parameterType="FeatureModel">
+		UPDATE
+			T_FEATURE
+		SET
+			FEATURE_TYP = #{featureTyp}
+			, FEATURE_SE = #{featureSe}
+			, FEATURE_KO_NM = #{featureKoNm}
+			, FEATURE_EN_NM = #{featureEnNm}
+			, CALC_UNT = #{calcUnt}
+			, FEATURE_DEF = #{featureDef}
+			, FEATURE_FM = #{featureFm}
+			, ENR_USER_ID = #{enrUserId}
+			, FEATURE_REL_TB = #{featureRelTb}
+			, FEATURE_DSC = #{featureDsc}
+			, MODI_ID = #{modiId}
+			, MODI_DT = now()
+		WHERE
+			FEATURE_ID = #{featureId}
+	</update>
+	
+	<update id="updateDelYnById" parameterType="String">
+		UPDATE
+			T_FEATURE
+		SET
+			DEL_YN = 'Y'
+			, MODI_ID = #{modiId}
+			, MODI_DT = now()
+		WHERE
+			FEATURE_ID = #{featureId}
+	</update>
 
 </mapper>

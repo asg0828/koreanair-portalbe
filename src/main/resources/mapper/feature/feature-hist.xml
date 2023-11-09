@@ -1,0 +1,46 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.feature.mapper.FeatureHistMapper">
+	
+	<insert id="insert" parameterType="FeatureHistModel">
+		<selectKey order="BEFORE" keyProperty="seq" resultType="int">
+			SELECT COALESCE(MAX(SEQ + 1), 1) FROM T_FEATURE_HIST WHERE FEATURE_ID = #{featureId}
+		</selectKey>
+	
+		INSERT INTO T_FEATURE_HIST (
+			SEQ
+			, FEATURE_ID
+			, FEATURE_TYP
+			, FEATURE_SE
+			, FEATURE_KO_NM
+			, FEATURE_EN_NM
+			, CALC_UNT
+			, FEATURE_DEF
+			, FEATURE_FM
+			, ENR_USER_ID
+			, FEATURE_REL_TB
+			, FEATURE_DSC
+			, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+		) VALUES (
+			#{seq}
+			, #{featureId}
+			, #{featureTyp}
+			, #{featureSe}
+			, #{featureKoNm}
+			, #{featureEnNm}
+			, #{calcUnt}
+			, #{featureDef}
+			, #{featureFm}
+			, #{enrUserId}
+			, #{featureRelTb}
+			, #{featureDsc}
+			, #{rgstId}
+			, now()
+			, #{modiId}
+			, now()
+		)
+	</insert>
+	
+</mapper>
