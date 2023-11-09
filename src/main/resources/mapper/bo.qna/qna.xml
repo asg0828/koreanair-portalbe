@@ -73,12 +73,6 @@
         )
     </insert>
 
-    <select id="checkIfAnswered" parameterType="String" resultType="int">
-        SELECT COUNT(*) AS cnt
-        FROM T_BBS_QNA
-        WHERE BF_QNA_ID = #{qnaId} AND DEL_YN = 'N'
-    </select>
-
     <select id="selectAll" resultType="qnaResDto">
         select
         *
@@ -161,7 +155,8 @@
         use_yn = #{useYn},
         modi_id = #{modiId},
         modi_dt = now(),
-        open_yn = #{openYn}
+        open_yn = #{openYn},
+        qna_stat = #{qnaStat}
         WHERE
         qna_id = #{qnaId}
     </update>

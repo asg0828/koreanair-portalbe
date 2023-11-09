@@ -87,7 +87,7 @@ public class QnaRestController {
     @GetMapping(value = "/v1/qna/{qnaId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> selectQna(@PathVariable String qnaId){
         qnaService.addViewCntQna(qnaId);
-        qnaService.updateQnaStat(qnaId);
+//        qnaService.updateQnaStat(qnaId);
         QnaResDto qnaResDto = qnaService.getQna(qnaId);
         qnaResDto.setComments(qnaService.selectQnaReplyList(qnaId));
 

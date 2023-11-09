@@ -20,13 +20,13 @@ public class QnaReqDto {
         private String clCode;
 
         @Schema(description = "제목", example = "제목", nullable = false)
-        @NotBlank(message = "제목은 필수 항목입니다.")
         private String sj;
 
         @Schema(description = "내용", example = "내용", nullable = false)
-        @NotBlank(message = "내용은 필수 항목입니다.")
         private String cn;
 
+        @Schema(description = "답변", example = "답변", nullable = false)
+        private String answ;
         @NotBlank(message = "사용여부는 필수 항목입니다.")
         @Schema(description = "사용여부", example = "Y|N", nullable = false)
         private String useYn;
@@ -37,6 +37,9 @@ public class QnaReqDto {
 
         @Schema(description = "답변상태", example = "UNREAD", nullable = false)
         private String qnaStat;
+
+        @Schema(description = "부모글 ID", example = "qn23000000027", nullable = false)
+        private String bfQnaId;
 
         @Schema(description = "등록 ID", example = "admin", nullable = false)
         private String rgstId;
@@ -72,6 +75,9 @@ public class QnaReqDto {
         @NotBlank(message = "게시여부는 필수 항목입니다.")
         @Schema(description = "게시여부", example = "Y|N", nullable = false)
         private String openYn;
+
+        @Schema(description = "답변상태", example = "READED", nullable = false)
+        private String qnaStat;
 
     }
 
