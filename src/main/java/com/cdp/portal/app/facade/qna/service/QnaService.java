@@ -40,7 +40,9 @@ public class QnaService {
                 .clCode(dto.getClCode())
                 .sj(dto.getSj())
                 .cn(dto.getCn())
+                .answ(dto.getAnsw())
                 .qnaStat("UNREAD")
+                .bfQnaId(dto.getBfQnaId())
                 .useYn(dto.getUseYn())
                 .openYn(dto.getOpenYn())
                 .rgstId(dto.getRgstId()) //TODO : 추후 변경
@@ -97,6 +99,7 @@ public class QnaService {
                 .answRgstId("admin")// TODO: 로그인한 사용자 세팅
                 .useYn(dto.getUseYn())
                 .openYn(dto.getOpenYn())
+                .qnaStat(dto.getQnaStat())
                 .modiId("admin")    // TODO: 로그인한 사용자 세팅
                 .build();
 

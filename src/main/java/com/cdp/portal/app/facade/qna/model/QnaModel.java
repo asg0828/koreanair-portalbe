@@ -28,7 +28,6 @@ public class QnaModel {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
     private LocalDateTime answRgstDt;
-    private String bfQnaId;
     private String useYn;
     private String delYn;
     private String rgstId;
@@ -41,6 +40,7 @@ public class QnaModel {
     private LocalDateTime modiDt;
     private String qnaStat;
     private String openYn;
+    private String bfQnaId;
     private int viewCnt;
     @Schema(description = "화면 순번")
     private int rownum;
