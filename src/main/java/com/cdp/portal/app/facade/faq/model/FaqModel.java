@@ -35,13 +35,13 @@ public class FaqModel {
     @Schema(description = "등록 ID")
     private String rgstId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
     @Schema(description = "등록 일시")
     private LocalDateTime rgstDt;
     @Schema(description = "수정 ID")
     private String modiId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
     @Schema(description = "수정 일시")
     private LocalDateTime modiDt;
     @Schema(description = "뷰 건수")

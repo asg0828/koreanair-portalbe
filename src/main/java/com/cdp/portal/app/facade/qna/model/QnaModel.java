@@ -26,7 +26,7 @@ public class QnaModel {
     private String answ;
     private String answRgstId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
     private LocalDateTime answRgstDt;
     private String bfQnaId;
     private String useYn;
@@ -37,7 +37,7 @@ public class QnaModel {
     private LocalDateTime rgstDt;
     private String modiId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
     private LocalDateTime modiDt;
     private String qnaStat;
     private String openYn;

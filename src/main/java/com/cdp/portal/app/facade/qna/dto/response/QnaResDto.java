@@ -11,12 +11,22 @@ import com.cdp.portal.app.facade.qna.model.QnaModel;
 import com.cdp.portal.common.dto.ApiResDto;
 
 import com.cdp.portal.common.dto.PagingDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Schema(description = "QNA 관리 응답")
 public class QnaResDto extends QnaModel {
     public static class QnaResDtoResult extends ApiResDto<QnaResDto.QnasResult> {}
+
+    @JsonProperty("comments")
+    @Schema(description = "댓글 목록", nullable = true)
+    private List<QnaResDto> comments;
 
     @Getter
     @ToString

@@ -65,12 +65,16 @@ public class QnaService {
                 .build();
     }
     /**
-     * 공지사항 상세조회
+     * Q&A 조회
      * @param qnaId
      * @return
      */
     public QnaResDto getQna(String qnaId) {
         return qnaMapper.selectByQnaId(qnaId);
+    }
+
+    public List<QnaResDto> selectQnaReplyList(String qnaId) {
+        return qnaMapper.selectQnaReplyList(qnaId);
     }
 
     /**
@@ -113,4 +117,6 @@ public class QnaService {
     public void addViewCntQna(String qnaId) {
         qnaMapper.addViewCntQna(qnaId);
     }
+    public void updateQnaStat(String qnaId) { qnaMapper.updateQnaStat(qnaId);}
+
 }

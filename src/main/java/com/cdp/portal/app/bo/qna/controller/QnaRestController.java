@@ -3,6 +3,7 @@ package com.cdp.portal.app.bo.qna.controller;
 import com.cdp.portal.app.facade.qna.dto.request.QnaReqDto;
 import com.cdp.portal.app.facade.qna.dto.response.QnaResDto;
 
+import com.cdp.portal.app.facade.qna.model.QnaModel;
 import com.cdp.portal.app.facade.qna.service.QnaService;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.PagingDto;
@@ -22,6 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -85,8 +87,11 @@ public class QnaRestController {
     @GetMapping(value = "/v1/qna/{qnaId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> selectQna(@PathVariable String qnaId){
         qnaService.addViewCntQna(qnaId);
+        qnaService.updateQnaStat(qnaId);
+        QnaResDto qnaResDto = qnaService.getQna(qnaId);
+        qnaResDto.setComments(qnaService.selectQnaReplyList(qnaId));
 
-        return ResponseEntity.ok(ApiResDto.success(qnaService.getQna(qnaId)));
+        return ResponseEntity.ok(ApiResDto.success(qnaResDto));
     }
 
     @Operation(summary = "Q&A 수정", description = "Q&A를 수정한다.", tags = { "qna" })
