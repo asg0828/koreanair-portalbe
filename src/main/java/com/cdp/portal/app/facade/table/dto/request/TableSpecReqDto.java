@@ -1,4 +1,4 @@
-package com.cdp.portal.app.facade.bizmeta.dto.request;
+package com.cdp.portal.app.facade.table.dto.request;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +120,7 @@ public class TableSpecReqDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
     @Builder
-    public static class SearchTableColumnSpec {
+    public static class SearchTableSpec {
         
         @Schema(description = "검색 테이블", example = "")
         private String searchTable;

@@ -1,5 +1,5 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cdp.portal.app.facade.bizmeta.mapper.TableColumnSpecMapper">
+<mapper namespace="com.cdp.portal.app.facade.table.mapper.TableColumnSpecMapper">
 
 	<insert id="insert" parameterType="TableColumnSpecModel">
 		INSERT INTO T_META_TB_CL_SPEC (
@@ -29,7 +29,7 @@
 		)
 	</insert>
 	
-	<select id="selectByMtsId" parameterType="String" resultType="com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto$TableColumnSpec">
+	<select id="selectByMtsId" parameterType="String" resultType="com.cdp.portal.app.facade.table.dto.response.TableSpecResDto$TableColumnSpec">
 		SELECT
 			MTS_ID
 			, MCS_ID
@@ -57,7 +57,7 @@
 			MTS_ID = #{mtsId}
 	</delete>
 	
-	<update id="updateYnByMtsId" parameterType="String">
+	<update id="updateDelYnByMtsId" parameterType="String">
 		UPDATE 
 			T_META_TB_CL_SPEC
 		SET

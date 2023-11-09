@@ -1,17 +1,17 @@
-package com.cdp.portal.app.facade.bizmeta.service;
+package com.cdp.portal.app.facade.table.service;
 
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cdp.portal.app.facade.bizmeta.dto.request.TableSpecReqDto;
-import com.cdp.portal.app.facade.bizmeta.dto.request.TableSpecReqDto.CreateTableColumnSpec;
-import com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto;
-import com.cdp.portal.app.facade.bizmeta.mapper.TableColumnSpecMapper;
-import com.cdp.portal.app.facade.bizmeta.mapper.TableSpecMapper;
-import com.cdp.portal.app.facade.bizmeta.model.TableColumnSpecModel;
-import com.cdp.portal.app.facade.bizmeta.model.TableSpecModel;
+import com.cdp.portal.app.facade.table.dto.request.TableSpecReqDto;
+import com.cdp.portal.app.facade.table.dto.request.TableSpecReqDto.CreateTableColumnSpec;
+import com.cdp.portal.app.facade.table.dto.response.TableSpecResDto;
+import com.cdp.portal.app.facade.table.mapper.TableColumnSpecMapper;
+import com.cdp.portal.app.facade.table.mapper.TableSpecMapper;
+import com.cdp.portal.app.facade.table.model.TableColumnSpecModel;
+import com.cdp.portal.app.facade.table.model.TableSpecModel;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
@@ -72,7 +72,7 @@ public class TableSpecService {
         }
     }
     
-    public TableSpecResDto.TableSpecsResult getTableSpecs(PagingDto pagingDto, TableSpecReqDto.SearchTableColumnSpec searchDto) {
+    public TableSpecResDto.TableSpecsResult getTableSpecs(PagingDto pagingDto, TableSpecReqDto.SearchTableSpec searchDto) {
         pagingDto.setPaging(tableSpecMapper.selectCount(searchDto));
         
         return TableSpecResDto.TableSpecsResult.builder()
@@ -146,10 +146,10 @@ public class TableSpecService {
         }
         
         /* update table spec delYn */
-        tableSpecMapper.updateYnById("admin", mtsId);
+        tableSpecMapper.updateDelYnById("admin", mtsId);
         
         /* update table column spec delYn */
-        tableColumnSpecMapper.updateYnByMtsId("admin", mtsId);
+        tableColumnSpecMapper.updateDelYnByMtsId("admin", mtsId);
     }
 
 }
