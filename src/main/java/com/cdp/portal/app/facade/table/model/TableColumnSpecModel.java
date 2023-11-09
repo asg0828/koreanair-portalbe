@@ -1,4 +1,4 @@
-package com.cdp.portal.app.facade.bizmeta.model;
+package com.cdp.portal.app.facade.table.model;
 
 import java.time.LocalDateTime;
 

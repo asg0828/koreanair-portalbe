@@ -1,11 +1,11 @@
-package com.cdp.portal.app.facade.bizmeta.dto.response;
+package com.cdp.portal.app.facade.table.dto.response;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cdp.portal.app.facade.bizmeta.dto.request.TableSpecReqDto;
-import com.cdp.portal.app.facade.bizmeta.model.TableColumnSpecModel;
-import com.cdp.portal.app.facade.bizmeta.model.TableSpecModel;
+import com.cdp.portal.app.facade.table.dto.request.TableSpecReqDto;
+import com.cdp.portal.app.facade.table.model.TableColumnSpecModel;
+import com.cdp.portal.app.facade.table.model.TableSpecModel;
 import com.cdp.portal.common.dto.ApiResDto;
 import com.cdp.portal.common.dto.PagingDto;
 
@@ -30,7 +30,7 @@ public class TableSpecResDto {
     @Schema(description = "테이블 정의서 목록")
     public static class TableSpecs extends TableSpecModel {
         
-        @Schema(description = "DB명", example = "")
+        @Schema(description = "DB명")
         private String srcDbNm; 
         
     }
@@ -42,7 +42,12 @@ public class TableSpecResDto {
     @Schema(description = "테이블 정의서 상세")
     public static class TableSpec extends TableSpecModel {
         
+        @Schema(description = "DB명")
+        private String srcDbNm;
+        
+        @Schema(description = "컬럼 정의 목록")
         private List<TableColumnSpec> columnSpecs = new ArrayList<>();
+        
     }
     
     @Schema(description = "테이블 컬럼 정의서 응답")
@@ -60,7 +65,7 @@ public class TableSpecResDto {
         private List<TableSpecs> contents;
         
         @Schema(description = "검색 정보", nullable = false)
-        private TableSpecReqDto.SearchTableColumnSpec search;
+        private TableSpecReqDto.SearchTableSpec search;
         
         @Schema(description = "페이지 정보", nullable = false)
         private PagingDto page;

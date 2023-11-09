@@ -1,5 +1,5 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cdp.portal.app.facade.bizmeta.mapper.TableSpecMapper">
+<mapper namespace="com.cdp.portal.app.facade.table.mapper.TableSpecMapper">
 
 	<insert id="insert" parameterType="TableSpecModel">
 		INSERT INTO T_META_TB_SPEC (
@@ -44,26 +44,26 @@
 			)
 	</select>
 	
-	<select id="selectAll" resultType="com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto$TableSpecs">
+	<select id="selectAll" resultType="com.cdp.portal.app.facade.table.dto.response.TableSpecResDto$TableSpecs">
 		SELECT
-			TB_SPEC.MTS_ID
-			, TB_SPEC.MTS_KO_NM
-			, TB_SPEC.MTS_EN_NM
-			, TB_SPEC.MTS_DEF
-			, TB_SPEC.SRC_SYS
-			, TB_SPEC.SRC_TB_NM
-			, TB_SPEC.SRC_DB_CD
-			, CODE.CODE_NM AS SRC_DB_NM
-			, TB_SPEC.MTS_DSC
-			, TB_SPEC.DEL_YN
-			, TB_SPEC.RGST_ID
-			, TB_SPEC.RGST_DT
-			, TB_SPEC.MODI_ID
-			, TB_SPEC.MODI_DT
+			T.MTS_ID
+			, T.MTS_KO_NM
+			, T.MTS_EN_NM
+			, T.MTS_DEF
+			, T.SRC_SYS
+			, T.SRC_TB_NM
+			, T.SRC_DB_CD
+			, C.CODE_NM AS SRC_DB_NM
+			, T.MTS_DSC
+			, T.DEL_YN
+			, T.RGST_ID
+			, T.RGST_DT
+			, T.MODI_ID
+			, T.MODI_DT
 		FROM
-			T_META_TB_SPEC TB_SPEC INNER JOIN T_CODE CODE ON TB_SPEC.SRC_DB_CD = CODE.CODE_ID
+			T_META_TB_SPEC T INNER JOIN T_CODE C ON T.SRC_DB_CD = C.CODE_ID
 		<include refid="selectWhere"/>
-		ORDER BY TB_SPEC.RGST_DT DESC
+		ORDER BY T.RGST_DT DESC
 		<include refid="paging.pagingOffsetSQL" />
 	</select>
 	
@@ -102,25 +102,26 @@
 		</where>
 	</sql>
 	
-	<select id="selectById" resultType="com.cdp.portal.app.facade.bizmeta.dto.response.TableSpecResDto$TableSpec">
+	<select id="selectById" resultType="com.cdp.portal.app.facade.table.dto.response.TableSpecResDto$TableSpec">
 		SELECT
-			MTS_ID
-			, MTS_KO_NM
-			, MTS_EN_NM
-			, MTS_DEF
-			, SRC_SYS
-			, SRC_TB_NM
-			, SRC_DB_CD
-			, MTS_DSC
-			, DEL_YN
-			, RGST_ID
-			, RGST_DT
-			, MODI_ID
-			, MODI_DT
+			T.MTS_ID
+			, T.MTS_KO_NM
+			, T.MTS_EN_NM
+			, T.MTS_DEF
+			, T.SRC_SYS
+			, T.SRC_TB_NM
+			, T.SRC_DB_CD
+			, C.CODE_NM AS SRC_DB_NM
+			, T.MTS_DSC
+			, T.DEL_YN
+			, T.RGST_ID
+			, T.RGST_DT
+			, T.MODI_ID
+			, T.MODI_DT
 		FROM
-			T_META_TB_SPEC
+			T_META_TB_SPEC T LEFT JOIN T_CODE C ON T.SRC_DB_CD = C.CODE_ID
 		WHERE
-			MTS_ID = #{mtsId}
+			T.MTS_ID = #{mtsId}
 	</select>
 	
 	<update id="update" parameterType="TableSpecModel">
@@ -140,7 +141,7 @@
 			MTS_ID = #{mtsId}
 	</update>
 	
-	<update id="updateYnById" parameterType="String">
+	<update id="updateDelYnById" parameterType="String">
 		UPDATE
 			T_META_TB_SPEC
 		SET
