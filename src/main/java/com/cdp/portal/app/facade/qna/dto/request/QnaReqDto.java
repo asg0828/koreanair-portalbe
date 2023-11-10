@@ -57,14 +57,11 @@ public class QnaReqDto {
     public static class UpdateQnaReq {
 
         @Schema(description = "분류 코드", example = "코드", nullable = false)
-        @NotBlank(message = "분류 코드는 필수 항목입니다.")
         private String clCode;
 
         @Schema(description = "제목", example = "제목", nullable = false)
-        @NotBlank(message = "제목은 필수 항목입니다.")
         private String sj;
 
-        @NotBlank(message = "내용은 필수 항목입니다.")
         @Schema(description = "내용", example = "내용", nullable = false)
         private String cn;
 
