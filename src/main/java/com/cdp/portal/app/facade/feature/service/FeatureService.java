@@ -131,7 +131,7 @@ public class FeatureService {
             throw CdpPortalError.FEATURE_NOT_FOUND.exception(featureId);
         }
         
-        featureMapper.updateDelYnById("admin", featureId);
+        featureMapper.updateDelYnById("admin", featureId);  // TODO: 로그인한 사용자 세팅
     }
             
     

@@ -28,7 +28,7 @@ public enum CdpPortalError {
     CODE_NOT_FOUND("E0101", "Request (codeId: {0}) on (groupId: {1}) is not found", HttpStatus.NOT_FOUND),
     GROUP_NOT_FOUND("E0102", "(groupId: {0}) is duplicated", HttpStatus.BAD_REQUEST),
     
-    // biz-meta
+    // table
     MTS_EN_NM_DUPLICATED("E0201", "(mtsEnNm: {0}) is duplicated", HttpStatus.BAD_REQUEST),
     TABLE_SPEC_NOT_FOUND("E0202", "(mtsId: {0}) is not found", HttpStatus.NOT_FOUND),
     
@@ -36,6 +36,10 @@ public enum CdpPortalError {
     //FEATURE_NM_DUPLICATED("E0301", "(Feature: {0}) is already exist", HttpStatus.BAD_REQUEST),
     FEATURE_NM_DUPLICATED("E0301", "Feature명({0})은 이미 등록되어있습니다)", HttpStatus.BAD_REQUEST),
     FEATURE_NOT_FOUND("E0302", "(featureId: {0}) is not found", HttpStatus.NOT_FOUND),
+    
+    // user
+    USER_FEATURE_DUPLICATED("E0401", "관심 Feature에 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
+    USER_FEATURE_NOT_EXISTS("E0402", "관심 Feature에 등록 되어있지않습니다.", HttpStatus.BAD_REQUEST),
     ;
     
     private String code;
