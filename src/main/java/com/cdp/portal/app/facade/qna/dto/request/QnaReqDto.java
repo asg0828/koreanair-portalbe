@@ -44,6 +44,9 @@ public class QnaReqDto {
         @Schema(description = "등록 ID", example = "admin", nullable = false)
         private String rgstId;
 
+        @Schema(description = "답변등록 ID", example = "admin", nullable = false)
+        private String answRgstId;
+
         @Schema(description = "수정자 ID", example = "admin", nullable = false)
         private String modiId;
 

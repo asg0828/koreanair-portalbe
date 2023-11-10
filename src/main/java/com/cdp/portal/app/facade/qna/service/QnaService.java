@@ -46,6 +46,7 @@ public class QnaService {
                 .useYn(dto.getUseYn())
                 .openYn(dto.getOpenYn())
                 .rgstId(dto.getRgstId()) //TODO : 추후 변경
+                .answRgstId(dto.getAnswRgstId())
                 .modiId(dto.getModiId())
                 .build();
 

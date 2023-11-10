@@ -40,8 +40,14 @@ public class QnaRestController {
     )
     @PostMapping(value = "/v1/qna", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createQna(@Valid @RequestBody QnaReqDto.CreateQnaReq dto) {
-        dto.setRgstId("admin");
-        dto.setModiId("admin");
+        if (dto.getAnsw() != null && !dto.getAnsw().isEmpty()) {
+            dto.setRgstId("admin");
+            dto.setAnswRgstId("admin");
+            dto.setModiId("admin");
+        } else {
+            dto.setRgstId("admin");
+            dto.setModiId("admin");
+        }
         qnaService.createQna(dto);
 
         return ResponseEntity.ok(ApiResDto.success());

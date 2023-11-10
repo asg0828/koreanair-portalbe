@@ -1,6 +1,6 @@
 package com.cdp.portal.app.facade.qna.model;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,17 +27,17 @@ public class QnaModel {
     private String answRgstId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
-    private LocalDateTime answRgstDt;
+    private Timestamp answRgstDt;
     private String useYn;
     private String delYn;
     private String rgstId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime rgstDt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
+    private Timestamp rgstDt;
     private String modiId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
-    private LocalDateTime modiDt;
+    private Timestamp modiDt;
     private String qnaStat;
     private String openYn;
     private String bfQnaId;
