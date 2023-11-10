@@ -1,0 +1,185 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdp.portal.app.facade.file.mapper.FileMapper">
+
+    <insert id="insertFile" parameterType="fileModel">
+        INSERT INTO T_FILE (FILE_ID, STORAGE_SE, SAVE_PATH, SAVE_FILE_NM, FILE_NM, FILE_EXTSN, FILE_SIZE, USE_YN,
+                            RGST_ID, RGST_DT, MODI_ID, MODI_DT, BUCKET_NM, FILE_URL, FILE_CL, REF_ID, ATMC_DEL_YN,
+                            ATMC_DEL_DT)
+        VALUES ( #{fileId}, #{storageSe}, #{savePath}, #{saveFileNm}, #{fileNm}, #{fileExtsn}, #{fileSize}, 'Y'
+               , #{rgstId}, NOW(), #{modiId}, NOW(), #{bucketNm}, #{fileUrl}, #{fileCl}, #{refId}
+               , CASE
+                     WHEN #{fileSize} > (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'FILE' AND CODE_ID = 'LIMIT')::INTEGER
+                         THEN 'Y'
+                     ELSE 'N' END
+               , CASE
+                     WHEN #{fileSize} > (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'FILE' AND CODE_ID = 'LIMIT')::INTEGER
+                         THEN CURRENT_DATE +
+                              ((SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'FILE' AND CODE_ID = 'PD') || 'days')::INTERVAL
+                     ELSE NULL END)
+    </insert>
+
+    <select id="selectAll" parameterType="string" resultType="fileModel">
+        SELECT
+        FILE_ID
+        , STORAGE_SE
+        , SAVE_PATH
+        , SAVE_FILE_NM
+        , FILE_NM
+        , FILE_EXTSN
+        , FILE_SIZE
+        , USE_YN
+        , RGST_ID
+        , RGST_DT
+        , MODI_ID
+        , MODI_DT
+        , BUCKET_NM
+        , FILE_URL
+        , FILE_CL
+        , SAVE_FILE_VER
+        , REF_ID
+        , REF_VER::TEXT
+        , ATMC_DEL_YN
+        , ATMC_DEL_DT
+        FROM T_FILE
+        WHERE USE_YN = 'Y'
+        <if test="fileId != null and fileId != ''">
+            AND FILE_ID = #{fileId}
+        </if>
+        <if test="refId != null and refId != ''">
+            AND REF_ID = #{refId}
+        </if>
+        <if test="fileCl != null and fileCl != ''">
+            AND FILE_CL = #{fileCl}
+        </if>
+        <if test="refVer != null and refVer != ''">
+            AND REF_VER = #{refVer}
+        </if>
+
+        ORDER BY FILE_ID
+    </select>
+
+    <select id="selectFile" parameterType="string" resultType="fileModel">
+        SELECT
+        FILE_ID
+        , STORAGE_SE
+        , SAVE_PATH
+        , SAVE_FILE_NM
+        , FILE_NM
+        , FILE_EXTSN
+        , FILE_SIZE
+        , USE_YN
+        , RGST_ID
+        , RGST_DT
+        , MODI_ID
+        , MODI_DT
+        , BUCKET_NM
+        , FILE_URL
+        , FILE_CL
+        , SAVE_FILE_VER
+        , REF_ID
+        , REF_VER::TEXT
+        , ATMC_DEL_YN
+        , ATMC_DEL_DT
+        FROM T_FILE
+        WHERE USE_YN = 'Y'
+        <if test="fileId != null and fileId != ''">
+            AND FILE_ID = #{fileId}
+        </if>
+        <if test="fileUrl != null and fileUrl != ''">
+            AND FILE_URL = #{fileUrl}
+        </if>
+    </select>
+    <insert id="insertRefVerFile" parameterType="fileModel">
+        INSERT INTO T_FILE(
+                           file_id
+                          ,storage_se
+                          ,bucket_nm
+                          ,save_path
+                          ,save_file_nm
+                          ,save_file_ver
+                          ,file_cl
+                          ,file_nm
+                          ,file_extsn
+                          ,file_size
+                          ,file_url
+                          ,ref_id
+                          ,ref_ver
+                          ,atmc_del_yn
+                          ,atmc_del_dt
+                          ,del_yn
+                          ,use_yn
+                          ,rgst_id
+                          ,rgst_dt
+                          ,modi_id
+                          ,modi_dt
+        )select file_id
+              ,storage_se
+              ,bucket_nm
+              ,save_path
+              ,save_file_nm
+              ,save_file_ver
+              ,file_cl
+              ,file_nm
+              ,file_extsn
+              ,file_size
+              ,file_url
+              ,ref_id
+              ,#{refVer}
+              ,atmc_del_yn
+              ,atmc_del_dt
+              ,del_yn
+              ,use_yn
+              ,rgst_id
+              ,NOW()
+              ,#{modiId}
+              ,NOW()
+        from T_FILE
+        where file_id = #{fileId}
+    </insert>
+
+    <update id="updateFile" parameterType="fileModel">
+        UPDATE PTL.T_FILE SET
+        MODI_ID = #{modiId}
+        , MODI_DT = NOW()
+        <if test="savePath != null and savePath != ''">
+            , STORAGE_SE = #{storageSe}
+            , SAVE_PATH = #{savePath}
+            , BUCKET_NM = #{bucketNm}
+            , SAVE_FILE_NM = #{saveFileNm}
+            , FILE_URL = #{fileUrl}
+        </if>
+        <if test="fileSize != null and fileSize > 0">
+            , FILE_SIZE = #{fileSize}
+            , ATMC_DEL_YN = CASE WHEN #{fileSize} > (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'FILE' AND CODE_ID = 'LIMIT')::INTEGER THEN 'Y' ELSE 'N' END
+            , ATMC_DEL_DT = CASE WHEN #{fileSize} > (SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'FILE' AND CODE_ID = 'LIMIT')::INTEGER
+            THEN CURRENT_DATE + ((SELECT CODE_NM FROM T_CODE WHERE GROUP_ID = 'FILE' AND CODE_ID = 'PD')||'days')::INTERVAL
+            ELSE NULL END
+        </if>
+        <if test="saveFileVer != null and saveFileVer != ''">
+            , SAVE_FILE_VER = #{saveFileVer}
+        </if>
+        <if test="refId != null and refId != ''">
+            , REF_ID = #{refId}
+        </if>
+        <if test="refVer != null and refVer != ''">
+            , REF_VER = #{refVer}
+        </if>
+        WHERE FILE_ID = #{fileId}
+    </update>
+
+    <delete id="deleteFile" parameterType="fileModel">
+        UPDATE PTL.T_FILE SET
+            USE_YN = #{useYn}
+                            , MODI_ID = #{modiId}
+                            , MODI_DT = NOW()
+        WHERE FILE_ID = #{fileId}
+    </delete>
+
+    <delete id="deleteFileParent" parameterType="fileModel">
+        UPDATE PTL.T_FILE SET
+            USE_YN = #{useYn}
+                            , MODI_ID = #{modiId}
+                            , MODI_DT = NOW()
+        WHERE REF_ID = #{refId}
+    </delete>
+</mapper>

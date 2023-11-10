@@ -102,7 +102,7 @@ public class DataRoomRestController {
 
     @Operation(summary = "자료실 삭제 API", description = "자료를 완전 삭제한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = NoticeResDto.NoticeResDtoResult.class)))
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = DataRoomResDto.DataRoomResDtoResult.class)))
     }
     )
     @DeleteMapping(value = "/v1/dataroom/{dataId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -114,7 +114,7 @@ public class DataRoomRestController {
 
     @Operation(summary = "자료실 SOFT 삭제 API", description = "공지사항을 SOFT 삭제한다.(del_yn)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = NoticeResDto.NoticeResDtoResult.class)))
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = DataRoomResDto.DataRoomResDtoResult.class)))
     }
     )
     @PostMapping(value = "/v1/dataroom/delete/{dataId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
