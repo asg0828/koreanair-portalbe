@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = CommonConstants.API_FO_PREFIX + "/biz-meta")
-@Tag(name = "table-spec", description = "Biz 메타 관리 > 테이블 정의서 관리 API")
+@Tag(name = "table-spec", description = "테이블 정의서 관리 API")
 public class FoTableSpecRestController {
     
     private final TableSpecService tableSpecService;
