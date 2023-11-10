@@ -8,6 +8,10 @@ server:
       enabled: false
   servlet:
     context-path: /pt
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
       
 springdoc:
   swagger-ui:
