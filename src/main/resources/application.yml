@@ -1,6 +1,7 @@
 spring:
   profiles:
     active: local
+
 server:
   port: 8080
   error:
@@ -12,6 +13,16 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+
+mybatis:
+  type-aliases-package: com.cdp.portal
+  type-handlers-package: com.cdp.portal
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    jdbc-type-for-null: NULL
+    use-generated-keys: false
+  mapper-locations: classpath:mapper/**/*.xml
       
 springdoc:
   swagger-ui:

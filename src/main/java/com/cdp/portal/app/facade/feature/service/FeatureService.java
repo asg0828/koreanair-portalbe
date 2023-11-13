@@ -25,7 +25,8 @@ public class FeatureService {
     private final FeatureMapper featureMapper;
     private final FeatureHistMapper featureHistMapper;
     private final IdUtil idUtil;
-    
+
+    @Transactional
     public void createFeature(FeatureReqDto.CreateFeature dto) {
         Boolean isExists = featureMapper.isExistsByFeatureKoNm(dto.getFeatureKoNm());
         if (isExists) {
@@ -125,6 +126,7 @@ public class FeatureService {
         }
     }
     
+    @Transactional
     public void deleteFeature(final String featureId) {
         FeatureResDto.Feature feature = featureMapper.selectById(featureId);
         if (Objects.isNull(feature)) {
