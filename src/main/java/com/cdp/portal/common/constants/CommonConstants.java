@@ -86,6 +86,18 @@ public class CommonConstants {
 		//표준용어
 		public static final String STANDARD_TERMS = "st";
 	}
+
+	public interface File {
+		public static final String AWS_S3 = "S3";
+		public static final String PREVIEW = "PREVIEW";
+		public static final String VIEW = "VIEW";
+		public static final String BOARD = "BOARD";
+		public static final String BOARDN = "BOARD_N";//공지사항
+		public static final String BOARDF = "BOARD_F";//FAQ
+		public static final String BOARDQ = "BOARD_Q";//QNA
+		public static final String BOARDD = "BOARD_D";//자료실
+		public static final String EDITOR = "EDITOR";
+	}
 	
 	//날짜, 시간 형식
 	public interface DATE_FORMAT {
@@ -94,6 +106,12 @@ public class CommonConstants {
 		public static final String DEFAULT_DAY = "yyyyMMdd";
 		public static final String DEFAULT_TIME = "HHmmss";
 		public static final String DEFAULT_DATETIME = "yyyyMMddHHmmss";
+	}
+
+	public interface Profile {
+		public static final String LOCAL = "local";
+		public static final String DEV = "dev";
+		public static final String PROD = "prod";
 	}
 	
 	// Header Name

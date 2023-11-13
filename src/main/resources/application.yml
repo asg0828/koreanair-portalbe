@@ -1,6 +1,7 @@
 spring:
   profiles:
     active: local
+
 server:
   port: 8080
   error:
@@ -12,6 +13,16 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+
+mybatis:
+  type-aliases-package: com.cdp.portal
+  type-handlers-package: com.cdp.portal
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    jdbc-type-for-null: NULL
+    use-generated-keys: false
+  mapper-locations: classpath:mapper/**/*.xml
       
 springdoc:
   swagger-ui:
@@ -27,3 +38,13 @@ api:
     client_id: 894018941704-2gn88c8qugmjhcar020usr9cr6vqft2q.apps.googleusercontent.com
   googleSpreadSheets:
     url: https://sheets.googleapis.com
+
+cloud:
+  aws:
+    s3:
+      bucket: awsdc-s3-dlk-dev-cdp-portalfe
+    region:
+      static: ap-northeast-2
+    credentials:
+      accesskey : ASIARUSMYB6B2XTLASDC
+      secretkey : BQEaOgezdGmbpiQksvf1kM3P7w15wFmlZghXo6+I

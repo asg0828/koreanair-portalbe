@@ -32,11 +32,8 @@ public class QnaService {
     @Transactional
     public void createQna(QnaReqDto.CreateQnaReq dto) {
 
-        final String qnaId = idUtil.getQnaId();
-        log.debug("##### createQna qnaId: {}", qnaId);
-
         QnaModel qnaModel = QnaModel.builder()
-                .qnaId(qnaId)
+                .qnaId(idUtil.getQnaId())
                 .clCode(dto.getClCode())
                 .sj(dto.getSj())
                 .cn(dto.getCn())
