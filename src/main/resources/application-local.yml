@@ -47,7 +47,7 @@ logging:
         portal:
           app: debug
       zaxxer:
-        hikari: debug
+        hikari: off
     jdbc:
       sqlonly: off
       sqltiming: debug
