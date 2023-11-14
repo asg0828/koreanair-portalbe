@@ -18,6 +18,10 @@ public class FileReqDto {
         private String storageSe;
         @Schema(description = "버킷 명", example = "", nullable = false)
         private String bucketNm;
+        @Schema(description = "저장 경로", example = "", nullable = false)
+        private String savePath;
+        @Schema(description = "파일 이름", example = "", nullable = false)
+        private String saveFileNm;
         @Schema(description = "사용 여부", example = "Y|N", nullable = false)
         private String useYn;
         @Schema(description = "등록 ID", example = "admin", nullable = false)

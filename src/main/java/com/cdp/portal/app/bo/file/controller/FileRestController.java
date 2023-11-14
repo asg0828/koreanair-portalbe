@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.sql.Timestamp;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +24,7 @@ public class FileRestController {
 
     @Operation(summary = "파일 업로드", description = "파일을 업로드합니다.")
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResDto<?>> uploadFile(FileReqDto.InsertFileReq file) {
+    public ResponseEntity<ApiResDto<?>> uploadFile(@RequestPart("file") MultipartFile file) {
         fileService.insertFile(file);
         return ResponseEntity.ok(ApiResDto.success());
     }

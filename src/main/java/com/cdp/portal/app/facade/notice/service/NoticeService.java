@@ -55,6 +55,7 @@ public class NoticeService {
      * @param
      * @return
      */
+    @Transactional
     public NoticeResDto.NoticesResult getNotices (PagingDto pagingDto, NoticeReqDto.SearchNotice searchDto) {
         pagingDto.setPaging(noticeMapper.selectCount(searchDto));
 
@@ -106,9 +107,11 @@ public class NoticeService {
      * 공지사항 삭제
      * @param noticeId
      */
+    @Transactional
     public void deleteNotice(String noticeId) {
         noticeMapper.deleteNotice(noticeId);
     }
+    @Transactional
     public void deleteNotice2(NoticeReqDto.DeleteNoticeReq dto) {
         noticeMapper.deleteNotice2(dto);
     }

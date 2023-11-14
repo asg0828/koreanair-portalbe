@@ -17,6 +17,8 @@ import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
 import com.cdp.portal.app.facade.faq.mapper.FaqMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class FaqService {
      * @param
      * @return
      */
-
+    @Transactional
     public FaqResDto.FaqsResult getFaqs (PagingDto pagingDto, FaqReqDto.SearchFaq searchDto) {
         pagingDto.setPaging(faqMapper.selectCount(searchDto));
 
@@ -46,6 +48,7 @@ public class FaqService {
      * @param faqId
      * @return
      */
+    @Transactional
     public FaqResDto getFaq(String faqId) {
         return faqMapper.selectByFaqId(faqId);
     }
@@ -54,6 +57,7 @@ public class FaqService {
      * 공지사항 등록
      * @param dto
      */
+    @Transactional
     public void createFaq(FaqReqDto.CreateFaqReq dto) {
 
         final String faqId = idUtil.getFaqId();
@@ -77,6 +81,7 @@ public class FaqService {
      * @param faqId
      * @param dto
      */
+    @Transactional
     public void updateFaq(final String faqId, FaqReqDto.UpdateFaqReq dto) {
         FaqResDto faqResDto = this.getFaq(faqId);
         if (Objects.isNull(faqResDto)) {
@@ -95,9 +100,11 @@ public class FaqService {
         faqMapper.updateFaq(faqModel);
     }
 
+    @Transactional
     public void deleteFaq(String faqId) {
         faqMapper.deleteFaq(faqId);
     }
+    @Transactional
     public void deleteFaq2(FaqReqDto.DeleteFaqReq dto) {
         faqMapper.deleteFaq2(dto);
     }

@@ -36,6 +36,16 @@ spring:
     host: redis-oneid-dev.koreanair.com
     port: 6980
     session-ttl: 1200
+      
+mybatis:
+  type-aliases-package: com.cdp.portal
+  type-handlers-package: com.cdp.portal
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    jdbc-type-for-null: NULL
+    use-generated-keys: false
+  mapper-locations: classpath:mapper/**/*.xml
     
 logging:
   level:
@@ -58,4 +68,12 @@ logging:
   pattern:
     console: "%date{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread]%cyan( %logger{10}) - %msg%n"
       
-    
+cloud:
+  aws:
+    s3:
+      bucket: awsdc-s3-dlk-dev-cdp-portalobject
+    region:
+      static: ap-northeast-2
+    credentials:
+      accesskey: ASIARUSMYB6B2XTLASDC
+      secretkey: BQEaOgezdGmbpiQksvf1kM3P7w15wFmlZghXo6+I
