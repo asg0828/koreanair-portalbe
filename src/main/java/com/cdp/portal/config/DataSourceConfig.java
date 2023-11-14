@@ -34,6 +34,15 @@ public class DataSourceConfig {
 	private final AWSSecretsManager secretsManagerClient;
 	private String dbPassword;
 	
+	@Value("${spring.config.activate.on-profile}")
+    private String profile;
+	
+	@Value("${spring.datasource.master.password}")
+    private String localDbMasterPassword;
+	
+	@Value("${spring.datasource.slave.password}")
+	private String localDbSlavePassword;
+	
     @Value("${cloud.aws.secrets-manager.db-password-arn}")
     String dbPasswordSecretManagerArn;
     
@@ -43,11 +52,17 @@ public class DataSourceConfig {
     @Bean(MASTER_DATASOURCE)
     @ConfigurationProperties(prefix = "spring.datasource.master")
     public DataSource masterDataSource() {
-    	var kalReaderDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
-        getSecretsManagerDbPassword();
-        kalReaderDataSource.setPassword(dbPassword);
+    	var cdpMasterDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
+    	if ("local".equals(profile)) {
+            cdpMasterDataSource.setPassword(localDbMasterPassword);
+        } else {
+            if (dbPassword == null) {
+                getSecretsManagerDbPassword();
+            }
+            cdpMasterDataSource.setPassword(dbPassword);
+        }
         
-        return kalReaderDataSource;
+        return cdpMasterDataSource;
 //        return DataSourceBuilder.create() 
 //                .type(HikariDataSource.class) 
 //                .build();
@@ -56,11 +71,17 @@ public class DataSourceConfig {
     @Bean(SLAVE_DATASOURCE)
     @ConfigurationProperties(prefix = "spring.datasource.slave")
     public DataSource slaveDataSource() {
-    	var kalReaderDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
-        getSecretsManagerDbPassword();
-        kalReaderDataSource.setPassword(dbPassword);
+    	var cdpSlaveDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
+    	if ("local".equals(profile)) {
+    		cdpSlaveDataSource.setPassword(localDbSlavePassword);
+        } else {
+            if (dbPassword == null) {
+                getSecretsManagerDbPassword();
+            }
+            cdpSlaveDataSource.setPassword(dbPassword);
+        }
         
-        return kalReaderDataSource;
+        return cdpSlaveDataSource;
 //        return DataSourceBuilder.create() 
 //                .type(HikariDataSource.class) 
 //                .build();
