@@ -49,4 +49,10 @@ logging:
   pattern:
     console: "%date{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread]%cyan( %logger{10}) - %msg%n"
       
-    
+cloud:
+  aws:
+    region: ap-northeast-2
+    secrets-manager:
+      db-password-arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/cdp/app-Yufwll
+      
+      
