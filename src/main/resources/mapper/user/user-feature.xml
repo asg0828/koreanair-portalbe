@@ -29,6 +29,67 @@
 			)
 	</select>
 	
+	<select id="selectAll" resultType="com.cdp.portal.app.facade.user.dto.response.UserFeatureResDto$UserFeatures">
+		SELECT 
+			row_number() OVER (ORDER BY Z.RGST_DT DESC) AS row_num
+			, Z.*
+			, Z.SE_GRP_ID AS featureSeGrp
+			, (SELECT SE_NM FROM T_FEATURE_SE WHERE SE_ID = Z.SE_GRP_ID) AS featureSeGrpNm
+			, Z.CODE_NM AS featureTypNm
+			, Z.SE_NM AS featureSeNm
+			, Z.USER_NM AS enrUserNm
+			, Z.DEPT_NM AS enrDeptNm
+		FROM (
+			SELECT
+				UF.USER_ID
+				, UF.FEATURE_ID
+				, F.FEATURE_TYP
+				, C.CODE_NM
+				, SE.SE_GRP_ID
+				, F.FEATURE_SE
+				, SE.SE_NM
+				, F.FEATURE_KO_NM
+				, F.FEATURE_EN_NM
+				, F.CALC_UNT
+				, F.FEATURE_DEF
+				, F.FEATURE_FM
+				, F.ENR_USER_ID
+				, F.ENR_DEPT_CODE
+				, D.DEPT_NM
+				, U.USER_NM
+				, F.FEATURE_REL_TB
+				, F.FEATURE_DSC
+				, F.DEL_YN
+				, UF.RGST_ID
+				, UF.RGST_DT
+			FROM
+				T_USER_FEATURE UF
+				INNER JOIN T_FEATURE F
+					ON UF.FEATURE_ID = F.FEATURE_ID
+				LEFT JOIN T_USER U
+					ON F.ENR_USER_ID = U.USER_ID
+				LEFT JOIN T_DEPT D
+					ON F.ENR_DEPT_CODE = D.DEPT_CODE
+				LEFT JOIN T_FEATURE_SE SE 
+					ON F.FEATURE_SE = SE.SE_ID
+				LEFT JOIN T_CODE C 
+					ON F.FEATURE_TYP = C.CODE_ID
+			WHERE
+				UF.USER_ID = #{userId}
+		) Z
+		<include refid="paging.pagingOffsetSQL" />
+
+	</select>
+	
+	<select id="selectCount" resultType="int">
+		SELECT
+			COUNT(*) AS cnt
+		FROM 
+			T_USER_FEATURE
+		WHERE
+			USER_ID = #{userId}
+	</select>
+	
 	<delete id="delete" parameterType="String">
 		DELETE
 		FROM
