@@ -37,10 +37,10 @@ public class DataSourceConfig {
 	@Value("${spring.config.activate.on-profile}")
     private String profile;
 	
-	@Value("${spring.datasource.master.password}")
+	@Value("${local.database.password.master-password}")
     private String localDbMasterPassword;
 	
-	@Value("${spring.datasource.slave.password}")
+	@Value("${local.database.password.slave-password}")
 	private String localDbSlavePassword;
 	
     @Value("${cloud.aws.secrets-manager.db-password-arn}")

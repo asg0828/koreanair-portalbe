@@ -48,3 +48,9 @@ cloud:
     credentials:
       accesskey : ASIARUSMYB6B2XTLASDC
       secretkey : BQEaOgezdGmbpiQksvf1kM3P7w15wFmlZghXo6+I
+
+local:
+  database:
+    password:
+      master-password: h@#Ru0Ro
+      slave-password: G$BRl5$B
