@@ -27,6 +27,7 @@ public class DataRoomService {
      * 자료실 등록
      * @param dto
      */
+    @Transactional
     public void createData(DataRoomReqDto.CreateDataRoomReq dto) {
 
         final String dataId = idUtil.getDataId();
@@ -48,7 +49,7 @@ public class DataRoomService {
      * @param
      * @return
      */
-
+    @Transactional
     public DataRoomResDto.DataRoomsResult getDataRooms(PagingDto pagingDto, DataRoomReqDto.SearchDataRoom searchDto) {
         pagingDto.setPaging(dataRoomMapper.selectCount(searchDto));
 
@@ -64,6 +65,7 @@ public class DataRoomService {
      * @param dataId
      * @return
      */
+    @Transactional
     public DataRoomResDto getData(String dataId) {
         return dataRoomMapper.selectByDataId(dataId);
     }
@@ -96,9 +98,11 @@ public class DataRoomService {
      * 자료실 삭제
      * @param dataId
      */
+    @Transactional
     public void deleteDataRoom(String dataId) {
         dataRoomMapper.deleteDataRoom(dataId);
     }
+    @Transactional
     public void deleteDataRoom2(DataRoomReqDto.DeleteDataRoomReq dto) {
         dataRoomMapper.deleteDataRoom2(dto);
     }

@@ -118,6 +118,7 @@ public class QnaRestController {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = QnaResDto.QnaResDtoResult.class)))
     }
     )
+    @Parameter(name ="qnaId", required = true, description = "QNA ID", example = "qn23000000005")
     @DeleteMapping(value = "/v1/qna/{qnaId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteQna(@PathVariable String qnaId) {
         qnaService.deleteQna(qnaId);

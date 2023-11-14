@@ -108,7 +108,8 @@ public class FaqRestController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
     }
     )
-    @DeleteMapping(value = "/v1/faq/{faqId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Parameter(name ="faqId", required = true, description = "FAQ ID", example = "fq23000000005")
+    @DeleteMapping(value = "/v1/faq/{faqId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteFaq(@PathVariable String faqId) {
         faqService.deleteFaq(faqId);
 

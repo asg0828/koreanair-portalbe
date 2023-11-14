@@ -55,6 +55,7 @@ public class QnaService {
      * @param
      * @return
      */
+    @Transactional
     public QnaResDto.QnasResult getQnas(PagingDto pagingDto, QnaReqDto.SearchQna searchDto) {
         pagingDto.setPaging(qnaMapper.selectCount(searchDto));
 
@@ -69,10 +70,12 @@ public class QnaService {
      * @param qnaId
      * @return
      */
+    @Transactional
     public QnaResDto getQna(String qnaId) {
         return qnaMapper.selectByQnaId(qnaId);
     }
 
+    @Transactional
     public List<QnaResDto> selectQnaReplyList(String qnaId) {
         return qnaMapper.selectQnaReplyList(qnaId);
     }
@@ -82,6 +85,7 @@ public class QnaService {
      * @param qnaId
      * @param dto
      */
+    @Transactional
     public void updateQna(final String qnaId, QnaReqDto.UpdateQnaReq dto) {
         QnaResDto qnaResDto = this.getQna(qnaId);
         if (Objects.isNull(qnaResDto)) {
@@ -108,9 +112,11 @@ public class QnaService {
      * Q&A 삭제
      * @param qnaId
      */
+    @Transactional
     public void deleteQna(String qnaId) {
         qnaMapper.deleteQna(qnaId);
     }
+    @Transactional
     public void deleteQna2(QnaReqDto.DeleteQnaReq dto) {
         qnaMapper.deleteQna2(dto);
     }

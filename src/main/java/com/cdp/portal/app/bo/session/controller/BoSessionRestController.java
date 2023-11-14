@@ -78,11 +78,11 @@ public class BoSessionRestController {
 	@Operation(summary = "logout", description = "SessionId 를 받아서 Session을 삭제한다.", tags = "Session", responses = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResSessionSpecSuccess.class))) })
 	@DeleteMapping(path = "/v1/logout")
-	public @ResponseBody ResponseEntity<ApiResDto<Void>> logout() {
+	public ResponseEntity<ApiResDto<Void>> logout() {
 		if (sessionService.logout(SessionScopeUtil.getContextSession().getSessionId())) {
-			return new ResponseEntity<>(HttpStatus.OK);
+			return ResponseEntity.ok((ApiResDto<Void>) ApiResDto.success());
 		} else {
-			return new ResponseEntity<>(HttpStatus.OK);
+			return ResponseEntity.ok((ApiResDto<Void>) ApiResDto.success());
 		}
 	}
 }

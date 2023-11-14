@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import static org.springframework.data.redis.cache.CacheKeyPrefix.SEPARATOR;
@@ -89,7 +90,7 @@ public class AwsS3Util {
     public boolean upload(FileModel file) {
         try {
             // 파일 경로 및 이름 설정
-            String key = StringUtils.joinWith(SEPARATOR, file.getSavePath(), file.getSaveFileNm());
+           String key = StringUtils.joinWith(SEPARATOR, file.getSavePath(), file.getSaveFileNm());
             // 파일 업로드 요청 생성
             PutObjectRequest putRequest = new PutObjectRequest(awsProps.getBucketName(), key, file.getInputStream(), null);
             // 파일 업로드 실행
@@ -100,6 +101,35 @@ public class AwsS3Util {
             return false;
         }
     }
+
+//    public boolean uploadFromUri(String s3Uri, InputStream inputStream) {
+//        boolean result = true;
+//        try {
+//            // S3 URI를 파싱하여 버킷 이름과 객체 키를 추출합니다.
+//            S3Uri s3UriObj = S3Uri.parse(s3Uri);
+//            String bucketName = s3UriObj.bucket();
+//            String objectKey = s3UriObj.key();
+//
+//            // 파일 업로드 요청 생성
+//            PutObjectRequest putRequest = PutObjectRequest.builder()
+//                    .bucket(bucketName)
+//                    .key(objectKey)
+//                    .build();
+//
+//            // 파일 업로드
+//            s3Client.putObject(putRequest, RequestBody.fromInputStream(inputStream, -1));
+//
+//            // 파일 업로드 성공 시
+//            log.info("File uploaded successfully to S3 URI: {}", s3Uri);
+//        } catch (S3Exception | SdkClientException e) {
+//            result = false;
+//            log.warn("S3 FILE UPLOAD FAILED");
+//            log.warn(e.getMessage());
+//        } finally {
+//            // 필요에 따라 inputStream을 닫는 로직을 추가할 수 있습니다.
+//        }
+//        return result;
+//    }
 
 
     /**

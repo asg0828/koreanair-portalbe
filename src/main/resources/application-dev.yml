@@ -3,10 +3,26 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:postgresql://cdpdb-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
-    driver-class-name: org.postgresql.Driver
-    username: cdpdevdb_app
-    password: efR-as0o
+    master:
+      jdbc-url: jdbc:log4jdbc:postgresql://cdpdb-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
+      username: cdpdevdb_app
+      password: efR-as0o
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      hikari:
+        minimum-idle: 5
+        maximum-pool-size: 20
+        connection-timeout: 10000
+        pool-name: cdp-master
+    slave:
+      jdbc-url: jdbc:postgresql://cdpdb-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
+      username: cdpdevdb_app
+      password: efR-as0o
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        minimum-idle: 5
+        maximum-pool-size: 20
+        connection-timeout: 10000
+        pool-name: cdp-slave
   mvc:
     pathmatch:
       matching-strategy: 'ant_path_matcher'
@@ -20,16 +36,6 @@ spring:
     host: redis-oneid-dev.koreanair.com
     port: 6980
     session-ttl: 1200
-      
-mybatis:
-  type-aliases-package: com.cdp.portal
-  type-handlers-package: com.cdp.portal
-  configuration:
-    map-underscore-to-camel-case: true
-    cache-enabled: false
-    jdbc-type-for-null: NULL
-    use-generated-keys: false
-  mapper-locations: classpath:mapper/**/*.xml
     
 logging:
   level:
@@ -38,7 +44,8 @@ logging:
       springframework: debug
     com:
       cdp:
-        portal: debug
+        portal:
+          app: debug
   pattern:
     console: "%date{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread]%cyan( %logger{10}) - %msg%n"
       
