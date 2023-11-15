@@ -126,6 +126,7 @@ public class DataSourceConfig {
                 this.dbPassword = jObject.getString("DBPassword");
             }
         } catch (Exception e) {
+        	System.out.println("AWSSecretsManagerException ========================>" + e.getMessage());
             log.error(e.getMessage());
             throw new AWSSecretsManagerException("SecretManager Exception Occured");
         }
