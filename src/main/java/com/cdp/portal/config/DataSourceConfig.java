@@ -54,7 +54,7 @@ public class DataSourceConfig {
     
     @Bean(MASTER_DATASOURCE)
     @ConfigurationProperties(prefix = "spring.datasource.master")
-    public DataSource masterDataSource() throws JSONException {
+    public DataSource masterDataSource() {
     	var cdpMasterDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
     	if ("local".equals(profile)) {
             cdpMasterDataSource.setPassword(localDbMasterPassword);
@@ -66,9 +66,6 @@ public class DataSourceConfig {
         }
         
         return cdpMasterDataSource;
-//        return DataSourceBuilder.create() 
-//                .type(HikariDataSource.class) 
-//                .build();
     }
     
     @Bean(SLAVE_DATASOURCE)
@@ -85,9 +82,6 @@ public class DataSourceConfig {
         }
         
         return cdpSlaveDataSource;
-//        return DataSourceBuilder.create() 
-//                .type(HikariDataSource.class) 
-//                .build();
     }
     
     @Bean
@@ -121,14 +115,14 @@ public class DataSourceConfig {
 
             if (getSecretValueResult.getSecretString() != null) {
                 var secret = getSecretValueResult.getSecretString();
+                System.out.println("secret ========================> " + secret);
 
                 var jObject = new JSONObject(secret);
                 this.dbPassword = jObject.getString("DBPassword");
             }
         } catch (Exception e) {
-        	System.out.println("AWSSecretsManagerException ========================>" + e.getMessage());
             log.error(e.getMessage());
-            throw new AWSSecretsManagerException("SecretManager Exception Occured");
+            throw new AWSSecretsManagerException("SecretManager Exception Occured : " + e.getMessage());
         }
     }
 
