@@ -7,7 +7,10 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+//import org.springframework.boot.configurationprocessor.json.JSONException;
+//import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -51,7 +54,7 @@ public class DataSourceConfig {
     
     @Bean(MASTER_DATASOURCE)
     @ConfigurationProperties(prefix = "spring.datasource.master")
-    public DataSource masterDataSource() {
+    public DataSource masterDataSource() throws JSONException {
     	var cdpMasterDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
     	if ("local".equals(profile)) {
             cdpMasterDataSource.setPassword(localDbMasterPassword);

@@ -49,6 +49,9 @@ dependencies {
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.154')
     implementation 'com.amazonaws:aws-java-sdk-s3'
     implementation 'com.amazonaws:aws-java-sdk-sts'
+    
+    // json
+    implementation 'org.json:json:20220924'
 }
 
 dependencyManagement {
