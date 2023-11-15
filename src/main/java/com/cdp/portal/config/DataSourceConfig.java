@@ -7,9 +7,6 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.boot.configurationprocessor.json.JSONException;
-//import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -115,10 +112,9 @@ public class DataSourceConfig {
 
             if (getSecretValueResult.getSecretString() != null) {
                 var secret = getSecretValueResult.getSecretString();
-                System.out.println("secret ========================> " + secret);
 
                 var jObject = new JSONObject(secret);
-                this.dbPassword = jObject.getString("DBPassword");
+                this.dbPassword = jObject.getString("password");
             }
         } catch (Exception e) {
             log.error(e.getMessage());
