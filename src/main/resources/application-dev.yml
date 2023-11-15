@@ -4,9 +4,9 @@ spring:
       on-profile: dev
   datasource:
     master:
-      jdbc-url: jdbc:log4jdbc:postgresql://rds-cdp-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
+      jdbc-url: jdbc:postgresql://rds-cdp-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
       username: cdpdevdb_app
-      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      driver-class-name: org.postgresql.Driver
       hikari:
         minimum-idle: 5
         maximum-pool-size: 20
@@ -42,8 +42,7 @@ logging:
       springframework: debug
     com:
       cdp:
-        portal:
-          app: debug
+        portal: debug
   pattern:
     console: "%date{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread]%cyan( %logger{10}) - %msg%n"
       
