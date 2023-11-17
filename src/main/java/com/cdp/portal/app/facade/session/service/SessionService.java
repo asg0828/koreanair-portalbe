@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,10 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
-import com.amazonaws.services.secretsmanager.AWSSecretsManager;
-import com.amazonaws.services.secretsmanager.model.AWSSecretsManagerException;
-import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
-import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
 import com.cdp.portal.app.facade.session.dto.SessionDto;
 import com.cdp.portal.app.facade.session.dto.SessionRequestDto;
 import com.cdp.portal.app.facade.session.repository.SessionRepository;
@@ -48,7 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 public class SessionService {
 
 	private final SessionRepository sessionRepository;
-	private final AWSSecretsManager secretsManagerClient;
 //	private final PssService pssService;
 //	private final ActionHistoryService actionHistoryService;
 //	private final MenuByRoleIdConfig menuByRoleIdConfig;
@@ -93,7 +87,7 @@ public class SessionService {
 
 			String employeeNumber = null;
 			try {
-				getSecretsManagerDbPassword();
+
 				employeeNumber = getEmployeeNumberFromGoogle(sessionRequest.getGoogleAccessToken());
 
 				if (ObjectUtils.isEmpty(employeeNumber)) {
@@ -175,26 +169,6 @@ public class SessionService {
 
 		return employeeNumber;
 	}
-	
-	//HR 정보 조회 API 권한용 ARN
-	public void getSecretsManagerDbPassword() {
-        try {
-            var getSecretValueRequest = new GetSecretValueRequest()
-                    .withSecretId("arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY");
-            GetSecretValueResult getSecretValueResult = null;
-            getSecretValueResult = secretsManagerClient.getSecretValue(getSecretValueRequest);
-
-            if (getSecretValueResult.getSecretString() != null) {
-                var secret = getSecretValueResult.getSecretString();
-                System.out.println("secret ======> : " + secret);
-
-                var jObject = new JSONObject(secret);
-//                this.dbPassword = jObject.getString("password");
-            }
-        } catch (Exception e) {
-            throw new AWSSecretsManagerException("SecretManager Exception Occured : " + e.getMessage());
-        }
-    }
 
 	public SessionDto getSession(String sessionId) {
 		return sessionRepository.getSession(sessionId);
