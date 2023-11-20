@@ -13,8 +13,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import com.cdp.portal.app.facade.session.dto.SessionDto;
 import com.cdp.portal.app.facade.session.service.AuthenticationService;
 import com.cdp.portal.common.constants.CommonConstants;
-import com.cdp.portal.common.enumeration.CdpPortalError;
-import com.cdp.portal.common.error.exception.CdpPortalException;
 import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
