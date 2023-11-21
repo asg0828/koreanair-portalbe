@@ -29,5 +29,12 @@ public interface FileMapper {
      * @param fileId
      * @return
      */
-    FileResDto selectByFileId(@Param("fileId") String fileId);
+    FileModel selectByFileId(@Param("fileId") String fileId);
+
+    /**
+     * 파일 삭제
+     * @param model
+     * @return
+     */
+    long deleteFile(FileModel model);
 }

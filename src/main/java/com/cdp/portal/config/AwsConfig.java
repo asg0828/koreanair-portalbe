@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class AwsConfig {
 
-    @Value("${cloud.aws.role.arn}") // application.properties 또는 application.yml에 역할 ARN을 설정하세요.
+    @Value("${cloud.aws.role.arn}")
     private String roleArn;
 
     @Bean("awsCredentialsProvider")
@@ -35,7 +35,7 @@ public class AwsConfig {
 
         return AmazonS3ClientBuilder.standard()
                 .withCredentials(credentialsProviderChain)
-                .withRegion(CommonConstants.AWS.REGION.getName()) // 지역 이름(String)을 사용
+                .withRegion(CommonConstants.AWS.REGION.getName())
                 .build();
     }
 }

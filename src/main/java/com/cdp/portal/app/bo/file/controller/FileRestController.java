@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,17 +43,23 @@ public class FileRestController {
 
     @Operation(summary = "파일 다운로드", description = "파일을 다운로드합니다.")
     @GetMapping(value = "/download/{fileId}")
-    public ResponseEntity<?> downloadFile(@PathVariable String fileId) {
-//        fileService.downloadFile(fileId);
-        return ResponseEntity.ok(ApiResDto.success());
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileId) {
+        ByteArrayResource resource = fileService.downloadFile(fileId).getBody();
+        HttpHeaders headers = fileService.getHeaders(fileId); // 파일 다운로드 헤더를 설정
+        // 파일 다운로드 헤더 설정
+        headers.add("Content-Disposition", "attachment; filename=\"" + fileId + "\"");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(resource.contentLength())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 
     @Operation(summary = "파일 삭제", description = "파일을 삭제합니다.")
-    @DeleteMapping(value = "/delete/{fileId}")
+    @PostMapping(value = "/delete/{fileId}")
     public ResponseEntity<ApiResDto<?>> deleteFile(@PathVariable String fileId) {
-//        fileService.deleteFile(fileId);
-
+        fileService.deleteFile(fileId);
         return ResponseEntity.ok(ApiResDto.success());
     }
-    // 기타 필요한 파일 관련 API 엔드포인트 추가 가능
 }

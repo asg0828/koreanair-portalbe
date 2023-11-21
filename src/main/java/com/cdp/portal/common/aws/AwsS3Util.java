@@ -131,7 +131,7 @@ public class AwsS3Util {
             S3Object s3Object = s3Client.getObject(new GetObjectRequest(awsProps.getBucketName(), key));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             IOUtils.copy(s3Object.getObjectContent(), baos);
-            file.setBytes(baos.toByteArray());
+            file.setBytes(baos.toByteArray()); // FileModel 객체에 파일 내용 저장
             return true;
         } catch (Exception e) {
             log.warn("S3 FILE DOWNLOAD FAILED", e);

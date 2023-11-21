@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +23,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
 import java.util.List;
 
 
@@ -32,7 +33,6 @@ public class FileService {
 
     private final FileMapper fileMapper;
     private final IdUtil idUtil;
-
     private final AwsS3Util s3Util;
 
     /**
@@ -87,12 +87,20 @@ public class FileService {
 
     /**
      * 파일 등록
-     * @param
      *
+     * @param
      */
     @Transactional
     public void insertFile(MultipartFile file) throws IOException {
         String fileNm = file.getOriginalFilename();
+        String fileExtsn = "";
+
+        if (fileNm != null) {
+            int lastIndex = fileNm.lastIndexOf(".");
+            if (lastIndex != -1) {
+                fileExtsn = fileNm.substring(lastIndex + 1);
+            }
+        }
 
         final String fileId = idUtil.getFileId();
         log.debug("##### insertFile fileId: {}", fileId);
@@ -100,6 +108,7 @@ public class FileService {
         FileModel fileModel = FileModel.builder()
                 .fileId(fileId)
                 .fileNm(fileNm)
+                .fileExtsn(fileExtsn)
                 .savePath("board")
                 .fileSize(file.getSize())
                 .saveFileNm(fileNm)
@@ -117,11 +126,11 @@ public class FileService {
 
     /**
      * 파일 목록 조회
-     * @param
      *
+     * @param
      */
     @Transactional
-    public FileResDto.FilesResult getFiles () {
+    public FileResDto.FilesResult getList() {
 
         return FileResDto.FilesResult.builder()
                 .contents(fileMapper.selectAll())
@@ -130,26 +139,64 @@ public class FileService {
 
     /**
      * 파일 조회
-     * @param fileId
      *
+     * @param fileId
      */
     @Transactional
-    public FileResDto getFile(String fileId) {
+    public FileModel selectFile(String fileId) {
         return fileMapper.selectByFileId(fileId);
     }
 
-    /**
-     * 파일 다운로드
-     * @param fileId
-     *
-     */
 
+    /**
+     * S3 파일 다운로드
+     *
+     * @param fileId
+     */
+    @Transactional
+    public ResponseEntity<ByteArrayResource> downloadFile(String fileId) {
+        ByteArrayResource resource = null;
+
+        long fileSize = 0;
+        String fileNm = "";
+        // request의 파일 정보 파라메터로 파일을 조회 후 다운로드
+        FileModel fileModel = fileMapper.selectByFileId(fileId);
+
+        if (fileModel != null) {
+            // S3에서 파일 다운로드
+            boolean downloadSuccess = s3Util.download(fileModel);
+
+            if (downloadSuccess) {
+                // 다운로드 성공한 경우 파일 정보 설정
+                byte[] fileBytes = fileModel.getBytes();
+                resource = new ByteArrayResource(fileBytes);
+                fileSize = fileBytes.length;
+                fileNm = fileModel.getFileNm();
+            }
+        }
+
+        HttpHeaders headers = getHeaders(fileNm);
+        headers.setContentLength(fileSize);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(fileSize)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
 
     /**
      * 파일 삭제
-     * @param fileId
      *
+     * @param fileId
      */
+    @Transactional
+    public void deleteFile(String fileId) {
+        FileModel file = fileMapper.selectByFileId(fileId);
 
-
+        if (file != null) {
+            file.setUseYn("N");
+            fileMapper.deleteFile(file);
+        }
+    }
 }
