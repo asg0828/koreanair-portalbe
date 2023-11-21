@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+
 public class CommonConstants {
 	//common
-    public static final String API_BO_PREFIX = "/bo";
-    public static final String API_FO_PREFIX = "/fo";
-    public static final String EMPTY_STRING = "";
+	public static final String API_BO_PREFIX = "/bo";
+	public static final String API_FO_PREFIX = "/fo";
+	public static final String EMPTY_STRING = "";
 	public static final String UNKNOWN = "unknown";
 
 	//session
@@ -16,7 +19,13 @@ public class CommonConstants {
 	public static final String SECURE_SHA1 = "SHA-1";
 	public static final String SECURE_SHA1PRNG = "SHA1PRNG";
 //	public static final String APIGEE_ERROR_ACTOR = "cdp-portal";
-	
+
+	// Header Name
+	public static final List<String> IP_HEADER = new ArrayList<>(
+			Arrays.asList("x-forwarded-for", "x-real-ip", "proxy-client-ip", "wl-proxy-client-ip",
+					"http_x_forwarded_for", "http_x_forwarded", "http_x_cluster_client_ip", "http_client_ip",
+					"http_forwarded_for", "http_forwarded", "http_via", "remote_addr"));
+
 	//HttpHeader
 	public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
 	public static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
@@ -33,7 +42,7 @@ public class CommonConstants {
 	public static final String X_CORRELATION_ID = "x-correlation-id";
 	public static final String SOAP_ACTION = "SOAPAction";
 	public static final String X_FORWARDED_FOR = "X-Forwarded-For";
-	
+
 	//ID 생성
 	public static interface ID {
 		//ID 타입 키, ID 구분 키
@@ -42,11 +51,11 @@ public class CommonConstants {
 		//파일
 		public static final String FILE = "fl";
 		//메타테이블정의
-		public static final String META_TBL_ID="mt";
+		public static final String META_TBL_ID = "mt";
 		//메타테이블컬럼정의
-		public static final String META_TBL_COL_ID="mc";
+		public static final String META_TBL_COL_ID = "mc";
 		//피쳐
-		public static final String FEATURE_ID="ft";
+		public static final String FEATURE_ID = "ft";
 		//공지사항
 		public static final String NOTICE = "nt";
 		//분석소스공유관리
@@ -74,7 +83,7 @@ public class CommonConstants {
 		// 배치 관리
 		public static final String BATCH_JOB = "bj";
 		//부서ID
-		public static final String DEPT_CD="dc";
+		public static final String DEPT_CD = "dc";
 		//게시판 ID
 		public static final String BBS_ID = "si";
 		//게시판 항목 ID
@@ -113,11 +122,18 @@ public class CommonConstants {
 		public static final String DEV = "dev";
 		public static final String PROD = "prod";
 	}
-	
-	// Header Name
-	public static final List<String> IP_HEADER = new ArrayList<>(
-			Arrays.asList("x-forwarded-for", "x-real-ip", "proxy-client-ip", "wl-proxy-client-ip",
-					"http_x_forwarded_for", "http_x_forwarded", "http_x_cluster_client_ip", "http_client_ip",
-					"http_forwarded_for", "http_forwarded", "http_via", "remote_addr"));
-}
 
+	//AWS
+	public interface AWS {
+		public static final String LOCAL_ACCESS_NAME = "ASIAZSST2FO6CY7LWGDJ";
+		public static final String LOCAL_SECRET_NAME = "ot20S5tIRroxNWcGEvy9zj+7i2z2LObZDTdVoyT+";
+		public static final Region REGION = Region.getRegion(Regions.AP_NORTHEAST_2);
+
+
+		// Header Name
+		public static final List<String> IP_HEADER = new ArrayList<>(
+				Arrays.asList("x-forwarded-for", "x-real-ip", "proxy-client-ip", "wl-proxy-client-ip",
+						"http_x_forwarded_for", "http_x_forwarded", "http_x_cluster_client_ip", "http_client_ip",
+						"http_forwarded_for", "http_forwarded", "http_via", "remote_addr"));
+	}
+}

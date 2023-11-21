@@ -23,7 +23,7 @@ mybatis:
     jdbc-type-for-null: NULL
     use-generated-keys: false
   mapper-locations: classpath:mapper/**/*.xml
-      
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -42,12 +42,12 @@ api:
 cloud:
   aws:
     s3:
-      bucket: awsdc-s3-dlk-dev-cdp-portalfe
-    region:
-      static: ap-northeast-2
-    credentials:
-      accesskey : ASIARUSMYB6B2XTLASDC
-      secretkey : BQEaOgezdGmbpiQksvf1kM3P7w15wFmlZghXo6+I
+      bucket: awsdc-s3-dlk-dev-cdp-portalobject
+  stack.auto: false
+  region.static: ap-northeast-2
+  credentials:
+    accessKey: ASIAZSST2FO6CY7LWGDJ
+    secretKey: ot20S5tIRroxNWcGEvy9zj+7i2z2LObZDTdVoyT+
 
 local:
   database:
