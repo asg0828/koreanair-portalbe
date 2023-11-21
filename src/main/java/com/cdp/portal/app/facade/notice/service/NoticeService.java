@@ -41,8 +41,6 @@ public class NoticeService {
                 .importantYn(dto.getImportantYn())
                 .popupYn(dto.getPopupYn())
                 .useYn(dto.getUseYn())
-                .startDt(dto.getStartDt())
-                .endDt(dto.getEndDt())
                 .rgstId(dto.getRgstId())
                 .modiId(dto.getModiId()) // TODO: 로그인한 사용자 세팅
                 .build();
@@ -96,8 +94,6 @@ public class NoticeService {
                 .popupYn(dto.getPopupYn())
                 .importantYn(dto.getImportantYn())
                 .useYn(dto.getUseYn())
-                .startDt(dto.getStartDt())
-                .endDt(dto.getEndDt())
                 .modiId(dto.getModiId())    // TODO: 로그인한 사용자 세팅
                 .build();
 
