@@ -181,7 +181,8 @@ public class SessionService {
 	public void getSecretsManagerDbPassword() {
         try {
             var getSecretValueRequest = new GetSecretValueRequest()
-                    .withSecretId("arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY");
+//                    .withSecretId("arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY");
+            		.withSecretId("arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:apigee/pss/dev/tms/cdp-JqK2D9");
             GetSecretValueResult getSecretValueResult = null;
             getSecretValueResult = secretsManagerClient.getSecretValue(getSecretValueRequest);
 
