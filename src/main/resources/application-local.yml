@@ -6,6 +6,7 @@ spring:
     master:
       jdbc-url: jdbc:log4jdbc:postgresql://rds-cdp-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
       username: cdpdevdb_mgr
+      password: h@#Ru0Ro
       driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
       hikari:
         minimum-idle: 5
@@ -15,6 +16,7 @@ spring:
     slave:
       jdbc-url: jdbc:postgresql://rds-cdp-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
       username: cdpdevdb_user
+      password: G$BRl5$B
       driver-class-name: org.postgresql.Driver
       hikari:
         minimum-idle: 5
@@ -34,7 +36,7 @@ spring:
     host: redis-oneid-dev.koreanair.com
     port: 6980
     session-ttl: 1200
-    
+
 logging:
   level:
     root: info
@@ -61,4 +63,17 @@ cloud:
     region: ap-northeast-2
     secrets-manager:
       db-password-arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/cdp/app-Yufwll
-    
+      s3:
+        bucket: "awsdc-s3-dlk-dev-cdp-portalobject"
+      credentials:
+    accessKey: ASIAZSST2FO6CY7LWGDJ
+    secretKey: ot20S5tIRroxNWcGEvy9zj+7i2z2LObZDTdVoyT+
+
+
+# AWS Properties
+aws-props:
+  bucket-name: awsdc-s3-dlk-dev-cdp-portalobject
+  s3-uri : s3://awsdc-s3-dlk-dev-cdp-portalobject
+  file-path: "board"
+  page-size: "10"
+  time-zone: "Asia/Seoul"

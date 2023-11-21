@@ -1,10 +1,14 @@
 package com.cdp.portal.app.bo.file.controller;
 
-import com.cdp.portal.app.facade.file.dto.request.FileReqDto;
 import com.cdp.portal.app.facade.file.service.FileService;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.ApiResDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -12,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 
 @RestController
@@ -23,8 +28,13 @@ public class FileRestController {
     private final FileService fileService;
 
     @Operation(summary = "파일 업로드", description = "파일을 업로드합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+    }
+    )
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResDto<?>> uploadFile(@RequestPart("file") MultipartFile file) {
+    public ResponseEntity<ApiResDto<?>> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         fileService.insertFile(file);
         return ResponseEntity.ok(ApiResDto.success());
     }
