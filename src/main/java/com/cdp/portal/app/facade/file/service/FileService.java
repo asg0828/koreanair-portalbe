@@ -100,7 +100,7 @@ public class FileService {
         FileModel fileModel = FileModel.builder()
                 .fileId(fileId)
                 .fileNm(fileNm)
-                .savePath("awsdc-s3-dlk-dev-cdp-portalobject/board")
+                .savePath("board")
                 .fileSize(file.getSize())
                 .saveFileNm(fileNm)
                 .inputStream(file.getResource().getInputStream())

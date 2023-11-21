@@ -96,12 +96,12 @@ public class AwsS3Util {
             }
             String key = StringUtils.joinWith(SEPARATOR, file.getSavePath(), file.getSaveFileNm());
             // 파일 업로드 요청 생성
-            PutObjectRequest putRequest = new PutObjectRequest(awsProps.getBucketName(), key, file.getInputStream(), null);
+            PutObjectRequest putRequest = new PutObjectRequest(bucketName, key, file.getInputStream(), null);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getFileSize());
             putRequest.setMetadata(metadata);
             // 파일 업로드 실행
-            s3Client.putObject(new PutObjectRequest(bucketName, key, file.getInputStream(), metadata));
+            s3Client.putObject(putRequest);
             return true;
         } catch (Exception e) {
             log.warn("S3 FILE UPLOAD FAILED", e);
