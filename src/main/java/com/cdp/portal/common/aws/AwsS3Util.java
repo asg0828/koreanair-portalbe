@@ -96,12 +96,12 @@ public class AwsS3Util {
             }
             String key = StringUtils.joinWith(SEPARATOR, file.getSavePath(), file.getSaveFileNm());
             // 파일 업로드 요청 생성
-            PutObjectRequest putRequest = new PutObjectRequest(awsProps.getBucketName(), key, file.getInputStream(), null);
+            PutObjectRequest putRequest = new PutObjectRequest(bucketName, key, file.getInputStream(), null);
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getFileSize());
             putRequest.setMetadata(metadata);
             // 파일 업로드 실행
-            s3Client.putObject(new PutObjectRequest(bucketName, key, file.getInputStream(), metadata));
+            s3Client.putObject(putRequest);
             return true;
         } catch (Exception e) {
             log.warn("S3 FILE UPLOAD FAILED", e);
@@ -131,7 +131,7 @@ public class AwsS3Util {
             S3Object s3Object = s3Client.getObject(new GetObjectRequest(awsProps.getBucketName(), key));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             IOUtils.copy(s3Object.getObjectContent(), baos);
-            file.setBytes(baos.toByteArray());
+            file.setBytes(baos.toByteArray()); // FileModel 객체에 파일 내용 저장
             return true;
         } catch (Exception e) {
             log.warn("S3 FILE DOWNLOAD FAILED", e);

@@ -15,7 +15,7 @@ public class FileResDto extends FileModel {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
     @Builder
-    @Schema(description = "공지사항 목록 결과")
+    @Schema(description = "파일 목록 결과")
     public static class FilesResult {
 
         @Schema(description = "컨텐츠 정보", nullable = false)

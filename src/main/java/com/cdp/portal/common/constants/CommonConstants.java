@@ -125,8 +125,8 @@ public class CommonConstants {
 
 	//AWS
 	public interface AWS {
-		public static final String LOCAL_ACCESS_NAME = "ASIAZSST2FO6CY7LWGDJ";
-		public static final String LOCAL_SECRET_NAME = "ot20S5tIRroxNWcGEvy9zj+7i2z2LObZDTdVoyT+";
+		public static final String LOCAL_ACCESS_NAME = "";
+		public static final String LOCAL_SECRET_NAME = "";
 		public static final Region REGION = Region.getRegion(Regions.AP_NORTHEAST_2);
 
 

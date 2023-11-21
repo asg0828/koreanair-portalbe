@@ -43,11 +43,13 @@ cloud:
   aws:
     s3:
       bucket: awsdc-s3-dlk-dev-cdp-portalobject
+    role:
+      arn: arn:aws:iam::658379516860:role/CDP-PORTALDEVELOPER
   stack.auto: false
   region.static: ap-northeast-2
   credentials:
-    accessKey: ASIAZSST2FO6CY7LWGDJ
-    secretKey: ot20S5tIRroxNWcGEvy9zj+7i2z2LObZDTdVoyT+
+    accessKey: ASIAZSST2FO6D5V6Q6FU
+    secretKey: 1/4ACdh4Ed1mfPQw3k70bXWcPjmWUXCVB/CA95Ao
 
 local:
   database:

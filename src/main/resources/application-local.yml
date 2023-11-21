@@ -61,13 +61,15 @@ logging:
 cloud:
   aws:
     region: ap-northeast-2
+    role:
+      arn: arn:aws:iam::658379516860:role/CDP-PORTALDEVELOPER
     secrets-manager:
       db-password-arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/cdp/app-Yufwll
       s3:
         bucket: "awsdc-s3-dlk-dev-cdp-portalobject"
       credentials:
-    accessKey: ASIAZSST2FO6CY7LWGDJ
-    secretKey: ot20S5tIRroxNWcGEvy9zj+7i2z2LObZDTdVoyT+
+    accessKey: ASIAZSST2FO6D5V6Q6FU
+    secretKey: 1/4ACdh4Ed1mfPQw3k70bXWcPjmWUXCVB/CA95Ao
 
 
 # AWS Properties
