@@ -94,7 +94,7 @@ public class SessionService {
 			String employeeNumber = null;
 			try {
 				
-				getSecretsManagerDbPassword();
+//				getSecretsManagerDbPassword();
 				employeeNumber = getEmployeeNumberFromGoogle(sessionRequest.getGoogleAccessToken());
 
 				if (ObjectUtils.isEmpty(employeeNumber)) {
