@@ -37,14 +37,6 @@ public class NoticeReqDto {
         @Schema(description = "팝업공지여부", example = "Y|N", nullable = false)
         private String popupYn;
 
-        @NotNull(message = "시작일시는 필수 항목입니다.")
-        @Schema(description = "시작일시", example = "2023-10-26 10:04:45.868000", nullable = false)
-        private Timestamp startDt;
-
-        @NotNull(message = "종료일시는 필수 항목입니다.")
-        @Schema(description = "종료일시", example = "2023-10-26 10:04:45.868000", nullable = false)
-        private Timestamp endDt;
-
         @Schema(description = "등록 ID", example = "admin", nullable = false)
         private String rgstId;
 
@@ -79,14 +71,6 @@ public class NoticeReqDto {
 
         @Schema(description = "수정 ID", example = "admin", nullable = false)
         private String modiId;
-
-        @NotNull(message = "시작일시는 필수 항목입니다.")
-        @Schema(description = "시작일시", example = "2023-10-26 10:04:45.868000", nullable = false)
-        private Timestamp startDt;
-
-        @NotNull(message = "종료일시는 필수 항목입니다.")
-        @Schema(description = "종료일시", example = "2023-10-26 10:04:45.868000", nullable = false)
-        private Timestamp endDt;
     }
 
     @Getter
