@@ -6,6 +6,8 @@ import java.util.Objects;
 import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
 import com.cdp.portal.app.facade.faq.model.FaqModel;
 import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
+import com.cdp.portal.app.facade.file.model.FileModel;
+import com.cdp.portal.app.facade.file.service.FileService;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
@@ -26,6 +28,7 @@ public class FaqService {
 
     private final FaqMapper faqMapper;
     private final IdUtil idUtil;
+    private final FileService fileService;
 
     /**
      * FAQ 목록 조회
@@ -73,6 +76,17 @@ public class FaqService {
                 .modiId(dto.getModiId()) // TODO: 로그인한 사용자 세팅
                 .build();
 
+        // 파일 서비스를 통해 파일의 refId를 설정
+        if (dto.getFileIds() != null) {
+            for (String fileId : dto.getFileIds()) {
+                FileModel file = new FileModel();
+                file.setFileId(fileId);
+                file.setRefId(faqId); // 파일의 refId를 공지사항의 ID로 설정
+                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
+            }
+        }
+
         faqMapper.insertFaq(faqModel);
     }
 
@@ -96,6 +110,17 @@ public class FaqService {
                 .useYn(dto.getUseYn())
                 .modiId("admin")    // TODO: 로그인한 사용자 세팅
                 .build();
+
+        // 파일 서비스를 통해 파일의 refId를 설정
+        if (dto.getFileIds() != null) {
+            for (String fileId : dto.getFileIds()) {
+                FileModel file = new FileModel();
+                file.setFileId(fileId);
+                file.setRefId(faqId); // 파일의 refId를 공지사항의 ID로 설정
+                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
+            }
+        }
 
         faqMapper.updateFaq(faqModel);
     }

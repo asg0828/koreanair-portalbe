@@ -22,7 +22,7 @@ public interface FileMapper {
      * @param
      * @return
      */
-    List<FileResDto> selectAll();
+    List<FileResDto> selectFileList();
     
     /**
      * 파일 조회
@@ -30,6 +30,13 @@ public interface FileMapper {
      * @return
      */
     FileModel selectByFileId(@Param("fileId") String fileId);
+
+    /**
+     * 파일 수정
+     * @param model
+     * @return
+     */
+    long updateFile(FileModel model);
 
     /**
      * 파일 삭제

@@ -49,6 +49,8 @@ public class QnaReqDto {
 
         @Schema(description = "수정자 ID", example = "admin", nullable = false)
         private String modiId;
+        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        private String[] fileIds;
 
     }
 
@@ -78,6 +80,8 @@ public class QnaReqDto {
 
         @Schema(description = "답변상태", example = "READED", nullable = false)
         private String qnaStat;
+        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        private String[] fileIds;
 
     }
 

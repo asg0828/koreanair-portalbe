@@ -140,7 +140,7 @@ public class FileService {
     public FileResDto.FilesResult getList() {
 
         return FileResDto.FilesResult.builder()
-                .contents(fileMapper.selectAll())
+                .contents(fileMapper.selectFileList())
                 .build();
     }
 
@@ -151,6 +151,7 @@ public class FileService {
      */
     @Transactional
     public FileModel selectFile(String fileId) {
+
         return fileMapper.selectByFileId(fileId);
     }
 
@@ -191,6 +192,17 @@ public class FileService {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
+
+    /**
+     * 파일 수정
+     *
+     * @param model
+     * @return
+     */
+    public long updateFile(FileModel model) {
+        return fileMapper.updateFile(model);
+    }
+
 
     /**
      * 파일 삭제

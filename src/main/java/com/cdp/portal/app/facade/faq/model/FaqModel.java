@@ -52,7 +52,6 @@ public class FaqModel {
     private String rgstNm;
     @Schema(description = "부서 이름")
     private String rgstDeptNm;
-
-    //faq특성상 목록에서 각 글의 파일목록도 같이 보여줘야 함
-//    private List<FileModel> fileList;
+    @Schema(description = "파일 아이디 목록")
+    private String[] fileIds;
 }

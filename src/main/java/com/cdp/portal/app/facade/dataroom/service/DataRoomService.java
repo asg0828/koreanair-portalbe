@@ -5,6 +5,8 @@ import com.cdp.portal.app.facade.dataroom.dto.response.DataRoomResDto;
 import com.cdp.portal.app.facade.dataroom.mapper.DataRoomMapper;
 import com.cdp.portal.app.facade.dataroom.model.DataRoomModel;
 
+import com.cdp.portal.app.facade.file.model.FileModel;
+import com.cdp.portal.app.facade.file.service.FileService;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
@@ -22,9 +24,11 @@ import java.util.Objects;
 public class DataRoomService {
     private final DataRoomMapper dataRoomMapper;
     private final IdUtil idUtil;
+    private final FileService fileService;
 
     /**
      * 자료실 등록
+     *
      * @param dto
      */
     @Transactional
@@ -41,11 +45,22 @@ public class DataRoomService {
                 .modiId(dto.getModiId())
                 .build();
 
+        if (dto.getFileIds() != null) {
+            for (String fileId : dto.getFileIds()) {
+                FileModel file = new FileModel();
+                file.setFileId(fileId);
+                file.setRefId(dataId); // 파일의 refId를 공지사항의 ID로 설정
+                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
+            }
+        }
+
         dataRoomMapper.insertDataRoom(dataRoomModel);
     }
 
     /**
      * 자료실 전체 목록 조회
+     *
      * @param
      * @return
      */
@@ -56,12 +71,13 @@ public class DataRoomService {
         return DataRoomResDto.DataRoomsResult.builder()
                 .page(pagingDto)
                 .search(searchDto)
-                .contents(dataRoomMapper.selectAll(pagingDto,searchDto))
+                .contents(dataRoomMapper.selectAll(pagingDto, searchDto))
                 .build();
     }
 
     /**
      * 자료실 조회
+     *
      * @param dataId
      * @return
      */
@@ -72,6 +88,7 @@ public class DataRoomService {
 
     /**
      * 자료실 수정
+     *
      * @param dataId
      * @param dto
      */
@@ -91,24 +108,37 @@ public class DataRoomService {
                 .modiId(dto.getModiId())    // TODO: 로그인한 사용자 세팅
                 .build();
 
+        if (dto.getFileIds() != null) {
+            for (String fileId : dto.getFileIds()) {
+                FileModel file = new FileModel();
+                file.setFileId(fileId);
+                file.setRefId(dataId); // 파일의 refId를 공지사항의 ID로 설정
+                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
+            }
+        }
+
         dataRoomMapper.updateDataRoom(dataRoomModel);
     }
 
     /**
      * 자료실 삭제
+     *
      * @param dataId
      */
     @Transactional
     public void deleteDataRoom(String dataId) {
         dataRoomMapper.deleteDataRoom(dataId);
     }
+
     @Transactional
     public void deleteDataRoom2(DataRoomReqDto.DeleteDataRoomReq dto) {
         dataRoomMapper.deleteDataRoom2(dto);
     }
-    
+
     /**
      * 조회수 증가
+     *
      * @param dataId
      * @return
      */

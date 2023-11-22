@@ -18,7 +18,7 @@
                      ELSE NULL END)
     </insert>
 
-    <select id="selectAll" parameterType="string" resultType="fileModel">
+    <select id="selectFileList" parameterType="string" resultType="fileModel">
         SELECT
         FILE_ID
         , STORAGE_SE
@@ -139,7 +139,7 @@
     </insert>
 
     <update id="updateFile" parameterType="fileModel">
-        UPDATE PTL.T_FILE SET
+        UPDATE T_FILE SET
         MODI_ID = #{modiId}
         , MODI_DT = NOW()
         <if test="savePath != null and savePath != ''">

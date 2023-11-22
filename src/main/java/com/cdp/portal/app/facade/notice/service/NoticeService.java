@@ -3,6 +3,8 @@ package com.cdp.portal.app.facade.notice.service;
 import java.util.List;
 import java.util.Objects;
 
+import com.cdp.portal.app.facade.file.model.FileModel;
+import com.cdp.portal.app.facade.file.service.FileService;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NoticeService {
     private final NoticeMapper noticeMapper;
     private final IdUtil idUtil;
+    private final FileService fileService;
 
     /**
      * 공지사항 등록
@@ -44,6 +47,17 @@ public class NoticeService {
                 .rgstId(dto.getRgstId())
                 .modiId(dto.getModiId()) // TODO: 로그인한 사용자 세팅
                 .build();
+
+        // 파일 서비스를 통해 파일의 refId를 설정
+        if (dto.getFileIds() != null) {
+            for (String fileId : dto.getFileIds()) {
+                FileModel file = new FileModel();
+                file.setFileId(fileId);
+                file.setRefId(noticeId); // 파일의 refId를 공지사항의 ID로 설정
+                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
+            }
+        }
 
         noticeMapper.insertNotice(noticeModel);
     }
@@ -71,6 +85,7 @@ public class NoticeService {
      */
     @Transactional
     public NoticeResDto getNotice(String noticeId) {
+
         return noticeMapper.selectByNoticeId(noticeId);
     }
 
@@ -96,6 +111,17 @@ public class NoticeService {
                 .useYn(dto.getUseYn())
                 .modiId(dto.getModiId())    // TODO: 로그인한 사용자 세팅
                 .build();
+
+        // 파일 서비스를 통해 파일의 refId를 설정
+        if (dto.getFileIds() != null) {
+            for (String fileId : dto.getFileIds()) {
+                FileModel file = new FileModel();
+                file.setFileId(fileId);
+                file.setRefId(noticeId); // 파일의 refId를 공지사항의 ID로 설정
+                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
+            }
+        }
 
         noticeMapper.updateNotice(noticeModel);
     }
