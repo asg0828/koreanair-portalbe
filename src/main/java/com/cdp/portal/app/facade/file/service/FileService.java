@@ -124,6 +124,8 @@ public class FileService {
                     .modiId("admin") // TODO: 로그인한 사용자 세팅
                     .fileCl(fileCl)
                     .build();
+
+            fileMapper.insertFile(fileModel);
             fileModels.add(fileModel);
         }
         s3Util.upload(fileModels);
