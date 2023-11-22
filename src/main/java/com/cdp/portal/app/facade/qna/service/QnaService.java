@@ -3,6 +3,8 @@ package com.cdp.portal.app.facade.qna.service;
 import java.util.List;
 import java.util.Objects;
 
+import com.cdp.portal.app.facade.file.model.FileModel;
+import com.cdp.portal.app.facade.file.service.FileService;
 import com.cdp.portal.app.facade.qna.dto.request.QnaReqDto;
 import com.cdp.portal.app.facade.qna.dto.response.QnaResDto;
 import com.cdp.portal.app.facade.qna.model.QnaModel;
@@ -24,6 +26,7 @@ public class QnaService {
 
     private final QnaMapper qnaMapper;
     private final IdUtil idUtil;
+    private final FileService fileService;
 
     /**
      * Q&A 등록
@@ -32,8 +35,11 @@ public class QnaService {
     @Transactional
     public void createQna(QnaReqDto.CreateQnaReq dto) {
 
+        final String qnaId = idUtil.getQnaId();
+        log.debug("##### createNotice noticeId: {}", qnaId);
+
         QnaModel qnaModel = QnaModel.builder()
-                .qnaId(idUtil.getQnaId())
+                .qnaId(qnaId)
                 .clCode(dto.getClCode())
                 .sj(dto.getSj())
                 .cn(dto.getCn())
@@ -46,6 +52,17 @@ public class QnaService {
                 .answRgstId(dto.getAnswRgstId())
                 .modiId(dto.getModiId())
                 .build();
+
+        // 파일 서비스를 통해 파일의 refId를 설정
+        if (dto.getFileIds() != null) {
+            for (String fileId : dto.getFileIds()) {
+                FileModel file = new FileModel();
+                file.setFileId(fileId);
+                file.setRefId(qnaId); // 파일의 refId를 공지사항의 ID로 설정
+                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
+            }
+        }
 
         qnaMapper.insertQna(qnaModel);
     }
@@ -104,6 +121,17 @@ public class QnaService {
                 .qnaStat(dto.getQnaStat())
                 .modiId("admin")    // TODO: 로그인한 사용자 세팅
                 .build();
+
+        // 파일 서비스를 통해 파일의 refId를 설정
+        if (dto.getFileIds() != null) {
+            for (String fileId : dto.getFileIds()) {
+                FileModel file = new FileModel();
+                file.setFileId(fileId);
+                file.setRefId(qnaId); // 파일의 refId를 공지사항의 ID로 설정
+                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
+            }
+        }
 
         qnaMapper.updateQna(qnaModel);
     }
