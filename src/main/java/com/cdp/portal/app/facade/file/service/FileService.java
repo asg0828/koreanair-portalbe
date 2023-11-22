@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -91,37 +92,41 @@ public class FileService {
      * @param
      */
     @Transactional
-    public void insertFile(MultipartFile file) throws IOException {
-        String fileNm = file.getOriginalFilename();
-        String fileExtsn = "";
+    public void insertFile(List<MultipartFile> files, String fileCl) throws IOException {
+        List<FileModel> fileModels = new ArrayList<>();
 
-        if (fileNm != null) {
-            int lastIndex = fileNm.lastIndexOf(".");
-            if (lastIndex != -1) {
-                fileExtsn = fileNm.substring(lastIndex + 1);
+        for (MultipartFile file : files) {
+            String fileNm = file.getOriginalFilename();
+            String fileExtsn = "";
+
+            if (fileNm != null) {
+                int lastIndex = fileNm.lastIndexOf(".");
+                if (lastIndex != -1) {
+                    fileExtsn = fileNm.substring(lastIndex + 1);
+                }
             }
+
+            final String fileId = idUtil.getFileId();
+            log.debug("##### insertFile fileId: {}", fileId);
+
+            FileModel fileModel = FileModel.builder()
+                    .fileId(fileId)
+                    .fileNm(fileNm)
+                    .fileExtsn(fileExtsn)
+                    .savePath("board")
+                    .fileSize(file.getSize())
+                    .saveFileNm(fileNm)
+                    .inputStream(file.getResource().getInputStream())
+                    .storageSe("S3")
+                    .bucketNm("awsdc-s3-dlk-dev-cdp-portalobject")
+                    .useYn("Y")
+                    .rgstId("admin")
+                    .modiId("admin") // TODO: 로그인한 사용자 세팅
+                    .fileCl(fileCl)
+                    .build();
+            fileModels.add(fileModel);
         }
-
-        final String fileId = idUtil.getFileId();
-        log.debug("##### insertFile fileId: {}", fileId);
-
-        FileModel fileModel = FileModel.builder()
-                .fileId(fileId)
-                .fileNm(fileNm)
-                .fileExtsn(fileExtsn)
-                .savePath("board")
-                .fileSize(file.getSize())
-                .saveFileNm(fileNm)
-                .inputStream(file.getResource().getInputStream())
-                .storageSe("S3")
-                .bucketNm("awsdc-s3-dlk-dev-cdp-portalobject")
-                .useYn("Y")
-                .rgstId("admin")
-                .modiId("admin") // TODO: 로그인한 사용자 세팅
-                .build();
-
-        fileMapper.insertFile(fileModel);
-        s3Util.upload(fileModel);
+        s3Util.upload(fileModels);
     }
 
     /**
