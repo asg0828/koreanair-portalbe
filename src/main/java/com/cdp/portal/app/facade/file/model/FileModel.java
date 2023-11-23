@@ -1,5 +1,6 @@
 package com.cdp.portal.app.facade.file.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -48,6 +49,7 @@ public class FileModel {
     private String fileCl;
     @Schema(description = "저장 파일 버전", example = "")
     private String saveFileVer;
+    @JsonIgnore
     private InputStream inputStream;
     private byte[] bytes;
     private String modiByUserYn; // 사용자가 등록, 수정, 삭제했는지 화면에서 전달되는 값

@@ -92,7 +92,7 @@ public class FileService {
      * @param
      */
     @Transactional
-    public void insertFile(List<MultipartFile> files, String fileCl) throws IOException {
+    public List<FileModel> insertFile(List<MultipartFile> files, String fileCl) throws IOException {
         List<FileModel> fileModels = new ArrayList<>();
 
         for (MultipartFile file : files) {
@@ -128,7 +128,9 @@ public class FileService {
             fileMapper.insertFile(fileModel);
             fileModels.add(fileModel);
         }
-        s3Util.upload(fileModels);
+            s3Util.upload(fileModels);
+
+        return fileModels;
     }
 
     /**
