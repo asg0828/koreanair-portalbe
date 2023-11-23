@@ -3,8 +3,10 @@ package com.cdp.portal.app.facade.qna.service;
 import java.util.List;
 import java.util.Objects;
 
+import com.cdp.portal.app.facade.file.mapper.FileMapper;
 import com.cdp.portal.app.facade.file.model.FileModel;
 import com.cdp.portal.app.facade.file.service.FileService;
+import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 import com.cdp.portal.app.facade.qna.dto.request.QnaReqDto;
 import com.cdp.portal.app.facade.qna.dto.response.QnaResDto;
 import com.cdp.portal.app.facade.qna.model.QnaModel;
@@ -27,6 +29,7 @@ public class QnaService {
     private final QnaMapper qnaMapper;
     private final IdUtil idUtil;
     private final FileService fileService;
+    private final FileMapper fileMapper;
 
     /**
      * Q&A 등록
@@ -89,7 +92,14 @@ public class QnaService {
      */
     @Transactional
     public QnaResDto getQna(String qnaId) {
-        return qnaMapper.selectByQnaId(qnaId);
+        QnaResDto qna = qnaMapper.selectByQnaId(qnaId);
+        if (qna != null) {
+            // 공지사항에 첨부된 파일 목록 조회
+            List<FileModel> fileList = fileMapper.selectFileListByRefId(qnaId);
+            qna.setFileList(fileList);
+        }
+
+        return qna;
     }
 
     @Transactional

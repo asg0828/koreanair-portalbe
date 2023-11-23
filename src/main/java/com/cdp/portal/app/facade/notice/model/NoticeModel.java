@@ -1,7 +1,9 @@
 package com.cdp.portal.app.facade.notice.model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
+import com.cdp.portal.app.facade.file.model.FileModel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -63,4 +65,7 @@ public class NoticeModel {
     private String rgstDeptNm;
     @Schema(description = "파일 아이디 목록")
     private String[] fileIds;
+    @Schema(description = "파일 정보")
+    private List<FileModel> fileList;
+
 }

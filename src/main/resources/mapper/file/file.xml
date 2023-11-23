@@ -182,4 +182,28 @@
                             , MODI_DT = NOW()
         WHERE REF_ID = #{refId}
     </delete>
+
+    <select id="selectFileListByRefId" parameterType="string" resultType="fileModel">
+        SELECT
+            FILE_ID
+             , STORAGE_SE
+             , SAVE_PATH
+             , SAVE_FILE_NM
+             , FILE_NM
+             , FILE_EXTSN
+             , FILE_SIZE
+             , USE_YN
+             , RGST_ID
+             , RGST_DT
+             , MODI_ID
+             , MODI_DT
+             , BUCKET_NM
+             , FILE_URL
+             , FILE_CL
+             , REF_ID
+        FROM T_FILE
+        WHERE REF_ID = #{refId}
+          AND USE_YN = 'Y'
+    </select>
+
 </mapper>

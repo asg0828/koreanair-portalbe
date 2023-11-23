@@ -2,8 +2,6 @@ package com.cdp.portal.app.facade.qna.mapper;
 
 import java.util.List;
 
-import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
-import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 import com.cdp.portal.app.facade.qna.dto.request.QnaReqDto;
 import com.cdp.portal.app.facade.qna.model.QnaModel;
 import com.cdp.portal.app.facade.qna.dto.response.QnaResDto;

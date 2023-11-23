@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
 import com.cdp.portal.app.facade.faq.model.FaqModel;
 import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
+import com.cdp.portal.app.facade.file.mapper.FileMapper;
 import com.cdp.portal.app.facade.file.model.FileModel;
 import com.cdp.portal.app.facade.file.service.FileService;
 import com.cdp.portal.common.IdUtil;
@@ -29,6 +30,7 @@ public class FaqService {
     private final FaqMapper faqMapper;
     private final IdUtil idUtil;
     private final FileService fileService;
+    private final FileMapper fileMapper;
 
     /**
      * FAQ 목록 조회
@@ -53,7 +55,14 @@ public class FaqService {
      */
     @Transactional
     public FaqResDto getFaq(String faqId) {
-        return faqMapper.selectByFaqId(faqId);
+            FaqResDto faq = faqMapper.selectByFaqId(faqId);
+
+        if (faq != null) {
+            List<FileModel> fileList = fileMapper.selectFileListByRefId(faqId);
+            faq.setFileList(fileList);
+        }
+
+        return faq;
     }
 
     /**

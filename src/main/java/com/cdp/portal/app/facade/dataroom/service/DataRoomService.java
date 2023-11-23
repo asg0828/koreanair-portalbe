@@ -5,8 +5,10 @@ import com.cdp.portal.app.facade.dataroom.dto.response.DataRoomResDto;
 import com.cdp.portal.app.facade.dataroom.mapper.DataRoomMapper;
 import com.cdp.portal.app.facade.dataroom.model.DataRoomModel;
 
+import com.cdp.portal.app.facade.file.mapper.FileMapper;
 import com.cdp.portal.app.facade.file.model.FileModel;
 import com.cdp.portal.app.facade.file.service.FileService;
+import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
@@ -25,6 +27,7 @@ public class DataRoomService {
     private final DataRoomMapper dataRoomMapper;
     private final IdUtil idUtil;
     private final FileService fileService;
+    private final FileMapper fileMapper;
 
     /**
      * 자료실 등록
@@ -83,6 +86,12 @@ public class DataRoomService {
      */
     @Transactional
     public DataRoomResDto getData(String dataId) {
+        DataRoomResDto dataroom = dataRoomMapper.selectByDataId(dataId);
+        if (dataroom != null) {
+            // 공지사항에 첨부된 파일 목록 조회
+            List<FileModel> fileList = fileMapper.selectFileListByRefId(dataId);
+            dataroom.setFileList(fileList);
+        }
         return dataRoomMapper.selectByDataId(dataId);
     }
 

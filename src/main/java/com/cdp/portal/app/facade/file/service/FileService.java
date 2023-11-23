@@ -141,11 +141,9 @@ public class FileService {
      * @param
      */
     @Transactional
-    public FileResDto.FilesResult getList() {
+    public List<FileModel> selectFileList(FileModel model) {
 
-        return FileResDto.FilesResult.builder()
-                .contents(fileMapper.selectFileList())
-                .build();
+        return fileMapper.selectFileList(model);
     }
 
     /**
