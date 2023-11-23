@@ -180,6 +180,7 @@ public class SessionService {
 	
 	//HR 정보 조회 API 권한용 ARN
 	public void getSecretsManager() {
+		System.out.println("##### getSecretsManager() invoked #####");
         try {
             var getSecretValueRequest = new GetSecretValueRequest()
 //                    .withSecretId("arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY");
