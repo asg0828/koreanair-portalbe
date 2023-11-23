@@ -5,8 +5,6 @@ import java.util.List;
 import com.cdp.portal.app.facade.faq.model.FaqModel;
 import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
 import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
-import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
-import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 import com.cdp.portal.common.dto.PagingDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

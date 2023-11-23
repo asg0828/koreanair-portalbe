@@ -172,5 +172,31 @@
         WHERE NOTICE_ID = #{noticeId}
     </update>
 
+    <select id="selectFileByNoticeId" parameterType="String" resultType="FileModel">
+        SELECT
+            FILE_ID
+             , STORAGE_SE
+             , SAVE_PATH
+             , SAVE_FILE_NM
+             , FILE_NM
+             , FILE_EXTSN
+             , FILE_SIZE
+             , USE_YN
+             , RGST_ID
+             , RGST_DT
+             , MODI_ID
+             , MODI_DT
+             , BUCKET_NM
+             , FILE_URL
+             , FILE_CL
+             , SAVE_FILE_VER
+             , REF_ID
+             , REF_VER::TEXT
+             , ATMC_DEL_YN
+             , ATMC_DEL_DT
+        FROM T_FILE
+        WHERE REF_ID = #{noticeId}
+    </select>
+
 </mapper>
 

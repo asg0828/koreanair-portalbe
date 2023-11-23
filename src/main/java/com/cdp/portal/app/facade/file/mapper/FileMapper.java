@@ -22,7 +22,7 @@ public interface FileMapper {
      * @param
      * @return
      */
-    List<FileResDto> selectFileList();
+    List<FileModel> selectFileList(FileModel model);
     
     /**
      * 파일 조회
@@ -44,4 +44,6 @@ public interface FileMapper {
      * @return
      */
     long deleteFile(FileModel model);
+
+    List<FileModel> selectFileListByRefId(@Param("refId") String refId);
 }

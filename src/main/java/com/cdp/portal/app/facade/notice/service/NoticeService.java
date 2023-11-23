@@ -3,6 +3,7 @@ package com.cdp.portal.app.facade.notice.service;
 import java.util.List;
 import java.util.Objects;
 
+import com.cdp.portal.app.facade.file.mapper.FileMapper;
 import com.cdp.portal.app.facade.file.model.FileModel;
 import com.cdp.portal.app.facade.file.service.FileService;
 import com.cdp.portal.common.IdUtil;
@@ -25,6 +26,7 @@ public class NoticeService {
     private final NoticeMapper noticeMapper;
     private final IdUtil idUtil;
     private final FileService fileService;
+    private final FileMapper fileMapper;
 
     /**
      * 공지사항 등록
@@ -85,8 +87,15 @@ public class NoticeService {
      */
     @Transactional
     public NoticeResDto getNotice(String noticeId) {
+        NoticeResDto notice = noticeMapper.selectByNoticeId(noticeId);
 
-        return noticeMapper.selectByNoticeId(noticeId);
+        if (notice != null) {
+            // 공지사항에 첨부된 파일 목록 조회
+            List<FileModel> fileList = fileMapper.selectFileListByRefId(noticeId);
+            notice.setFileList(fileList);
+        }
+
+        return notice;
     }
 
     /**

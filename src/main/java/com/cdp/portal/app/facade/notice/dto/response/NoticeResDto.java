@@ -33,6 +33,14 @@ public class NoticeResDto extends NoticeModel {
         private PagingDto page;
         @Schema(description = "파일 목록", nullable = false)
         private List<FileModel> fileList;
+    }
 
+    @Schema(description = "파일 목록", nullable = false)
+    private List<FileModel> fileList;
+    public void setFileList(List<FileModel> fileList) {
+        this.fileList = fileList;
+    }
+    public List<FileModel> getFileList() {
+        return this.fileList;
     }
 }
