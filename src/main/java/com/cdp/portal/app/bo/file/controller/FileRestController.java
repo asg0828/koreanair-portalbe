@@ -47,7 +47,7 @@ public class FileRestController {
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam String fileCl
     ) throws IOException {
-        List<FileModel> uploadedFileIds = fileService.insertFile(files, fileCl); // 업로드한 파일의 ID 목록을 가져옴
+        List<String> uploadedFileIds = fileService.insertFile(files, fileCl); // 업로드한 파일의 ID 목록을 가져옴
         return ResponseEntity.ok(ApiResDto.success(uploadedFileIds)); // 파일 ID 목록을 응답으로 반환
     }
 
@@ -67,8 +67,8 @@ public class FileRestController {
 
     @Operation(summary = "파일 삭제", description = "파일을 삭제합니다.")
     @PostMapping(value = "/delete/{fileId}")
-    public ResponseEntity<ApiResDto<?>> deleteFile(@PathVariable String fileId) {
-        fileService.deleteFile(fileId);
-        return ResponseEntity.ok(ApiResDto.success());
+    public ResponseEntity<ApiResDto<List<String>>> deleteFile(@PathVariable String fileId) {
+        List<String> deletedFileIds = fileService.deleteFile(fileId);
+        return ResponseEntity.ok(ApiResDto.success(deletedFileIds));
     }
 }
