@@ -94,7 +94,8 @@ public class SessionService {
 			String employeeNumber = null;
 			try {
 				
-//				getSecretsManagerDbPassword();
+				//HR 정보 조회용
+				getSecretsManager();
 				employeeNumber = getEmployeeNumberFromGoogle(sessionRequest.getGoogleAccessToken());
 
 				if (ObjectUtils.isEmpty(employeeNumber)) {
@@ -178,7 +179,7 @@ public class SessionService {
 	}
 	
 	//HR 정보 조회 API 권한용 ARN
-	public void getSecretsManagerDbPassword() {
+	public void getSecretsManager() {
         try {
             var getSecretValueRequest = new GetSecretValueRequest()
 //                    .withSecretId("arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY");
