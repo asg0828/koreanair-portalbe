@@ -95,7 +95,7 @@ public class SessionService {
 			try {
 				
 				//HR 정보 조회용
-//				getSecretsManager();
+				getSecretsManager();
 				
 				employeeNumber = getEmployeeNumberFromGoogle(sessionRequest.getGoogleAccessToken());
 
