@@ -92,8 +92,9 @@ public class FileService {
      * @param
      */
     @Transactional
-    public List<FileModel> insertFile(List<MultipartFile> files, String fileCl) throws IOException {
+    public List<String> insertFile(List<MultipartFile> files, String fileCl) throws IOException {
         List<FileModel> fileModels = new ArrayList<>();
+        List<String> uploadedFileIds = new ArrayList<>();
 
         for (MultipartFile file : files) {
             String fileNm = file.getOriginalFilename();
@@ -126,11 +127,12 @@ public class FileService {
                     .build();
 
             fileMapper.insertFile(fileModel);
+            uploadedFileIds.add(fileId);
             fileModels.add(fileModel);
         }
             s3Util.upload(fileModels);
 
-        return fileModels;
+        return uploadedFileIds;
     }
 
     /**
@@ -210,14 +212,19 @@ public class FileService {
      * 파일 삭제
      *
      * @param fileId
+     * @return 삭제한 파일의 ID
      */
     @Transactional
-    public void deleteFile(String fileId) {
+    public List<String> deleteFile(String fileId) {
+        List<String> deletedFileIds = new ArrayList<>();
         FileModel file = fileMapper.selectByFileId(fileId);
 
         if (file != null) {
             file.setUseYn("N");
             fileMapper.deleteFile(file);
+            deletedFileIds.add(fileId);
         }
+
+        return deletedFileIds;
     }
 }
