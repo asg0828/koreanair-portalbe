@@ -36,6 +36,8 @@ public class FaqReqDto {
 
         @Schema(description = "수정자 ID", example = "admin", nullable = false)
         private String modiId;
+        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        private String[] fileIds;
     }
 
     @Getter
@@ -60,6 +62,8 @@ public class FaqReqDto {
 
         @Schema(description = "수정 ID", example = "admin", nullable = false)
         private String modiId;
+        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        private String[] fileIds;
     }
 
     @Getter

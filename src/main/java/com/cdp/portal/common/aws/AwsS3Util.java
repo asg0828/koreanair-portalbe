@@ -75,33 +75,27 @@ public class AwsS3Util {
     }
 
     /**
-     * S3 파일 목록 업로드
-     */
-    public boolean upload(List<FileModel> files) {
-        boolean result = true;
-        for (FileModel file : files) {
-            result = upload(file) && result;
-        }
-        return result;
-    }
-
-    /**
      * S3 파일 업로드
      */
-    public boolean upload(FileModel file) {
+    public boolean upload(List<FileModel> files) {
         try {
             String bucketName = "awsdc-s3-dlk-dev-cdp-portalobject";
-            if (StringUtils.isBlank(file.getStorageSe())) {
-                setSavePath(file);
+
+            for (FileModel file : files) {
+                if (StringUtils.isBlank(file.getStorageSe())) {
+                    setSavePath(file);
+                }
+                String key = StringUtils.joinWith(SEPARATOR, file.getSavePath(), file.getFileCl(), file.getSaveFileNm());
+
+                // 파일 업로드 요청 생성
+                PutObjectRequest putRequest = new PutObjectRequest(bucketName, key, file.getInputStream(), null);
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(file.getFileSize());
+                putRequest.setMetadata(metadata);
+
+                // 파일 업로드 실행
+                s3Client.putObject(putRequest);
             }
-            String key = StringUtils.joinWith(SEPARATOR, file.getSavePath(), file.getSaveFileNm());
-            // 파일 업로드 요청 생성
-            PutObjectRequest putRequest = new PutObjectRequest(bucketName, key, file.getInputStream(), null);
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.getFileSize());
-            putRequest.setMetadata(metadata);
-            // 파일 업로드 실행
-            s3Client.putObject(putRequest);
             return true;
         } catch (Exception e) {
             log.warn("S3 FILE UPLOAD FAILED", e);

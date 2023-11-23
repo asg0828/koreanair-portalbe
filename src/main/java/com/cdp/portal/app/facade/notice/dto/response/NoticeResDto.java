@@ -2,6 +2,7 @@ package com.cdp.portal.app.facade.notice.dto.response;
 
 import java.util.List;
 
+import com.cdp.portal.app.facade.file.model.FileModel;
 import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
 import com.cdp.portal.app.facade.notice.model.NoticeModel;
 import com.cdp.portal.common.dto.ApiResDto;
@@ -30,6 +31,8 @@ public class NoticeResDto extends NoticeModel {
         private NoticeReqDto.SearchNotice search;
         @Schema(description = "페이지 정보", nullable = false)
         private PagingDto page;
+        @Schema(description = "파일 목록", nullable = false)
+        private List<FileModel> fileList;
 
     }
 }

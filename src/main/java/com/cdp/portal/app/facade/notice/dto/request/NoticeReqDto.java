@@ -42,6 +42,9 @@ public class NoticeReqDto {
 
         @Schema(description = "수정자 ID", example = "admin", nullable = false)
         private String modiId;
+
+        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        private String[] fileIds;
     }
 
     @Getter
@@ -68,9 +71,11 @@ public class NoticeReqDto {
         @Schema(description = "팝업공지여부", example = "Y|N", nullable = false)
         private String popupYn;
 
-
         @Schema(description = "수정 ID", example = "admin", nullable = false)
         private String modiId;
+
+        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        private String[] fileIds;
     }
 
     @Getter

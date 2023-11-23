@@ -48,4 +48,6 @@ public class QnaModel {
     private String rgstNm;
     @Schema(description = "부서 이름")
     private String rgstDeptNm;
+    @Schema(description = "파일 아이디 목록")
+    private String[] fileIds;
 }

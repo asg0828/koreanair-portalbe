@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -91,37 +92,47 @@ public class FileService {
      * @param
      */
     @Transactional
-    public void insertFile(MultipartFile file) throws IOException {
-        String fileNm = file.getOriginalFilename();
-        String fileExtsn = "";
+    public List<String> insertFile(List<MultipartFile> files, String fileCl) throws IOException {
+        List<FileModel> fileModels = new ArrayList<>();
+        List<String> uploadedFileIds = new ArrayList<>();
 
-        if (fileNm != null) {
-            int lastIndex = fileNm.lastIndexOf(".");
-            if (lastIndex != -1) {
-                fileExtsn = fileNm.substring(lastIndex + 1);
+        for (MultipartFile file : files) {
+            String fileNm = file.getOriginalFilename();
+            String fileExtsn = "";
+
+            if (fileNm != null) {
+                int lastIndex = fileNm.lastIndexOf(".");
+                if (lastIndex != -1) {
+                    fileExtsn = fileNm.substring(lastIndex + 1);
+                }
             }
+
+            final String fileId = idUtil.getFileId();
+            log.debug("##### insertFile fileId: {}", fileId);
+
+            FileModel fileModel = FileModel.builder()
+                    .fileId(fileId)
+                    .fileNm(fileNm)
+                    .fileExtsn(fileExtsn)
+                    .savePath("board")
+                    .fileSize(file.getSize())
+                    .saveFileNm(fileNm)
+                    .inputStream(file.getResource().getInputStream())
+                    .storageSe("S3")
+                    .bucketNm("awsdc-s3-dlk-dev-cdp-portalobject")
+                    .useYn("Y")
+                    .rgstId("admin")
+                    .modiId("admin") // TODO: 로그인한 사용자 세팅
+                    .fileCl(fileCl)
+                    .build();
+
+            fileMapper.insertFile(fileModel);
+            uploadedFileIds.add(fileId);
+            fileModels.add(fileModel);
         }
+            s3Util.upload(fileModels);
 
-        final String fileId = idUtil.getFileId();
-        log.debug("##### insertFile fileId: {}", fileId);
-
-        FileModel fileModel = FileModel.builder()
-                .fileId(fileId)
-                .fileNm(fileNm)
-                .fileExtsn(fileExtsn)
-                .savePath("board")
-                .fileSize(file.getSize())
-                .saveFileNm(fileNm)
-                .inputStream(file.getResource().getInputStream())
-                .storageSe("S3")
-                .bucketNm("awsdc-s3-dlk-dev-cdp-portalobject")
-                .useYn("Y")
-                .rgstId("admin")
-                .modiId("admin") // TODO: 로그인한 사용자 세팅
-                .build();
-
-        fileMapper.insertFile(fileModel);
-        s3Util.upload(fileModel);
+        return uploadedFileIds;
     }
 
     /**
@@ -133,7 +144,7 @@ public class FileService {
     public FileResDto.FilesResult getList() {
 
         return FileResDto.FilesResult.builder()
-                .contents(fileMapper.selectAll())
+                .contents(fileMapper.selectFileList())
                 .build();
     }
 
@@ -144,6 +155,7 @@ public class FileService {
      */
     @Transactional
     public FileModel selectFile(String fileId) {
+
         return fileMapper.selectByFileId(fileId);
     }
 
@@ -186,17 +198,33 @@ public class FileService {
     }
 
     /**
+     * 파일 수정
+     *
+     * @param model
+     * @return
+     */
+    public long updateFile(FileModel model) {
+        return fileMapper.updateFile(model);
+    }
+
+
+    /**
      * 파일 삭제
      *
      * @param fileId
+     * @return 삭제한 파일의 ID
      */
     @Transactional
-    public void deleteFile(String fileId) {
+    public List<String> deleteFile(String fileId) {
+        List<String> deletedFileIds = new ArrayList<>();
         FileModel file = fileMapper.selectByFileId(fileId);
 
         if (file != null) {
             file.setUseYn("N");
             fileMapper.deleteFile(file);
+            deletedFileIds.add(fileId);
         }
+
+        return deletedFileIds;
     }
 }
