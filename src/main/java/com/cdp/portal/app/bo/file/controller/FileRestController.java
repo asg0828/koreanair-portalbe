@@ -47,8 +47,8 @@ public class FileRestController {
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam String fileCl
     ) throws IOException {
-        fileService.insertFile(files, fileCl);
-        return ResponseEntity.ok(ApiResDto.success());
+        List<FileModel> uploadedFileIds = fileService.insertFile(files, fileCl); // 업로드한 파일의 ID 목록을 가져옴
+        return ResponseEntity.ok(ApiResDto.success(uploadedFileIds)); // 파일 ID 목록을 응답으로 반환
     }
 
     @Operation(summary = "파일 다운로드", description = "파일을 다운로드합니다.")
