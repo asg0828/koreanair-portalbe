@@ -55,8 +55,10 @@ public class FileRestController {
     @GetMapping(value = "/download/{fileId}")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileId) {
         ByteArrayResource resource = fileService.downloadFile(fileId).getBody();
+        HttpHeaders headers = fileService.getHeaders(fileId);
 
         return ResponseEntity.ok()
+                .headers(headers)
                 .contentLength(resource.contentLength())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
