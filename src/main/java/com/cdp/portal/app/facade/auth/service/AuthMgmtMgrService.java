@@ -11,6 +11,7 @@ import com.cdp.portal.app.facade.auth.dto.request.AuthMgmtReqDto;
 import com.cdp.portal.app.facade.auth.dto.response.AuthMgmtResDto;
 import com.cdp.portal.app.facade.auth.mapper.AuthMgmtMgrMapper;
 import com.cdp.portal.app.facade.auth.model.AuthModel;
+import com.cdp.portal.app.facade.dept.mapper.DeptAuthMapper;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthMgmtMgrService {
 	private final IdUtil idUtil;
 	private final AuthMgmtMgrMapper authMgmtMgrMapper;
+	private final DeptAuthMapper deptAuthMapper;
 
     @Transactional
     public void createAuth(AuthMgmtReqDto.CreateAuth dto) {
@@ -66,5 +68,7 @@ public class AuthMgmtMgrService {
 	@Transactional
     public void deleteAuth(String authId) {
 		authMgmtMgrMapper.delete(authId);
+		deptAuthMapper.deleteMgrAuthByAuthId(authId);
+		deptAuthMapper.deleteUserAuthByAuthId(authId);
     }
 }
