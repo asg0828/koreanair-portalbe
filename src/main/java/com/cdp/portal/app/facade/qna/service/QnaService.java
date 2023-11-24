@@ -94,7 +94,6 @@ public class QnaService {
     public QnaResDto getQna(String qnaId) {
         QnaResDto qna = qnaMapper.selectByQnaId(qnaId);
         if (qna != null) {
-            // 공지사항에 첨부된 파일 목록 조회
             List<FileModel> fileList = fileMapper.selectFileListByRefId(qnaId);
             qna.setFileList(fileList);
         }
