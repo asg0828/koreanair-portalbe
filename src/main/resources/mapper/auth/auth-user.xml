@@ -1,0 +1,60 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.auth.mapper.AuthMgmtUserMapper">
+
+    <select id="selectAll" resultType="AuthModel">
+        SELECT ROW_NUMBER() OVER (ORDER BY RGST_DT ASC) AS ROWNUM
+             , AUTH_ID
+             , AUTH_CL
+             , AUTH_NM
+             , AUTH_DSC
+          FROM T_USER_SYS_AUTH
+    </select>
+
+    <select id="selectById" resultType="AuthModel">
+        SELECT ROW_NUMBER() OVER (ORDER BY RGST_DT ASC) AS ROWNUM
+             , AUTH_ID
+             , AUTH_CL
+             , AUTH_NM
+             , AUTH_DSC
+          FROM T_USER_SYS_AUTH
+         WHERE AUTH_ID = #{authId}
+    </select>
+
+    <insert id="insert" parameterType="AuthModel">
+        INSERT INTO T_USER_SYS_AUTH (
+               AUTH_ID
+             , AUTH_NM
+             , AUTH_DSC
+             , RGST_ID
+             , RGST_DT
+             , MODI_ID
+             , MODI_DT
+        ) VALUES (
+               #{authId}
+             , #{authNm}
+             , #{authDsc}
+             , #{rgstId}
+             , now()
+             , #{modiId}
+             , now()
+        )
+    </insert>
+
+    <update id="update" parameterType="AuthModel">
+        UPDATE
+            T_USER_SYS_AUTH
+        SET
+            AUTH_NM = #{authNm}
+            , AUTH_DSC = #{authDsc}
+            , MODI_ID = #{modiId}
+            , MODI_DT = now()
+        WHERE
+            AUTH_ID = #{authId}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        DELETE FROM T_USER_SYS_AUTH
+         WHERE AUTH_ID = #{authId}
+    </delete>
+
+</mapper>

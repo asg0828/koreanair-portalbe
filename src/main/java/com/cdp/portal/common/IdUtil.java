@@ -78,13 +78,6 @@ public class IdUtil {
 	}
 
 	/**
-	 * 권한 ID : 권한
-	 */
-	public String getAuthId() {
-		return service.getId(CommonConstants.ID.AUTH);
-	}
-
-	/**
 	 * 메뉴 ID : 메뉴
 	 */
 	public String getMenuId() {
@@ -125,21 +118,21 @@ public class IdUtil {
 	public String getMetaTblId() {
 		return service.getId(CommonConstants.ID.META_TBL_ID);
 	}
-	
+
 	/**
      * 메타테이블 컬럼ID
      */
     public String getMetaTblColId() {
         return service.getId(CommonConstants.ID.META_TBL_COL_ID);
     }
-	
+
 	/**
 	 * 관리부서ID
 	 */
 	public String getDeptCd() {
 		return service.getId(CommonConstants.ID.DEPT_CD);
 	}
-	
+
 	/**
 	 * 게시판 ID
 	 * @return
@@ -147,14 +140,14 @@ public class IdUtil {
 	public String getBbsId() {
 		return service.getId(CommonConstants.ID.BBS_ID);
 	}
-	
+
 	/*
 	 * 게시판 항목 ID
 	 */
 	public String getBbsItem() {
 		return service.getId(CommonConstants.ID.BBS_ITEM);
 	}
-	
+
 	/**
 	 * 가상그룹 ID
 	 */
@@ -170,13 +163,13 @@ public class IdUtil {
 	}
 
 	/**
-	 * 표준용어ID 
+	 * 표준용어ID
 	 * @return
 	 */
 	public String getStandardTerms() {
 		return service.getId(CommonConstants.ID.STANDARD_TERMS);
 	}
-	
+
 	/**
 	 * Feature ID
 	 * @return
@@ -184,7 +177,23 @@ public class IdUtil {
 	public String getFeatureId() {
         return service.getId(CommonConstants.ID.FEATURE_ID);
     }
-	
-	
+
+	/**
+	 * 관리자 권한 ID
+	 * @return
+	 */
+	public String getAuthMgrId() {
+		return service.getId(CommonConstants.ID.MGR_AUTH);
+	}
+
+	/**
+	 * 사용자 권한 ID
+	 * @return
+	 */
+	public String getAuthUserId() {
+		return service.getId(CommonConstants.ID.USER_AUTH);
+	}
+
+
 
 }

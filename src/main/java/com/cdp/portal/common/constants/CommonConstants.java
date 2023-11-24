@@ -43,6 +43,11 @@ public class CommonConstants {
 	public static final String SOAP_ACTION = "SOAPAction";
 	public static final String X_FORWARDED_FOR = "X-Forwarded-For";
 
+	//생성, 수정, 삭제 오퍼레이터
+	public static final String CUD_OPERATOR_CREATE = "C";
+	public static final String CUD_OPERATOR_UPDATE = "U";
+	public static final String CUD_OPERATOR_DELETE = "D";
+
 	//ID 생성
 	public static interface ID {
 		//ID 타입 키, ID 구분 키
@@ -68,8 +73,10 @@ public class CommonConstants {
 		public static final String QNA = "qn";
 		//자유게시판
 		public static final String FREE = "fr";
-		//권한
-		public static final String AUTH = "au";
+		//권한 - 관리자
+		public static final String MGR_AUTH = "ma";
+		//권한 - 사용자
+		public static final String USER_AUTH = "ua";
 		//메뉴
 		public static final String MENU = "mn";
 		//알림
@@ -107,7 +114,7 @@ public class CommonConstants {
 		public static final String BOARDD = "BOARD_D";//자료실
 		public static final String EDITOR = "EDITOR";
 	}
-	
+
 	//날짜, 시간 형식
 	public interface DATE_FORMAT {
 		public static final String YEAR = "yy";

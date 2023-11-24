@@ -9,12 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdp.portal.app.facade.user.dto.request.UserMgmtReqDto;
-import com.cdp.portal.app.facade.user.dto.response.UserMgmtMgrAuthResDto.ApiResUserMgmtMgrAuthResDtos;
 import com.cdp.portal.app.facade.user.dto.response.UserMgmtResDto.ApiResUser;
 import com.cdp.portal.app.facade.user.dto.response.UserMgmtResDto.ApiResUsers;
-import com.cdp.portal.app.facade.user.service.UserMgmtMgrAuthService;
 import com.cdp.portal.app.facade.user.service.UserMgmtService;
-import com.cdp.portal.app.facade.user.service.UserMgmtUserAuthService;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.ApiResDto;
 import com.cdp.portal.common.dto.PagingDto;
@@ -34,29 +31,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "user-mgmt", description = "사용자 관리 API")
 public class BoUserMgmtController {
 	private final UserMgmtService userMgmtService;
-	private final UserMgmtMgrAuthService userMgmtMgrAuthService;
-	private final UserMgmtUserAuthService userMgmtUserAuthService;
-	
-	@Operation(summary = "관리자 권한 목록 조회", description = "사용자 관리 목록 관리자 권한 목록을 조회한다.", tags = { "user-mgmt" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResUserMgmtMgrAuthResDtos.class)))
-        }
-    )
-    @GetMapping(value = "/v1/mgr-auths/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUserMgmtMgrAuthsAll() {
-        return ResponseEntity.ok(ApiResDto.success(userMgmtMgrAuthService.getUserMgmtMgrAuths()));
-    }
-	
-	@Operation(summary = "사용자 권한 목록 조회", description = "사용자 관리 목록 사용자 권한 목록을 조회한다.", tags = { "user-mgmt" })
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResUserMgmtMgrAuthResDtos.class)))
-	}
-			)
-	@GetMapping(value = "/v1/user-auths/all", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> getUserMgmtUserAuthsAll() {
-		return ResponseEntity.ok(ApiResDto.success(userMgmtUserAuthService.getUserMgmtUserAuths()));
-	}
-	
+
 	@Operation(summary = "사용자 목록 조회", description = "사용자 목록을 조회한다.", tags = { "user-mgmt" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResUsers.class)))
@@ -78,12 +53,12 @@ public class BoUserMgmtController {
             @RequestParam(value ="userAuthId", required = false, defaultValue = "") String userAuthId,
             @RequestParam(value ="mgrAuthId", required = false, defaultValue = "") String mgrAuthId,
             @RequestParam(value ="useYn", required = false, defaultValue = "") String useYn) {
-        
+
         PagingDto pagingDto = PagingDto.builder()
                 .page(page)
                 .pageSize(pageSize)
                 .build();
-        
+
         UserMgmtReqDto.SearchUser searchDto = UserMgmtReqDto.SearchUser.builder()
         		.userNm(userNm)
         		.deptNm(deptNm)
@@ -91,10 +66,10 @@ public class BoUserMgmtController {
         		.mgrAuthId(mgrAuthId)
         		.useYn(useYn)
                 .build();
-        
+
         return ResponseEntity.ok(ApiResDto.success(userMgmtService.getUsers(pagingDto, searchDto)));
     }
-	
+
 	@Operation(summary = "사용자 조회", description = "사용자 상세를 조회한다.", tags = { "user-mgmt" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResUser.class))),

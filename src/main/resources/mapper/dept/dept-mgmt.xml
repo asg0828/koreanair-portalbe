@@ -1,0 +1,101 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.dept.mapper.DeptMgmtMapper">
+
+    <select id="selectAll" resultType="com.cdp.portal.app.facade.dept.dto.response.DeptMgmtResDto$Dept">
+        SELECT ROW_NUMBER() OVER (ORDER BY Z.ORD_SEQ ASC) AS ROW_NUM
+		     , Z.*
+		  FROM (
+		        SELECT D.DEPT_CODE
+		             , D.UP_DEPT_CODE
+		             , D.DEPT_NM
+		             , D.ORD_SEQ
+		             , D.COMPANY_CODE
+		             , USA.AUTH_ID AS USER_AUTH_ID
+		             , USA.AUTH_NM AS USER_AUTH_NM
+		             , MSA.AUTH_ID AS MGR_AUTH_ID
+		             , MSA.AUTH_NM AS MGR_AUTH_NM
+		          FROM T_DEPT D
+		               LEFT JOIN T_USER_AUTH UA
+		                   ON D.DEPT_CODE = UA.DEPT_CODE
+		               LEFT JOIN T_MGR_AUTH MA
+		                   ON D.DEPT_CODE = MA.DEPT_CODE
+		               LEFT JOIN T_USER_SYS_AUTH USA
+		                   ON UA.AUTH_ID = USA.AUTH_ID
+		               LEFT JOIN T_MGR_SYS_AUTH MSA
+		                   ON MA.AUTH_ID = MSA.AUTH_ID
+		         <include refid="selectWhere"/>
+		       ) Z
+    </select>
+
+    <sql id="selectWhere">
+        <where>
+            <if test="search.deptNm != null and search.deptNm != ''">
+                AND MENU_NM LIKE '%' || #{search.menuNm} || '%'
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectCount" resultType="int">
+        SELECT COUNT(*) AS CNT
+          FROM T_DEPT D
+               LEFT JOIN T_USER_AUTH UA
+                   ON D.DEPT_CODE = UA.DEPT_CODE
+               LEFT JOIN T_MGR_AUTH MA
+                   ON D.DEPT_CODE = MA.DEPT_CODE
+               LEFT JOIN T_USER_SYS_AUTH USA
+                   ON UA.AUTH_ID = USA.AUTH_ID
+               LEFT JOIN T_MGR_SYS_AUTH MSA
+                   ON MA.AUTH_ID = MSA.AUTH_ID
+         <include refid="selectWhere"/>
+    </select>
+
+    <insert id="insert" parameterType="DeptModel">
+        INSERT INTO T_DEPT(
+               DEPT_CODE
+             , DEPT_NM
+             , UP_DEPT_CODE
+             , ORD_SEQ
+             , RGST_ID
+             , RGST_DT
+             , MODI_ID
+             , MODI_DT
+        ) VALUES (
+               #{deptCode}
+             , #{deptNm}
+             , #{upDeptCode}
+             , #{ordSeq}
+             , #{rgstId}
+             , now()
+             , #{modiId}
+             , now()
+        )
+    </insert>
+
+    <update id="update" parameterType="DeptModel">
+        UPDATE T_DEPT
+		   SET DEPT_NM = #{deptNm}
+		     , UP_DEPT_CODE = #{upDeptCode}
+		     , ORD_SEQ = #{ordSeq}
+		     , MODI_ID = #{modiId}
+		     , MODI_DT = now()
+		 WHERE DEPT_CODE = #{deptCode}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        DELETE FROM T_DEPT
+         WHERE DEPT_CODE = #{deptCode}
+    </delete>
+
+    <select id="isExistsByDeptCode" resultType="Boolean">
+        SELECT EXISTS
+             (
+                SELECT 1
+                FROM
+                    T_DEPT
+                WHERE
+                    DEPT_CODE = #{deptCode}
+                LIMIT 1
+             )
+    </select>
+
+</mapper>
