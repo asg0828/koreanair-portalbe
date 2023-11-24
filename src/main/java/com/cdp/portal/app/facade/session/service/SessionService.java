@@ -93,10 +93,10 @@ public class SessionService {
 
 			String employeeNumber = null;
 			try {
-				
+
 				//HR 정보 조회용
-				getSecretsManager();
-				
+//				getSecretsManager();
+
 				employeeNumber = getEmployeeNumberFromGoogle(sessionRequest.getGoogleAccessToken());
 
 				if (ObjectUtils.isEmpty(employeeNumber)) {
@@ -178,7 +178,7 @@ public class SessionService {
 
 		return employeeNumber;
 	}
-	
+
 	//HR 정보 조회 API 권한용 ARN
 	public void getSecretsManager() {
         try {
