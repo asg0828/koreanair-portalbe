@@ -51,5 +51,13 @@ cloud:
     region: ap-northeast-2
     secrets-manager:
       db-password-arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/cdp/app-Yufwll
+
+# AWS Properties
+aws-props:
+  bucket-name: awsdc-s3-dlk-dev-cdp-portalobject
+  s3-uri : s3://awsdc-s3-dlk-dev-cdp-portalobject
+  file-path: "board"
+  page-size: "10"
+  time-zone: "Asia/Seoul"
       
       
