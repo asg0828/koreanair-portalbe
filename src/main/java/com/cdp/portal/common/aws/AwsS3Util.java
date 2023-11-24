@@ -120,7 +120,7 @@ public class AwsS3Util {
     public boolean download(FileModel file) {
         try {
             // 파일 경로 및 이름 설정
-            String key = StringUtils.joinWith(SEPARATOR, file.getSavePath(), file.getSaveFileNm());
+            String key = StringUtils.joinWith(SEPARATOR, file.getSavePath(), file.getFileCl(), file.getSaveFileNm());
             // 파일 다운로드 요청 생성
             S3Object s3Object = s3Client.getObject(new GetObjectRequest(awsProps.getBucketName(), key));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
