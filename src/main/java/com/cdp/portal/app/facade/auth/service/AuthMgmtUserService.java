@@ -11,6 +11,7 @@ import com.cdp.portal.app.facade.auth.dto.request.AuthMgmtReqDto;
 import com.cdp.portal.app.facade.auth.dto.response.AuthMgmtResDto;
 import com.cdp.portal.app.facade.auth.mapper.AuthMgmtUserMapper;
 import com.cdp.portal.app.facade.auth.model.AuthModel;
+import com.cdp.portal.app.facade.dept.mapper.DeptAuthMapper;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthMgmtUserService {
 	private final IdUtil idUtil;
 	private final AuthMgmtUserMapper authMgmtUserMapper;
+	private final DeptAuthMapper deptAuthMapper;
 
     @Transactional
     public void createAuth(AuthMgmtReqDto.CreateAuth dto) {
@@ -66,5 +68,8 @@ public class AuthMgmtUserService {
 	@Transactional
     public void deleteAuth(String authId) {
 		authMgmtUserMapper.delete(authId);
+		deptAuthMapper.deleteUserAuthByAuthId(authId);
+		authMgmtUserMapper.deleteUserMenuByAuthId(authId);
+		// TODO:예외그룹-권한 링크 테이블 삭제 필요
     }
 }

@@ -46,7 +46,10 @@ public enum CdpPortalError {
 	DEPT_CODE_NOT_FOUND("E0502", "부서 코드({0})를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
 
 	// auth
-	AUTH_NOT_FOUND("E0602", "권한 ID({0})를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST)
+	AUTH_NOT_FOUND("E0602", "권한 ID({0})를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
+
+	// menu
+	MENU_ID_NOT_FOUND("E0702", "메뉴 ID({0})를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
 	;
 
     private String code;

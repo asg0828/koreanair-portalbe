@@ -20,4 +20,7 @@ public interface AuthMgmtMgrMapper {
 
 	Long delete(@Param("authId") String authId);
 
+	Long deleteMgrMenuByAuthId(@Param("authId") String authId);
+	Long deleteMgrMenuByMenuId(@Param("menuId") String menuId);
+
 }

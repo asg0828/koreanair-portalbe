@@ -69,6 +69,7 @@ public class AuthMgmtMgrService {
     public void deleteAuth(String authId) {
 		authMgmtMgrMapper.delete(authId);
 		deptAuthMapper.deleteMgrAuthByAuthId(authId);
-		deptAuthMapper.deleteUserAuthByAuthId(authId);
+		authMgmtMgrMapper.deleteMgrMenuByAuthId(authId);
+		// TODO:예외그룹-권한 링크 테이블 삭제 필요
     }
 }

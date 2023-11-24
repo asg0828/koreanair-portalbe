@@ -1,0 +1,99 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.menu.mapper.MenuMgmtUserMapper">
+
+    <select id="selectAll" resultType="com.cdp.portal.app.facade.menu.dto.response.MenuMgmtResDto$MenuMgmt">
+        SELECT ROW_NUMBER() OVER (ORDER BY Z.ORD_SEQ ASC) AS ROW_NUM
+             , Z.*
+          FROM (
+                SELECT MENU_ID
+                     , UP_MENU_ID
+                     , MENU_NM
+                     , MENU_URL
+                     , MENU_DSC
+                     , ORD_SEQ
+                     , MENU_SE
+                     , MENU_ATTR
+                     , USE_YN
+                     , MENU_ICON
+                  FROM T_USER_SYS_MENU USM
+                 <include refid="selectWhere"/>
+               ) Z
+    </select>
+
+    <sql id="selectWhere">
+        <where>
+            <if test="search.menuNm != null and search.menuNm != ''">
+                AND MENU_NM LIKE '%' || #{search.menuNm} || '%'
+            </if>
+        </where>
+    </sql>
+
+    <insert id="insert" parameterType="MenuModel">
+        INSERT INTO T_USER_SYS_MENU(
+               MENU_ID
+             , UP_MENU_ID
+             , MENU_NM
+             , MENU_URL
+             , MENU_DSC
+             , ORD_SEQ
+             , MENU_SE
+             , MENU_ATTR
+             , USE_YN
+             , MENU_ICON
+             , RGST_ID
+             , RGST_DT
+             , MODI_ID
+             , MODI_DT
+        ) VALUES (
+               #{menuId}
+             , #{upMenuId}
+             , #{menuNm}
+             , #{menuUrl}
+             , #{menuDsc}
+             , #{ordSeq}
+             , #{menuSe}
+             , #{menuAttr}
+             , #{useYn}
+             , #{menuIcon}
+             , #{rgstId}
+             , now()
+             , #{modiId}
+             , now()
+        )
+    </insert>
+
+    <update id="update" parameterType="MenuModel">
+        UPDATE T_USER_SYS_MENU
+           SET MENU_ID = #{menuId}
+             , UP_MENU_ID = #{upMenuId}
+             , MENU_NM = #{menuNm}
+             , MENU_URL = #{menuUrl}
+             , MENU_DSC = #{menuDsc}
+             , ORD_SEQ = #{ordSeq}
+             , MENU_SE = #{menuSe}
+             , MENU_ATTR = #{menuAttr}
+             , USE_YN = #{useYn}
+             , MENU_ICON = #{menuIcon}
+             , MODI_ID = #{modiId}
+             , MODI_DT = now()
+         WHERE MENU_ID = #{menuId}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        DELETE FROM T_USER_SYS_MENU
+         WHERE MENU_ID = #{menuId}
+    </delete>
+
+    <select id="isExistsByMenuId" resultType="Boolean">
+        SELECT EXISTS
+             (
+                SELECT 1
+                FROM
+                    T_USER_SYS_MENU
+                WHERE
+                    MENU_ID = #{menuId}
+                LIMIT 1
+             )
+    </select>
+
+</mapper>

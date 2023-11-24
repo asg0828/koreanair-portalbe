@@ -57,4 +57,14 @@
          WHERE AUTH_ID = #{authId}
     </delete>
 
+    <delete id="deleteMgrMenuByAuthId" parameterType="String">
+        DELETE FROM T_MGR_SYS_MENU_AUTH
+         WHERE AUTH_ID = #{authId}
+    </delete>
+
+    <delete id="deleteMgrMenuByMenuId" parameterType="String">
+        DELETE FROM T_MGR_SYS_MENU_AUTH
+         WHERE MENU_ID = #{menuId}
+    </delete>
+
 </mapper>
