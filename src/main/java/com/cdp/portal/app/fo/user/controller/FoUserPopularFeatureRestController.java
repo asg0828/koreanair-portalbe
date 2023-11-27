@@ -1,4 +1,4 @@
-package com.cdp.portal.app.bo.user.controller;
+package com.cdp.portal.app.fo.user.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +21,10 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = CommonConstants.API_BO_PREFIX + "/user-mgmt")
+@RequestMapping(value = CommonConstants.API_FO_PREFIX + "/user-mgmt")
 @Tag(name = "user-popular-feature", description = "사용자 인기 Feature 관리 API")
-public class BoUserPopularFeatureController {
-    
+public class FoUserPopularFeatureRestController {
+
     private final UserFeatureService userFeatureService;
     
     @Operation(summary = "사용자 인기 Feature 조회", description = "사용자 인기 Feature를 조회한다.", tags = { "user-popular-feature" })
@@ -36,5 +36,5 @@ public class BoUserPopularFeatureController {
     public ResponseEntity<?> getUserPopularFeatures() {
         return ResponseEntity.ok(ApiResDto.success(userFeatureService.getUserPopularFeatures()));
     }
-
+    
 }

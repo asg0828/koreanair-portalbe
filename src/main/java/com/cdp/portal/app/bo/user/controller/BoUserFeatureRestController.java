@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping(value = CommonConstants.API_BO_PREFIX + "/user-mgmt")
 @Tag(name = "user-feature", description = "사용자 관심 Feature 관리 API")
-public class BoUserFeatureController {
+public class BoUserFeatureRestController {
     
     private final UserFeatureService userFeatureService;
     
