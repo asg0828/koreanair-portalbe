@@ -99,5 +99,71 @@
 		AND
 			FEATURE_ID = #{featureId}
 	</delete>
+	
+	<select id="selectPopularFeature" resultType="com.cdp.portal.app.facade.user.dto.response.UserFeatureResDto$UserPopularFeatures">
+		WITH POPULAR_FEATURE AS (
+			SELECT 
+				FEATURE_ID
+				, COUNT(*) AS USER_FEATURE_CNT
+			FROM 
+				T_USER_FEATURE
+			GROUP BY FEATURE_ID
+			ORDER BY USER_FEATURE_CNT DESC
+			LIMIT 50
+		)
+		SELECT 
+			Z.*
+			, Z.SE_GRP_ID AS featureSeGrp
+			, (SELECT SE_NM FROM T_FEATURE_SE WHERE SE_ID = Z.SE_GRP_ID) AS featureSeGrpNm
+			, Z.CODE_NM AS featureTypNm
+			, Z.SE_NM AS featureSeNm
+			, Z.USER_NM AS enrUserNm
+			, Z.DEPT_NM AS enrDeptNm
+			, CASE WHEN Z.USER_ID IS NULL THEN false ELSE true END AS isUserFeature
+		FROM (
+			SELECT
+				F.FEATURE_ID
+				, F.FEATURE_TYP
+				, C.CODE_NM
+				, SE.SE_GRP_ID
+				, F.FEATURE_SE
+				, SE.SE_NM
+				, F.FEATURE_KO_NM
+				, F.FEATURE_EN_NM
+				, F.CALC_UNT
+				, F.FEATURE_DEF
+				, F.FEATURE_FM
+				, F.ENR_USER_ID
+				, F.ENR_DEPT_CODE
+				, D.DEPT_NM
+				, U.USER_NM
+				, F.FEATURE_REL_TB
+				, F.FEATURE_DSC
+				, F.DEL_YN
+				, F.RGST_ID
+				, F.RGST_DT
+				, F.MODI_ID
+				, F.MODI_DT
+				, UF.USER_ID
+				, PF.USER_FEATURE_CNT 
+			FROM
+				T_FEATURE F
+				INNER JOIN POPULAR_FEATURE PF
+					ON F.FEATURE_ID = PF.FEATURE_ID
+				LEFT JOIN T_USER U
+					ON F.ENR_USER_ID = U.USER_ID
+				LEFT JOIN T_DEPT D
+					ON F.ENR_DEPT_CODE = D.DEPT_CODE
+				LEFT JOIN T_FEATURE_SE SE 
+					ON F.FEATURE_SE = SE.SE_ID
+				LEFT JOIN T_CODE C 
+					ON F.FEATURE_TYP = C.CODE_ID
+				LEFT JOIN T_USER_FEATURE UF 
+					ON F.FEATURE_ID = UF.FEATURE_ID AND UF.USER_ID = #{userId}
+			WHERE
+				F.DEL_YN = 'N'
+		) Z
+	</select>
+	
 
 </mapper>

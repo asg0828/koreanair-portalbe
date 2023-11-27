@@ -19,11 +19,13 @@ public interface FeatureMapper {
     
     Boolean isExistsByFeatureEnNm(String featureEnNm);
     
-    List<FeatureResDto.Feature> selectAll(@Param("paging") PagingDto pagingDto, @Param("search") FeatureReqDto.SearchFeature searchDto);
+    List<FeatureResDto.Feature> selectAll(@Param("paging") PagingDto pagingDto, @Param("search") FeatureReqDto.SearchFeature searchDto, @Param("userId") String userId);
     
     int selectCount(@Param("search") FeatureReqDto.SearchFeature searchDto);
     
     FeatureResDto.Feature selectById(String featureId);
+    
+    FeatureResDto.Feature selectByFeatureIdAndUserId(@Param("featureId") String featureId, @Param("userId") String userId);
     
     Long update(FeatureModel featureModel);
     

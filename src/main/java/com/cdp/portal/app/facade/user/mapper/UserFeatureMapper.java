@@ -21,5 +21,7 @@ public interface UserFeatureMapper {
     int selectCount(@Param("userId") String userId);
     
     Long delete(@Param("userId") String userId, @Param("featureId") String featureId);
+    
+    List<UserFeatureResDto.UserPopularFeatures> selectPopularFeature(@Param("userId") String userId);
 
 }

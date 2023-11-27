@@ -1,6 +1,6 @@
 package com.cdp.portal.app.facade.user.service;
 
-import java.util.Arrays;
+import java.util.Arrays;import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +60,10 @@ public class UserFeatureService {
         Arrays.asList(featureIds).forEach(featureId -> {
             userFeatureMapper.delete(userId, featureId);
         });
+    }
+    
+    public List<UserFeatureResDto.UserPopularFeatures> getUserPopularFeatures() {
+        return userFeatureMapper.selectPopularFeature("admin"); // TODO: 로그인한 사용자 세팅
     }
 
 }

@@ -86,6 +86,9 @@ public class FeatureResDto {
         @Schema(description = "비고", example = "")
         private String featureDsc;
         
+        @Schema(description = "사용자 피쳐 여부(관심 피쳐)", example = "true|false")
+        private Boolean isUserFeature;
+        
         @Schema(description = "삭제여부", example = "")
         private String delYn;
         

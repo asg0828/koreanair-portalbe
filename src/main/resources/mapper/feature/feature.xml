@@ -73,6 +73,7 @@
 			, Z.SE_NM AS featureSeNm
 			, Z.USER_NM AS enrUserNm
 			, Z.DEPT_NM AS enrDeptNm
+			, CASE WHEN Z.USER_ID IS NULL THEN false ELSE true END AS isUserFeature
 		FROM (
 			SELECT
 				F.FEATURE_ID
@@ -97,6 +98,7 @@
 				, F.RGST_DT
 				, F.MODI_ID
 				, F.MODI_DT
+				, UF.USER_ID
 			FROM
 				T_FEATURE F
 				LEFT JOIN T_USER U
@@ -107,6 +109,8 @@
 					ON F.FEATURE_SE = SE.SE_ID
 				LEFT JOIN T_CODE C 
 					ON F.FEATURE_TYP = C.CODE_ID
+				LEFT JOIN T_USER_FEATURE UF 
+					ON F.FEATURE_ID = UF.FEATURE_ID AND UF.USER_ID = #{userId}
 			<include refid="selectWhere"/>
 		) Z
 		<include refid="paging.pagingOffsetSQL" />
@@ -166,6 +170,31 @@
 	</sql>
 	
 	<select id="selectById" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
+		SELECT
+			FEATURE_ID
+			, FEATURE_TYP
+			, FEATURE_SE
+			, FEATURE_KO_NM
+			, FEATURE_EN_NM
+			, CALC_UNT
+			, FEATURE_DEF
+			, FEATURE_FM
+			, ENR_USER_ID
+			, ENR_DEPT_CODE
+			, FEATURE_REL_TB
+			, FEATURE_DSC
+			, DEL_YN
+			, RGST_ID
+			, RGST_DT
+			, MODI_ID
+			, MODI_DT
+		FROM
+			T_FEATURE
+		WHERE
+			FEATURE_ID = #{featureId}
+	</select>
+	
+	<select id="selectByFeatureIdAndUserId" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
 		SELECT 
 			Z.*
 			, Z.SE_GRP_ID AS featureSeGrp
@@ -174,6 +203,7 @@
 			, Z.SE_NM AS featureSeNm
 			, Z.USER_NM AS enrUserNm
 			, Z.DEPT_NM AS enrDeptNm
+			, CASE WHEN Z.USER_ID IS NULL THEN false ELSE true END AS isUserFeature
 		FROM (
 			SELECT
 				F.FEATURE_ID
@@ -198,6 +228,7 @@
 				, F.RGST_DT
 				, F.MODI_ID
 				, F.MODI_DT
+				, UF.USER_ID
 			FROM
 				T_FEATURE F
 				LEFT JOIN T_USER U
@@ -208,6 +239,8 @@
 					ON F.FEATURE_SE = SE.SE_ID
 				LEFT JOIN T_CODE C 
 					ON F.FEATURE_TYP = C.CODE_ID
+				LEFT JOIN T_USER_FEATURE UF 
+					ON F.FEATURE_ID = UF.FEATURE_ID AND UF.USER_ID = #{userId}
 			WHERE
 				F.FEATURE_ID = #{featureId}
 		) Z
