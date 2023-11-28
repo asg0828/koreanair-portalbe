@@ -30,7 +30,7 @@
     <sql id="selectWhere">
         <where>
             <if test="search.deptNm != null and search.deptNm != ''">
-                AND MENU_NM LIKE '%' || #{search.menuNm} || '%'
+                AND DEPT_NM LIKE '%' || #{search.deptNm} || '%'
             </if>
         </where>
     </sql>
