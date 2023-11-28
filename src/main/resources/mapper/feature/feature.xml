@@ -12,6 +12,7 @@
 			, FEATURE_DEF
 			, FEATURE_FM
 			, ENR_USER_ID
+			, ENR_DEPT_CODE
 			, FEATURE_REL_TB
 			, FEATURE_DSC
 			, RGST_ID
@@ -28,6 +29,7 @@
 			, #{featureDef}
 			, #{featureFm}
 			, #{enrUserId}
+			, #{enrDeptCode}
 			, #{featureRelTb}
 			, #{featureDsc}
 			, #{rgstId}
@@ -63,7 +65,31 @@
 			)
 	</select>
 	
-	<select id="selectAll" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
+	<select id="selectAll" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Features">
+		SELECT
+			F.FEATURE_ID
+			, F.FEATURE_TYP
+			, F.FEATURE_SE
+			, F.FEATURE_KO_NM
+			, F.FEATURE_EN_NM
+			, F.CALC_UNT
+			, F.FEATURE_DEF
+			, F.FEATURE_FM
+			, F.ENR_USER_ID
+			, F.ENR_DEPT_CODE
+			, F.FEATURE_REL_TB
+			, F.FEATURE_DSC
+			, F.DEL_YN
+			, F.RGST_ID
+			, F.RGST_DT
+			, F.MODI_ID
+			, F.MODI_DT
+		FROM
+			T_FEATURE F
+		<include refid="selectWhere"/>
+	</select>
+	
+	<select id="selects" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
 		SELECT 
 			row_number() OVER (ORDER BY Z.RGST_DT DESC) AS row_num
 			, Z.*
@@ -136,36 +162,42 @@
 		<where>
 			F.DEL_YN = 'N'
 			<if test="search.featureSeGrp != null and search.featureSeGrp != '' and (search.featureSe == null or search.featureSe == '')">
-            	AND FEATURE_SE IN (
+            	AND F.FEATURE_SE IN (
             		SELECT SE_ID 
             		FROM T_FEATURE_SE 
             		WHERE SE_GRP_ID = #{search.featureSeGrp}
             	) 
             </if>
             <if test="search.featureSeGrp != null and search.featureSeGrp != '' and search.featureSe != null and search.featureSe != ''">
-            	AND FEATURE_SE = #{search.featureSe}
+            	AND F.FEATURE_SE = #{search.featureSe}
             </if>
-			<if test="search.searchFeature != null and search.searchFeature != ''">
+            <if test="search.featureKoNm != null and search.featureKoNm != ''">
+            	AND F.FEATURE_KO_NM = #{search.featureKoNm}
+            </if>
+            <if test="search.featureEnNm != null and search.featureEnNm != ''">
+            	AND F.FEATURE_EN_NM = #{search.featureEnNm}
+            </if>
+			<if test="search.enrUserId != null and search.enrUserId != ''">
+            	AND F.ENR_USER_ID = #{search.enrUserId}
+            </if>
+            <if test="search.enrDeptCode != null and search.enrDeptCode != ''">
+            	AND F.ENR_DEPT_CODE = #{search.enrDeptCode}
+            </if>
+            <if test="search.searchFeature != null and search.searchFeature != ''">
 				AND (1 != 1
 				<foreach collection="search.searchConditions" item="dataSet" index="index">
 					<if test="dataSet != null and dataSet == 'featureKoNm'">
-                		OR FEATURE_KO_NM LIKE '%' || #{search.searchFeature} || '%'
+                		OR F.FEATURE_KO_NM LIKE '%' || #{search.searchFeature} || '%'
                 	</if>
                 	<if test="dataSet != null and dataSet == 'featureEnNm'">
-                		OR FEATURE_EN_NM LIKE '%' || #{search.searchFeature} || '%'
+                		OR F.FEATURE_EN_NM LIKE '%' || #{search.searchFeature} || '%'
                 	</if>
                 	<if test="dataSet != null and dataSet == 'featureDef'">
-                		OR FEATURE_DEF LIKE '%' || #{search.searchFeature} || '%'
+                		OR F.FEATURE_DEF LIKE '%' || #{search.searchFeature} || '%'
                 	</if>
 				</foreach>
 				)
 			</if>
-			<if test="search.enrUserId != null and search.enrUserId != ''">
-            	AND ENR_USER_ID = #{search.enrUserId}
-            </if>
-            <if test="search.enrDeptCode != null and search.enrDeptCode != ''">
-            	AND ENR_DEPT_CODE = #{search.enrDeptCode}
-            </if>
 		</where>
 	</sql>
 	
@@ -258,6 +290,7 @@
 			, FEATURE_DEF = #{featureDef}
 			, FEATURE_FM = #{featureFm}
 			, ENR_USER_ID = #{enrUserId}
+			, ENR_DEPT_CODE = #{enrDeptCode}
 			, FEATURE_REL_TB = #{featureRelTb}
 			, FEATURE_DSC = #{featureDsc}
 			, MODI_ID = #{modiId}

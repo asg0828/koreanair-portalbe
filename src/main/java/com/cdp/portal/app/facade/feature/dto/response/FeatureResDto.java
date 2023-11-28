@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.cdp.portal.app.facade.feature.dto.request.FeatureReqDto;
+import com.cdp.portal.app.facade.feature.model.FeatureModel;
 import com.cdp.portal.common.dto.ApiResDto;
 import com.cdp.portal.common.dto.PagingDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -22,14 +23,14 @@ import lombok.ToString;
 @Schema(description = "Feature 응답")
 public class FeatureResDto {
     
-    public static class ApiResFeatures extends ApiResDto<FeatureResDto.FeaturesResult> {}
-    public static class ApiResFeature extends ApiResDto<Feature> {}
+    public static class ApiResFeaturesResult extends ApiResDto<FeatureResDto.FeaturesResult> {}
+    public static class ApiResFeature extends ApiResDto<FeatureResDto.Feature> {}
+    public static class ApiResFeatures extends ApiResDto<FeatureResDto.Features> {}
     
     @Getter
     @Setter
     @ToString
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    @Schema(description = "Feature 상세")
     public static class Feature {
         
         @Schema(description = "피쳐ID", example = "", nullable = false)
@@ -115,7 +116,6 @@ public class FeatureResDto {
     @Builder
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
-    @Schema(description = "Feature 목록 결과")
     public static class FeaturesResult {
         
         @Schema(description = "컨텐츠 정보", nullable = false)
@@ -128,5 +128,11 @@ public class FeatureResDto {
         private PagingDto page;
         
     }
+    
+    @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class Features extends FeatureModel {}
 
 }

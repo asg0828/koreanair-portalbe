@@ -1,8 +1,10 @@
 package com.cdp.portal.app.facade.feature.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +19,9 @@ import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FeatureService {
@@ -58,6 +62,14 @@ public class FeatureService {
         featureMapper.insert(featureModel);
     }
     
+//    public Boolean isExistsByFeatureKoNm(String featureKoNm) {
+//        return featureMapper.isExistsByFeatureKoNm(featureKoNm);
+//    }
+//    
+//    public Boolean isExistsByFeatureEnNm(String featureEnNm) {
+//        return featureMapper.isExistsByFeatureEnNm(featureEnNm);
+//    }
+    
     public FeatureResDto.Feature getFeature(final String featureId) {
         FeatureResDto.Feature feature = featureMapper.selectByFeatureIdAndUserId(featureId, "admin");   // TODO: 로그인한 사용자 세팅
         if (Objects.isNull(feature)) {
@@ -67,11 +79,19 @@ public class FeatureService {
         return feature;
     }
     
+    public List<FeatureResDto.Features> getFeatures(FeatureReqDto.SearchFeature searchDto) {
+        if (StringUtils.isEmpty(searchDto.getFeatureKoNm()) && StringUtils.isEmpty(searchDto.getFeatureEnNm())) {
+            return new ArrayList<>();
+        }
+        
+        return featureMapper.selectAll(searchDto);
+    }
+    
     public FeatureResDto.FeaturesResult getFeatures(PagingDto pagingDto, FeatureReqDto.SearchFeature searchDto) {
         pagingDto.setPaging(featureMapper.selectCount(searchDto));
         
         return FeatureResDto.FeaturesResult.builder()
-                .contents(featureMapper.selectAll(pagingDto, searchDto, "admin"))   // TODO: 로그인한 사용자 세팅
+                .contents(featureMapper.selects(pagingDto, searchDto, "admin"))   // TODO: 로그인한 사용자 세팅
                 .search(searchDto)
                 .page(pagingDto)
                 .build();

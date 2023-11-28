@@ -27,7 +27,7 @@ public class FoUserPopularFeatureRestController {
 
     private final UserFeatureService userFeatureService;
     
-    @Operation(summary = "사용자 인기 Feature 조회", description = "사용자 인기 Feature를 조회한다.", tags = { "user-popular-feature" })
+    @Operation(summary = "사용자 인기 Feature 목록 조회", description = "사용자 인기 Feature 목록을 조회한다.", tags = { "user-popular-feature" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiUserPopularFeatures.class)))
         }

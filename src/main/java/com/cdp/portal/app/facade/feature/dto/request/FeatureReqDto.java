@@ -117,17 +117,23 @@ public class FeatureReqDto {
         @Schema(description = "피쳐중구분", example = "")
         private String featureSe;
         
-        @Schema(description = "검색 Feature", example = "")
-        private String searchFeature;
+        @Schema(description = "피쳐한글명", example = "")
+        private String featureKoNm;
         
-        @Schema(description = "검색 조건", example = "")
-        private String[] searchConditions;
+        @Schema(description = "피쳐영문명", example = "")
+        private String featureEnNm;
         
         @Schema(description = "신청자 ID", example = "")
         private String enrUserId;
         
         @Schema(description = "신청부서코드", example = "")
         private String enrDeptCode;
+        
+        @Schema(description = "검색 Feature", example = "")
+        private String searchFeature;
+        
+        @Schema(description = "검색 조건", example = "")
+        private String[] searchConditions;
         
     }
 

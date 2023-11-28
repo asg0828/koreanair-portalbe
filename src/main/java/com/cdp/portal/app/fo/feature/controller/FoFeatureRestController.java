@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cdp.portal.app.facade.feature.dto.request.FeatureReqDto;
 import com.cdp.portal.app.facade.feature.dto.response.FeatureResDto.ApiResFeature;
-import com.cdp.portal.app.facade.feature.dto.response.FeatureResDto.ApiResFeatures;
+import com.cdp.portal.app.facade.feature.dto.response.FeatureResDto.ApiResFeaturesResult;
 import com.cdp.portal.app.facade.feature.dto.response.FeatureSeparateResDto.ApiResFeatureSeparateResDtos;
 import com.cdp.portal.app.facade.feature.service.FeatureSeparateService;
 import com.cdp.portal.app.facade.feature.service.FeatureService;
@@ -59,7 +59,7 @@ public class FoFeatureRestController {
     
     @Operation(summary = "Feature 목록 조회", description = "Feature 목록을 조회한다.", tags = { "feature" })
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResFeatures.class)))
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResFeaturesResult.class)))
         }
     )
     @Parameter(name ="page", required = false, description = "페이지", example = "1")
