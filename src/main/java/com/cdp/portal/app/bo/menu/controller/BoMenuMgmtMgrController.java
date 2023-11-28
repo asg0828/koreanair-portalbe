@@ -48,7 +48,7 @@ public class BoMenuMgmtMgrController {
         return ResponseEntity.ok(ApiResDto.success());
     }
 
-	@Operation(summary = "메뉴 목록 조회 - 관리자", description = "메뉴 관리 목록 [관리자] 메뉴를 저장 한다.", tags = { "menu-mgmt" })
+	@Operation(summary = "메뉴 목록 조회 - 관리자", description = "메뉴 관리 목록 [관리자] 메뉴를 조회 한다.", tags = { "menu-mgmt" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResMenus.class)))
         }
