@@ -1,15 +1,9 @@
-package com.cdp.portal.app.bo.feature.controller;
-
-import javax.validation.Valid;
+package com.cdp.portal.app.fo.feature.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,9 +29,9 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = CommonConstants.API_BO_PREFIX + "/biz-meta")
+@RequestMapping(value = CommonConstants.API_FO_PREFIX + "/biz-meta")
 @Tag(name = "feature", description = "Feature 관리 API")
-public class BoFeatureRestController {
+public class FoFeatureRestController {
     
     private final FeatureSeparateService featureSeparateService;
     private final FeatureService featureService;
@@ -61,19 +55,6 @@ public class BoFeatureRestController {
     @GetMapping(value = "/v1/feature-separates/{seGrpId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getFeatureSeparates(@PathVariable String seGrpId) {
         return ResponseEntity.ok(ApiResDto.success(featureSeparateService.getFeatureSeparates(seGrpId)));
-    }
-    
-    @Operation(summary = "Feature 등록", description = "Feature를 등록한다.", tags = { "feature" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
-        }
-    )
-    @PostMapping(value = "/v1/features", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createFeature(@Valid @RequestBody FeatureReqDto.CreateFeature dto) {
-        featureService.createFeature(dto);
-        
-        return ResponseEntity.ok(ApiResDto.success());
     }
     
     @Operation(summary = "Feature 목록 조회", description = "Feature 목록을 조회한다.", tags = { "feature" })
@@ -127,34 +108,6 @@ public class BoFeatureRestController {
     @GetMapping(value = "/v1/features/{featureId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getFeature(@PathVariable String featureId) {
         return ResponseEntity.ok(ApiResDto.success(featureService.getFeature(featureId)));
-    }
-    
-    @Operation(summary = "Feature 수정", description = "Feature를 수정한다.", tags = { "feature" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
-            @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
-        }
-    )
-    @Parameter(name ="featureId", required = true, description = "피쳐ID", example = "")
-    @PutMapping(value = "/v1/features/{featureId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateFeature(@PathVariable String featureId, @Valid @RequestBody FeatureReqDto.updateFeature dto) {
-        featureService.updateFeature(featureId, dto);
-        
-        return ResponseEntity.ok(ApiResDto.success());
-    }
-    
-    @Operation(summary = "Feature 삭제", description = "Feature를 삭제한다.", tags = { "feature" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
-            @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
-        }
-    )
-    @Parameter(name ="featureId", required = true, description = "피쳐ID", example = "")
-    @DeleteMapping(value = "/v1/features/{featureId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteFeature(@PathVariable String featureId) {
-        featureService.deleteFeature(featureId);
-        
-        return ResponseEntity.ok(ApiResDto.success());
     }
 
 }

@@ -59,7 +59,7 @@ public class FeatureService {
     }
     
     public FeatureResDto.Feature getFeature(final String featureId) {
-        FeatureResDto.Feature feature = featureMapper.selectById(featureId);
+        FeatureResDto.Feature feature = featureMapper.selectByFeatureIdAndUserId(featureId, "admin");   // TODO: 로그인한 사용자 세팅
         if (Objects.isNull(feature)) {
             throw CdpPortalError.FEATURE_NOT_FOUND.exception(featureId);
         }
@@ -71,7 +71,7 @@ public class FeatureService {
         pagingDto.setPaging(featureMapper.selectCount(searchDto));
         
         return FeatureResDto.FeaturesResult.builder()
-                .contents(featureMapper.selectAll(pagingDto, searchDto))
+                .contents(featureMapper.selectAll(pagingDto, searchDto, "admin"))   // TODO: 로그인한 사용자 세팅
                 .search(searchDto)
                 .page(pagingDto)
                 .build();
