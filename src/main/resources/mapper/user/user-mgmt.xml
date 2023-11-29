@@ -2,7 +2,7 @@
 <mapper namespace="com.cdp.portal.app.facade.user.mapper.UserMgmtMapper">
 
     <select id="selectAll" resultType="com.cdp.portal.app.facade.user.dto.response.UserMgmtResDto$User">
-        SELECT ROW_NUMBER() OVER (ORDER BY Z.RGST_DT DESC) AS ROW_NUM
+        SELECT ROW_NUMBER() OVER (ORDER BY Z.RGST_DT DESC) AS ROWNUM
 		     , Z.*
 		     , CASE WHEN Z.E_USER_AUTH_ID IS NULL THEN Z.USER_AUTH_ID ELSE Z.E_USER_AUTH_ID END AS APLD_USER_AUTH_ID
 		     , CASE WHEN Z.E_USER_AUTH_NM IS NULL THEN Z.USER_AUTH_NM ELSE Z.E_USER_AUTH_NM END AS APLD_USER_AUTH_NM

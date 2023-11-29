@@ -35,7 +35,7 @@ public class UserMgmtResDto {
     public static class User {
 
     	@Schema(description = "행번", nullable = false)
-    	private int rowNum;
+    	private int rowmum;
 
         @Schema(description = "사용자 ID", nullable = false)
         private String userId;

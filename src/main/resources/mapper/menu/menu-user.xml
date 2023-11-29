@@ -2,7 +2,7 @@
 <mapper namespace="com.cdp.portal.app.facade.menu.mapper.MenuMgmtUserMapper">
 
     <select id="selectAll" resultType="com.cdp.portal.app.facade.menu.dto.response.MenuMgmtResDto$MenuMgmt">
-        SELECT ROW_NUMBER() OVER (ORDER BY Z.ORD_SEQ ASC) AS ROW_NUM
+        SELECT ROW_NUMBER() OVER (ORDER BY Z.ORD_SEQ ASC) AS ROWNUM
              , Z.*
           FROM (
                 SELECT MENU_ID

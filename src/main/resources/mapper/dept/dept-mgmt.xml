@@ -2,7 +2,7 @@
 <mapper namespace="com.cdp.portal.app.facade.dept.mapper.DeptMgmtMapper">
 
     <select id="selectAll" resultType="com.cdp.portal.app.facade.dept.dto.response.DeptMgmtResDto$Dept">
-        SELECT ROW_NUMBER() OVER (ORDER BY Z.ORD_SEQ ASC) AS ROW_NUM
+        SELECT ROW_NUMBER() OVER (ORDER BY Z.ORD_SEQ ASC) AS ROWNUM
 		     , Z.*
 		  FROM (
 		        SELECT D.DEPT_CODE
