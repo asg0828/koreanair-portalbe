@@ -1,9 +1,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cdp.portal.app.facade.user.mapper.UserMgmtMapper">
-    
+
     <select id="selectAll" resultType="com.cdp.portal.app.facade.user.dto.response.UserMgmtResDto$User">
         SELECT ROW_NUMBER() OVER (ORDER BY Z.RGST_DT DESC) AS ROW_NUM
-		     , Z.* 
+		     , Z.*
 		     , CASE WHEN Z.E_USER_AUTH_ID IS NULL THEN Z.USER_AUTH_ID ELSE Z.E_USER_AUTH_ID END AS APLD_USER_AUTH_ID
 		     , CASE WHEN Z.E_USER_AUTH_NM IS NULL THEN Z.USER_AUTH_NM ELSE Z.E_USER_AUTH_NM END AS APLD_USER_AUTH_NM
 		     , CASE WHEN Z.E_MGR_AUTH_ID IS NULL THEN Z.MGR_AUTH_ID ELSE Z.E_MGR_AUTH_ID END AS APLD_MGR_AUTH_ID
@@ -13,9 +13,10 @@
 		             , USER_NM
 		             , USER_EMAIL
 		             , U.DEPT_CODE
-		             , D.DEPT_NM 
+		             , D.DEPT_NM
 		             , U.UP_DEPT_CODE
 		             , U.GROUP_CODE
+		             , E.GROUP_NM
 		             , U.COMPANY_CODE
 		             , LAST_LOG_DT
 		             , BF_DEPT_CODE
@@ -45,20 +46,20 @@
 		               LEFT JOIN T_MGR_SYS_AUTH MSA
 		                   ON MA.AUTH_ID = MSA.AUTH_ID
 		               LEFT JOIN T_EGROUP E
-		                   ON U.GROUP_CODE = E.GROUP_CODE 
+		                   ON U.GROUP_CODE = E.GROUP_CODE
 		               LEFT JOIN T_USER_EGROUP_AUTH UEA
-		                   ON E.GROUP_CODE = UEA.GROUP_CODE 
+		                   ON E.GROUP_CODE = UEA.GROUP_CODE
 		               LEFT JOIN T_MGR_EGROUP_AUTH MEA
 		                   ON E.GROUP_CODE = MEA.GROUP_CODE
 		               LEFT JOIN T_USER_SYS_AUTH USA2
-		                   ON UEA.AUTH_ID = USA2.AUTH_ID 
+		                   ON UEA.AUTH_ID = USA2.AUTH_ID
 		               LEFT JOIN T_MGR_SYS_AUTH MSA2
 		                   ON MEA.AUTH_ID = MSA2.AUTH_ID
 		         <include refid="selectWhere"/>
 		        ) Z
         <include refid="paging.pagingOffsetSQL" />
     </select>
-    
+
     <sql id="selectWhere">
         <where>
             <if test="search.userNm != null and search.userNm != ''">
@@ -78,7 +79,7 @@
             </if>
         </where>
     </sql>
-    
+
     <select id="selectCount" resultType="int">
         SELECT COUNT(*) AS CNT
           FROM T_USER U
@@ -93,20 +94,20 @@
                LEFT JOIN T_MGR_SYS_AUTH MSA
                    ON MA.AUTH_ID = MSA.AUTH_ID
                LEFT JOIN T_EGROUP E
-                   ON U.GROUP_CODE = E.GROUP_CODE 
+                   ON U.GROUP_CODE = E.GROUP_CODE
                LEFT JOIN T_USER_EGROUP_AUTH UEA
-                   ON E.GROUP_CODE = UEA.GROUP_CODE 
+                   ON E.GROUP_CODE = UEA.GROUP_CODE
                LEFT JOIN T_MGR_EGROUP_AUTH MEA
                    ON E.GROUP_CODE = MEA.GROUP_CODE
                LEFT JOIN T_USER_SYS_AUTH USA2
-                   ON UEA.AUTH_ID = USA2.AUTH_ID 
+                   ON UEA.AUTH_ID = USA2.AUTH_ID
                LEFT JOIN T_MGR_SYS_AUTH MSA2
                    ON MEA.AUTH_ID = MSA2.AUTH_ID
          <include refid="selectWhere"/>
     </select>
 
     <select id="selectById" resultType="com.cdp.portal.app.facade.user.dto.response.UserMgmtResDto$User">
-        SELECT Z.* 
+        SELECT Z.*
              , CASE WHEN Z.E_USER_AUTH_ID IS NULL THEN Z.USER_AUTH_ID ELSE Z.E_USER_AUTH_ID END AS APLD_USER_AUTH_ID
 		     , CASE WHEN Z.E_USER_AUTH_NM IS NULL THEN Z.USER_AUTH_NM ELSE Z.E_USER_AUTH_NM END AS APLD_USER_AUTH_NM
 		     , CASE WHEN Z.E_MGR_AUTH_ID IS NULL THEN Z.MGR_AUTH_ID ELSE Z.E_MGR_AUTH_ID END AS APLD_MGR_AUTH_ID
@@ -120,9 +121,10 @@
                      , USER_NM
                      , USER_EMAIL
                      , U.DEPT_CODE
-                     , D.DEPT_NM 
+                     , D.DEPT_NM
                      , U.UP_DEPT_CODE
                      , U.GROUP_CODE
+                     , E.GROUP_NM
                      , U.COMPANY_CODE
                      , LAST_LOG_DT
                      , BF_DEPT_CODE
@@ -160,13 +162,13 @@
                        LEFT JOIN T_MGR_SYS_AUTH MSA
                            ON MA.AUTH_ID = MSA.AUTH_ID
                        LEFT JOIN T_EGROUP E
-                           ON U.GROUP_CODE = E.GROUP_CODE 
+                           ON U.GROUP_CODE = E.GROUP_CODE
                        LEFT JOIN T_USER_EGROUP_AUTH UEA
-                           ON E.GROUP_CODE = UEA.GROUP_CODE 
+                           ON E.GROUP_CODE = UEA.GROUP_CODE
                        LEFT JOIN T_MGR_EGROUP_AUTH MEA
                            ON E.GROUP_CODE = MEA.GROUP_CODE
                        LEFT JOIN T_USER_SYS_AUTH USA2
-                           ON UEA.AUTH_ID = USA2.AUTH_ID 
+                           ON UEA.AUTH_ID = USA2.AUTH_ID
                        LEFT JOIN T_MGR_SYS_AUTH MSA2
                            ON MEA.AUTH_ID = MSA2.AUTH_ID
                        LEFT JOIN T_DEPT BFD
@@ -180,17 +182,17 @@
                        LEFT JOIN T_MGR_SYS_AUTH BFMSA
                            ON BFMA.AUTH_ID = BFMSA.AUTH_ID
                        LEFT JOIN T_EGROUP BFE
-                           ON U.BF_GROUP_CODE = BFE.GROUP_CODE 
+                           ON U.BF_GROUP_CODE = BFE.GROUP_CODE
                        LEFT JOIN T_USER_EGROUP_AUTH BFUEA
-                           ON BFE.GROUP_CODE = BFUEA.GROUP_CODE 
+                           ON BFE.GROUP_CODE = BFUEA.GROUP_CODE
                        LEFT JOIN T_MGR_EGROUP_AUTH BFMEA
                            ON BFE.GROUP_CODE = BFMEA.GROUP_CODE
                        LEFT JOIN T_USER_SYS_AUTH BFUSA2
-                           ON BFUEA.AUTH_ID = BFUSA2.AUTH_ID 
+                           ON BFUEA.AUTH_ID = BFUSA2.AUTH_ID
                        LEFT JOIN T_MGR_SYS_AUTH BFMSA2
                            ON BFMEA.AUTH_ID = BFMSA2.AUTH_ID
                  WHERE U.USER_ID = #{userId}
                 ) Z
     </select>
-    
+
 </mapper>
