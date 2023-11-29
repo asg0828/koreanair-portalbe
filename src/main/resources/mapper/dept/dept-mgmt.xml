@@ -8,6 +8,7 @@
 		        SELECT D.DEPT_CODE
 		             , D.UP_DEPT_CODE
 		             , D.DEPT_NM
+		             , UD.DEPT_NM AS UP_DEPT_NM
 		             , D.ORD_SEQ
 		             , D.COMPANY_CODE
 		             , USA.AUTH_ID AS USER_AUTH_ID
@@ -23,6 +24,8 @@
 		                   ON UA.AUTH_ID = USA.AUTH_ID
 		               LEFT JOIN T_MGR_SYS_AUTH MSA
 		                   ON MA.AUTH_ID = MSA.AUTH_ID
+		               LEFT JOIN T_DEPT UD
+                           ON D.UP_DEPT_CODE = UD.DEPT_CODE
 		         <include refid="selectWhere"/>
 		       ) Z
     </select>
