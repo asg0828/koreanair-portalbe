@@ -26,7 +26,6 @@ public class MenuMgmtMgrService {
 
     @Transactional
     public void saveMenus(List<MenuMgmtReqDto.SaveMenu> dtos) {
-    	final String menuId = idUtil.getMenuId();
 
     	List<MenuMgmtReqDto.SaveMenu> createMenus = dtos.stream()
     			.filter(c -> CommonConstants.CUD_OPERATOR_CREATE.equals(c.getOprtrSe()))
@@ -41,6 +40,8 @@ public class MenuMgmtMgrService {
     			.collect(Collectors.toList());
 
     	createMenus.forEach(c -> {
+    		final String menuId = idUtil.getMenuId();
+
     		menuMgmtMgrMapper.insert(MenuModel.builder()
     				.menuId(menuId)
     				.upMenuId(c.getUpMenuId())
@@ -80,6 +81,7 @@ public class MenuMgmtMgrService {
 
     		menuMgmtMgrMapper.delete(c.getMenuId());
     		authMgmtMgrMapper.deleteMgrMenuByMenuId(c.getMenuId());
+    		// TODO: nested 삭제 필요??
     	});
 
     }

@@ -26,7 +26,6 @@ public class MenuMgmtUserService {
 
     @Transactional
     public void saveMenus(List<MenuMgmtReqDto.SaveMenu> dtos) {
-    	final String menuId = idUtil.getMenuId();
 
     	List<MenuMgmtReqDto.SaveMenu> createMenus = dtos.stream()
     			.filter(c -> CommonConstants.CUD_OPERATOR_CREATE.equals(c.getOprtrSe()))
@@ -41,6 +40,8 @@ public class MenuMgmtUserService {
     			.collect(Collectors.toList());
 
     	createMenus.forEach(c -> {
+    		final String menuId = idUtil.getMenuId();
+
     		menuMgmtUserMapper.insert(MenuModel.builder()
     				.menuId(menuId)
     				.upMenuId(c.getUpMenuId())
