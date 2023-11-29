@@ -177,16 +177,5 @@ public class BoFeatureRestController {
         
         return ResponseEntity.ok(ApiResDto.success());
     }
-//    
-//    @Operation(summary = "Feature 중복체크(피쳐한글명)", description = "Feature 한글명으로 조회하여 데이터 유무를 리턴한다.", tags = { "feature" })
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
-//        }
-//    )
-//    @Parameter(name ="featureKoNm", required = true, description = "피쳐한글명", example = "")
-//    @GetMapping(value = "/v1/features/{featureKoNm}/exists", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<?> isExistsFeatureByFeatureKoNm(@PathVariable String featureKoNm) {
-//        return ResponseEntity.ok(ApiResDto.success(featureService.isExistsByFeatureKoNm(featureKoNm)));
-//    }
 
 }

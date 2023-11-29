@@ -19,9 +19,7 @@ import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FeatureService {
@@ -62,14 +60,6 @@ public class FeatureService {
         featureMapper.insert(featureModel);
     }
     
-//    public Boolean isExistsByFeatureKoNm(String featureKoNm) {
-//        return featureMapper.isExistsByFeatureKoNm(featureKoNm);
-//    }
-//    
-//    public Boolean isExistsByFeatureEnNm(String featureEnNm) {
-//        return featureMapper.isExistsByFeatureEnNm(featureEnNm);
-//    }
-    
     public FeatureResDto.Feature getFeature(final String featureId) {
         FeatureResDto.Feature feature = featureMapper.selectByFeatureIdAndUserId(featureId, "admin");   // TODO: 로그인한 사용자 세팅
         if (Objects.isNull(feature)) {
@@ -99,7 +89,7 @@ public class FeatureService {
     
     @Transactional
     public void updateFeature(final String featureId, FeatureReqDto.updateFeature dto) {
-        FeatureResDto.Feature feature = featureMapper.selectById(featureId);
+        FeatureResDto.Feature feature = featureMapper.selectByFeatureId(featureId);
         if (Objects.isNull(feature)) {
             throw CdpPortalError.FEATURE_NOT_FOUND.exception(featureId);
         }
@@ -148,12 +138,12 @@ public class FeatureService {
     
     @Transactional
     public void deleteFeature(final String featureId) {
-        FeatureResDto.Feature feature = featureMapper.selectById(featureId);
+        FeatureResDto.Feature feature = featureMapper.selectByFeatureId(featureId);
         if (Objects.isNull(feature)) {
             throw CdpPortalError.FEATURE_NOT_FOUND.exception(featureId);
         }
         
-        featureMapper.updateDelYnById("admin", featureId);  // TODO: 로그인한 사용자 세팅
+        featureMapper.updateDelYnByFeatureId(featureId, "admin");  // TODO: 로그인한 사용자 세팅
     }
             
     

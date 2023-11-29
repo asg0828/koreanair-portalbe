@@ -29,7 +29,7 @@
 			)
 	</select>
 	
-	<select id="selectAll" resultType="com.cdp.portal.app.facade.user.dto.response.UserFeatureResDto$UserFeatures">
+	<select id="selects" resultType="com.cdp.portal.app.facade.user.dto.response.UserFeatureResDto$UserFeatures">
 		SELECT 
 			row_number() OVER (ORDER BY Z.RGST_DT DESC) AS row_num
 			, Z.*
@@ -100,7 +100,7 @@
 			FEATURE_ID = #{featureId}
 	</delete>
 	
-	<select id="selectPopularFeature" resultType="com.cdp.portal.app.facade.user.dto.response.UserFeatureResDto$UserPopularFeatures">
+	<select id="selectPopularFeatures" resultType="com.cdp.portal.app.facade.user.dto.response.UserFeatureResDto$UserPopularFeatures">
 		WITH POPULAR_FEATURE AS (
 			SELECT 
 				FEATURE_ID
@@ -108,6 +108,7 @@
 			FROM 
 				T_USER_FEATURE
 			GROUP BY FEATURE_ID
+			ORDER BY USER_FEATURE_CNT DESC
 			LIMIT 50
 		)
 		SELECT 

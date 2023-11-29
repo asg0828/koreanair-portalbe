@@ -16,12 +16,12 @@ public interface UserFeatureMapper {
     
     Boolean isExistsByUserIdAndFeatureId(@Param("userId") String userId, @Param("featureId") String featureId);
     
-    List<UserFeatureResDto.UserFeatures> selectAll(@Param("userId") String userId, @Param("paging") PagingDto pagingDto);
+    List<UserFeatureResDto.UserFeatures> selects(@Param("userId") String userId, @Param("paging") PagingDto pagingDto);
     
     int selectCount(@Param("userId") String userId);
     
     Long delete(@Param("userId") String userId, @Param("featureId") String featureId);
     
-    List<UserFeatureResDto.UserPopularFeatures> selectPopularFeature(@Param("userId") String userId);
+    List<UserFeatureResDto.UserPopularFeatures> selectPopularFeatures(@Param("userId") String userId);
 
 }

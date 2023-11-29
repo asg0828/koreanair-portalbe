@@ -40,7 +40,7 @@ public class UserFeatureService {
         pagingDto.setPaging(userFeatureMapper.selectCount(userId));
      
         return UserFeatureResDto.UserFeaturesResult.builder()
-                .contents(userFeatureMapper.selectAll(userId, pagingDto))
+                .contents(userFeatureMapper.selects(userId, pagingDto))
                 .page(pagingDto)
                 .build();
     }
@@ -63,7 +63,7 @@ public class UserFeatureService {
     }
     
     public List<UserFeatureResDto.UserPopularFeatures> getUserPopularFeatures() {
-        return userFeatureMapper.selectPopularFeature("admin"); // TODO: 로그인한 사용자 세팅
+        return userFeatureMapper.selectPopularFeatures("admin"); // TODO: 로그인한 사용자 세팅
     }
 
 }

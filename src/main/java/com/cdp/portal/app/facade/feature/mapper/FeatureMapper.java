@@ -25,12 +25,12 @@ public interface FeatureMapper {
     
     int selectCount(@Param("search") FeatureReqDto.SearchFeature searchDto);
     
-    FeatureResDto.Feature selectById(String featureId);
+    FeatureResDto.Feature selectByFeatureId(String featureId);
     
     FeatureResDto.Feature selectByFeatureIdAndUserId(@Param("featureId") String featureId, @Param("userId") String userId);
     
     Long update(FeatureModel featureModel);
     
-    Long updateDelYnById(@Param("modiId") String modiId, @Param("featureId") String featureId);
+    Long updateDelYnByFeatureId(@Param("featureId") String featureId, @Param("modiId") String modiId);
 
 }

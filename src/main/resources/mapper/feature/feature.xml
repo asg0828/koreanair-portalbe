@@ -201,7 +201,7 @@
 		</where>
 	</sql>
 	
-	<select id="selectById" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
+	<select id="selectByFeatureId" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
 		SELECT
 			FEATURE_ID
 			, FEATURE_TYP
@@ -299,7 +299,7 @@
 			FEATURE_ID = #{featureId}
 	</update>
 	
-	<update id="updateDelYnById" parameterType="String">
+	<update id="updateDelYnByFeatureId" parameterType="String">
 		UPDATE
 			T_FEATURE
 		SET
