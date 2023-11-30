@@ -72,6 +72,7 @@ public class TableSpecService {
         }
     }
     
+    @Transactional(readOnly = true)
     public TableSpecResDto.TableSpecsResult getTableSpecs(PagingDto pagingDto, TableSpecReqDto.SearchTableSpec searchDto) {
         pagingDto.setPaging(tableSpecMapper.selectCount(searchDto));
         
@@ -82,6 +83,7 @@ public class TableSpecService {
                 .build();
     }
     
+    @Transactional(readOnly = true)
     public TableSpecResDto.TableSpec getTableSpec(final String mtsId) {
         TableSpecResDto.TableSpec tableSpec = tableSpecMapper.selectById(mtsId);
         if (Objects.isNull(tableSpec)) {

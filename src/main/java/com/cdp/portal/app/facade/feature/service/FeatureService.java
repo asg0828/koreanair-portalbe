@@ -60,6 +60,7 @@ public class FeatureService {
         featureMapper.insert(featureModel);
     }
     
+    @Transactional(readOnly = true)
     public FeatureResDto.Feature getFeature(final String featureId) {
         FeatureResDto.Feature feature = featureMapper.selectByFeatureIdAndUserId(featureId, "admin");   // TODO: 로그인한 사용자 세팅
         if (Objects.isNull(feature)) {
@@ -69,6 +70,7 @@ public class FeatureService {
         return feature;
     }
     
+    @Transactional(readOnly = true)
     public List<FeatureResDto.Features> getFeatures(FeatureReqDto.SearchFeature searchDto) {
         if (StringUtils.isEmpty(searchDto.getFeatureKoNm()) && StringUtils.isEmpty(searchDto.getFeatureEnNm())) {
             return new ArrayList<>();
@@ -77,6 +79,7 @@ public class FeatureService {
         return featureMapper.selectAll(searchDto);
     }
     
+    @Transactional(readOnly = true)
     public FeatureResDto.FeaturesResult getFeatures(PagingDto pagingDto, FeatureReqDto.SearchFeature searchDto) {
         pagingDto.setPaging(featureMapper.selectCount(searchDto));
         

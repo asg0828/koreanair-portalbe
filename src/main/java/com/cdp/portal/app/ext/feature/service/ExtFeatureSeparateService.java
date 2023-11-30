@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cdp.portal.app.ext.feature.dto.response.ExtFeatureSeparateResDto;
 import com.cdp.portal.app.facade.feature.mapper.FeatureSeparateMapper;
@@ -16,6 +17,7 @@ public class ExtFeatureSeparateService {
     
     private final FeatureSeparateMapper featureSeparateMapper;
     
+    @Transactional(readOnly = true)
     public List<ExtFeatureSeparateResDto> getFeatureSeparates(String seGrpId) {
         return featureSeparateMapper.selectBySeGrpId(seGrpId).stream()
                 .map(m -> {

@@ -25,6 +25,7 @@ public class CodeService {
      * @param groupId
      * @return
      */
+    @Transactional(readOnly = true)
     public List<CodeResDto> getCodes(String groupId) {
         return codeMapper.selectCodeByGroupId(groupId);
     }
@@ -70,6 +71,7 @@ public class CodeService {
      * @param codeId
      * @return
      */
+    @Transactional(readOnly = true)
     public CodeResDto getCode(String groupId, String codeId) {
         return codeMapper.selectByGroupIdAndCodeId(groupId, codeId);
     }

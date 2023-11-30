@@ -36,6 +36,7 @@ public class UserFeatureService {
         userFeatureMapper.insert(userFeatureModel);
     }
     
+    @Transactional(readOnly = true)
     public UserFeatureResDto.UserFeaturesResult getUserFeatures(String userId, PagingDto pagingDto) {
         pagingDto.setPaging(userFeatureMapper.selectCount(userId));
      
@@ -62,6 +63,7 @@ public class UserFeatureService {
         });
     }
     
+    @Transactional(readOnly = true)
     public List<UserFeatureResDto.UserPopularFeatures> getUserPopularFeatures() {
         return userFeatureMapper.selectPopularFeatures("admin"); // TODO: 로그인한 사용자 세팅
     }
