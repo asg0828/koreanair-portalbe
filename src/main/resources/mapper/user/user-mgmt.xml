@@ -69,10 +69,10 @@
                 AND D.DEPT_NM LIKE '%'|| #{search.deptNm} || '%'
             </if>
             <if test="search.userAuthId != null and search.userAuthId != ''">
-	            AND (USA.AUTH_NM = #{search.userAuthId} OR USA2.AUTH_NM = #{search.userAuthId})
+	            AND (USA.AUTH_ID = #{search.userAuthId} OR USA2.AUTH_ID = #{search.userAuthId})
             </if>
             <if test="search.mgrAuthId != null and search.mgrAuthId != ''">
-                AND (MSA.AUTH_NM = #{search.mgrAuthId} OR MSA2.AUTH_NM = #{search.mgrAuthId})
+                AND (MSA.AUTH_ID = #{search.mgrAuthId} OR MSA2.AUTH_ID = #{search.mgrAuthId})
             </if>
             <if test="search.useYn != null and search.useYn != ''">
                 AND U.USE_YN = #{search.useYn}
