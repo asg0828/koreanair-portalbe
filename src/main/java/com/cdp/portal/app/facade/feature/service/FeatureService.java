@@ -32,12 +32,12 @@ public class FeatureService {
     public void createFeature(FeatureReqDto.CreateFeature dto) {
         Boolean isExists = featureMapper.isExistsByFeatureKoNm(dto.getFeatureKoNm());
         if (isExists) {
-            throw CdpPortalError.FEATURE_NM_DUPLICATED.exception(dto.getFeatureKoNm());
+            throw CdpPortalError.FEATURE_KO_NM_DUPLICATED.exception(dto.getFeatureKoNm());
         }
         
         isExists = featureMapper.isExistsByFeatureEnNm(dto.getFeatureEnNm());
         if (isExists) {
-            throw CdpPortalError.FEATURE_NM_DUPLICATED.exception(dto.getFeatureEnNm());
+            throw CdpPortalError.FEATURE_EN_NM_DUPLICATED.exception(dto.getFeatureEnNm());
         }
         
         FeatureModel featureModel = FeatureModel.builder()
