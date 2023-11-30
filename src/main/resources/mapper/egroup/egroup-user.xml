@@ -1,0 +1,38 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.egroup.mapper.EgroupUserMapper">
+
+    <select id="selectByGroupCode" resultType="com.cdp.portal.app.facade.egroup.dto.response.EgroupMgmtResDto$EgroupUser">
+        SELECT U.USER_ID
+             , U.USER_NM
+             , U.GROUP_CODE
+             , U.DEPT_CODE
+             , D.DEPT_NM
+          FROM T_USER U
+               INNER JOIN T_EGROUP E
+                   ON U.GROUP_CODE = E.GROUP_CODE
+               LEFT JOIN T_DEPT D
+                   ON U.DEPT_CODE = D.DEPT_CODE
+         WHERE U.USE_YN = 'Y'
+           AND U.GROUP_CODE = #{groupCode}
+    </select>
+
+    <update id="update" parameterType="EgroupUserModel">
+        UPDATE T_USER
+           SET GROUP_CODE = #{groupCode}
+             , MODI_ID = #{modiId}
+             , MODI_DT = now()
+         WHERE USER_ID IN
+         <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+              #{userId}
+         </foreach>
+    </update>
+
+    <update id="updateGroupCodeToNull" parameterType="EgroupUserModel">
+        UPDATE T_USER
+           SET GROUP_CODE = NULL
+             , MODI_ID = #{modiId}
+             , MODI_DT = now()
+         WHERE GROUP_CODE = #{groupCode}
+    </update>
+
+</mapper>

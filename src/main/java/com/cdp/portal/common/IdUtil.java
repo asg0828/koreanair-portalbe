@@ -194,6 +194,11 @@ public class IdUtil {
 		return service.getId(CommonConstants.ID.USER_AUTH);
 	}
 
-
+	/**
+	 * 사용자 예외그룹 CODE
+	 */
+	public String getGroupCode() {
+		return service.getId(CommonConstants.ID.EGROUP_CD);
+	}
 
 }

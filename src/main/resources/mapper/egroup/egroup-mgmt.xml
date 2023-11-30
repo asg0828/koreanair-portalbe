@@ -1,0 +1,103 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.egroup.mapper.EgroupMgmtMapper">
+
+    <select id="selectAll" resultType="com.cdp.portal.app.facade.egroup.dto.response.EgroupMgmtResDto$Egroup">
+        SELECT ROW_NUMBER() OVER (ORDER BY Z.ORD_SEQ ASC) AS ROWNUM
+             , Z.*
+          FROM (
+                SELECT E.GROUP_CODE
+                     , E.UP_GROUP_CODE
+                     , E.GROUP_NM
+                     , UE.GROUP_NM AS UP_GROUP_NM
+                     , E.ORD_SEQ
+                     , USA.AUTH_ID AS USER_AUTH_ID
+                     , USA.AUTH_NM AS USER_AUTH_NM
+                     , MSA.AUTH_ID AS MGR_AUTH_ID
+                     , MSA.AUTH_NM AS MGR_AUTH_NM
+                  FROM T_EGROUP E
+                       LEFT JOIN T_USER_EGROUP_AUTH UEA
+                           ON E.GROUP_CODE = UEA.GROUP_CODE
+                       LEFT JOIN T_MGR_EGROUP_AUTH MEA
+                           ON E.GROUP_CODE = MEA.GROUP_CODE
+                       LEFT JOIN T_USER_SYS_AUTH USA
+                           ON UEA.AUTH_ID = USA.AUTH_ID
+                       LEFT JOIN T_MGR_SYS_AUTH MSA
+                           ON MEA.AUTH_ID = MSA.AUTH_ID
+                       LEFT JOIN T_EGROUP UE
+                           ON E.UP_GROUP_CODE = UE.GROUP_CODE
+                 <include refid="selectWhere"/>
+               ) Z
+    </select>
+
+    <sql id="selectWhere">
+        <where>
+            <if test="search.groupNm != null and search.groupNm != ''">
+                AND GROUP_NM LIKE '%' || #{search.groupNm} || '%'
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectCount" resultType="int">
+        SELECT COUNT(*) AS CNT
+          FROM T_EGROUP E
+               LEFT JOIN T_USER_EGROUP_AUTH UEA
+                   ON E.GROUP_CODE = UEA.GROUP_CODE
+               LEFT JOIN T_MGR_EGROUP_AUTH MEA
+                   ON E.GROUP_CODE = MEA.GROUP_CODE
+               LEFT JOIN T_USER_SYS_AUTH USA
+                   ON UEA.AUTH_ID = USA.AUTH_ID
+               LEFT JOIN T_MGR_SYS_AUTH MSA
+                   ON MEA.AUTH_ID = MSA.AUTH_ID
+         <include refid="selectWhere"/>
+    </select>
+
+    <insert id="insert" parameterType="EgroupModel">
+        INSERT INTO T_EGROUP(
+               GROUP_CODE
+             , GROUP_NM
+             , UP_GROUP_CODE
+             , ORD_SEQ
+             , RGST_ID
+             , RGST_DT
+             , MODI_ID
+             , MODI_DT
+        ) VALUES (
+               #{groupCode}
+             , #{groupNm}
+             , #{upGroupCode}
+             , #{ordSeq}
+             , #{rgstId}
+             , now()
+             , #{modiId}
+             , now()
+        )
+    </insert>
+
+    <update id="update" parameterType="EgroupModel">
+        UPDATE T_EGROUP
+		   SET GROUP_NM = #{groupNm}
+		     , UP_GROUP_CODE = #{upGroupCode}
+		     , ORD_SEQ = #{ordSeq}
+		     , MODI_ID = #{modiId}
+		     , MODI_DT = now()
+		 WHERE GROUP_CODE = #{groupCode}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        DELETE FROM T_EGROUP
+         WHERE GROUP_CODE = #{groupCode}
+    </delete>
+
+    <select id="isExistsByGroupCode" resultType="Boolean">
+        SELECT EXISTS
+             (
+                SELECT 1
+                FROM
+                    T_EGROUP
+                WHERE
+                    GROUP_CODE = #{groupCode}
+                LIMIT 1
+             )
+    </select>
+
+</mapper>

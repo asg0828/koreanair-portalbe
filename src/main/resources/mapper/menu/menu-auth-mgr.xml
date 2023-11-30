@@ -1,0 +1,46 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.menu.mapper.MenuAuthMgmtMgrMapper">
+
+    <select id="selectByAuthId" resultType="com.cdp.portal.app.facade.menu.dto.response.MenuAuthMgmtResDto$MenuAuthMgmt">
+        SELECT Z.*
+          FROM (
+                SELECT AUTH_ID
+                     , MENU_ID
+                     , MENU_ATTR
+                  FROM T_MGR_SYS_MENU_AUTH
+                 <include refid="selectWhere"/>
+               ) Z
+    </select>
+
+    <sql id="selectWhere">
+        <where>
+            <if test="authId != null and authId != ''">
+                AND AUTH_ID = #{authId}
+            </if>
+        </where>
+    </sql>
+
+    <insert id="insert" parameterType="MenuAuthModel">
+        INSERT INTO T_MGR_SYS_MENU_AUTH(
+               AUTH_ID
+             , MENU_ID
+             , RGST_ID
+             , RGST_DT
+             , MODI_ID
+             , MODI_DT
+        ) VALUES (
+               #{authId}
+             , #{menuId}
+             , #{rgstId}
+             , now()
+             , #{modiId}
+             , now()
+        )
+    </insert>
+
+    <delete id="delete" parameterType="String">
+        DELETE FROM T_MGR_SYS_MENU_AUTH
+         WHERE AUTH_ID = #{authId}
+    </delete>
+
+</mapper>

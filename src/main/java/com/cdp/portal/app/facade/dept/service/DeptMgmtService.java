@@ -23,28 +23,28 @@ import lombok.RequiredArgsConstructor;
 public class DeptMgmtService {
 	private final DeptMgmtMapper deptMgmtMapper;
 	private final DeptAuthMapper deptAuthMapper;
-	
+
     @Transactional
     public void saveDepts(List<DeptMgmtReqDto.SaveDept> dtos) {
-    	
+
     	List<DeptMgmtReqDto.SaveDept> createDepts = dtos.stream()
     			.filter(c -> CommonConstants.CUD_OPERATOR_CREATE.equals(c.getOprtrSe()))
     			.collect(Collectors.toList());
-    	
+
     	List<DeptMgmtReqDto.SaveDept> updateDepts = dtos.stream()
     			.filter(c -> CommonConstants.CUD_OPERATOR_UPDATE.equals(c.getOprtrSe()))
     			.collect(Collectors.toList());
-    	
+
     	List<DeptMgmtReqDto.SaveDept> deleteDepts = dtos.stream()
     			.filter(c -> CommonConstants.CUD_OPERATOR_DELETE.equals(c.getOprtrSe()))
     			.collect(Collectors.toList());
-    	
+
     	createDepts.forEach(c -> {
 			Boolean isExists = deptMgmtMapper.isExistsByDeptCode(c.getDeptCode());
 			if (isExists) {
 			      throw CdpPortalError.DEPT_CODE_DUPLICATED.exception(c.getDeptCode());
 			}
-			
+
     		deptMgmtMapper.insert(DeptModel.builder()
     				.deptCode(c.getDeptCode())
     				.deptNm(c.getDeptNm())
@@ -53,7 +53,7 @@ public class DeptMgmtService {
     				.rgstId("admin")    // TODO: 로그인한 사용자 세팅
     	            .modiId("admin")    // TODO: 로그인한 사용자 세팅
     				.build());
-    		
+
     		if(!ObjectUtils.isEmpty(c.getMgrAuthId())) {
     			deptAuthMapper.insertMgrAuth(DeptAuthModel.builder()
     					.deptCode(c.getDeptCode())
@@ -62,7 +62,7 @@ public class DeptMgmtService {
         	            .modiId("admin")    // TODO: 로그인한 사용자 세팅
     					.build());
     		}
-    		
+
     		if(!ObjectUtils.isEmpty(c.getUserAuthId())) {
     			deptAuthMapper.insertUserAuth(DeptAuthModel.builder()
     					.deptCode(c.getDeptCode())
@@ -72,13 +72,13 @@ public class DeptMgmtService {
     					.build());
     		}
     	});
-    	
+
     	updateDepts.forEach(c -> {
     		Boolean isExists = deptMgmtMapper.isExistsByDeptCode(c.getDeptCode());
 			if (!isExists) {
 			      throw CdpPortalError.DEPT_CODE_NOT_FOUND.exception(c.getDeptCode());
 			}
-			
+
     		deptMgmtMapper.update(DeptModel.builder()
 	    			.deptCode(c.getDeptCode())
 	    			.deptNm(c.getDeptNm())
@@ -86,36 +86,36 @@ public class DeptMgmtService {
 	    			.ordSeq(c.getOrdSeq())
 	    			.modiId("admin")    // TODO: 로그인한 사용자 세팅
 	    			.build());
-    		
+
     		DeptAuthModel mgrDeptAuthModel = DeptAuthModel.builder()
     				.deptCode(c.getDeptCode())
     				.authId(c.getMgrAuthId())
     				.rgstId("admin")    // TODO: 로그인한 사용자 세팅
     				.modiId("admin")    // TODO: 로그인한 사용자 세팅
     				.build();
-    		
+
     		//수정시 무조건 권한 삭제 후 생성
     		deptAuthMapper.deleteMgrAuthByDeptCode(mgrDeptAuthModel.getDeptCode());
-    		
+
     		if(!ObjectUtils.isEmpty(c.getMgrAuthId())) {
     			deptAuthMapper.insertMgrAuth(mgrDeptAuthModel);
     		}
-    		
-    		DeptAuthModel mgrUserAuthModel = DeptAuthModel.builder()
+
+    		DeptAuthModel userDeptAuthModel = DeptAuthModel.builder()
     				.deptCode(c.getDeptCode())
     				.authId(c.getUserAuthId())
     				.rgstId("admin")    // TODO: 로그인한 사용자 세팅
     				.modiId("admin")    // TODO: 로그인한 사용자 세팅
     				.build();
-    		
+
     		//수정시 무조건 권한 삭제 후 생성
-    		deptAuthMapper.deleteUserAuthByDeptCode(mgrUserAuthModel.getDeptCode());
-    		
+    		deptAuthMapper.deleteUserAuthByDeptCode(userDeptAuthModel.getDeptCode());
+
     		if(!ObjectUtils.isEmpty(c.getUserAuthId())) {
-    			deptAuthMapper.insertUserAuth(mgrUserAuthModel);
+    			deptAuthMapper.insertUserAuth(userDeptAuthModel);
     		}
     	});
-    	
+
     	deleteDepts.forEach(c -> {
 			Boolean isExists = deptMgmtMapper.isExistsByDeptCode(c.getDeptCode());
 			if (!isExists) {
@@ -130,7 +130,7 @@ public class DeptMgmtService {
     }
 
     public DeptMgmtResDto.DeptsResult getDepts(DeptMgmtReqDto.SearchDept searchDto) {
-        
+
         return DeptMgmtResDto.DeptsResult.builder()
                 .contents(deptMgmtMapper.selectAll(searchDto))
                 .search(searchDto)

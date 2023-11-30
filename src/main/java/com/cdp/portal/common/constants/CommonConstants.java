@@ -101,6 +101,8 @@ public class CommonConstants {
 		public static final String DATA_ID = "dt";
 		//표준용어
 		public static final String STANDARD_TERMS = "st";
+		//사용자 예외그룹
+		public static final String EGROUP_CD = "ec";
 	}
 
 	public interface File {
