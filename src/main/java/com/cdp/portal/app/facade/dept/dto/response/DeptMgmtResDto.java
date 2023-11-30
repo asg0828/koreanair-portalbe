@@ -26,7 +26,7 @@ public class DeptMgmtResDto {
     public static class Dept {
 
 		@Schema(description = "행번", nullable = false)
-    	private int rowmum;
+    	private int rownum;
 
         @Schema(description = "부서(팀)코드", nullable = false)
         private String deptCode;
