@@ -29,13 +29,13 @@ public enum CdpPortalError {
     GROUP_NOT_FOUND("E0102", "(groupId: {0}) is duplicated", HttpStatus.BAD_REQUEST),
 
     // table
-    MTS_EN_NM_DUPLICATED("E0201", "(mtsEnNm: {0}) is duplicated", HttpStatus.BAD_REQUEST),
-    TABLE_SPEC_NOT_FOUND("E0202", "(mtsId: {0}) is not found", HttpStatus.NOT_FOUND),
-
+    MTS_EN_NM_DUPLICATED("E0201", "테이블정의영문명({0})은 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
+    TABLE_SPEC_NOT_FOUND("E0202", "테이블정의 ID({0})를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    
     // feature
-    //FEATURE_NM_DUPLICATED("E0301", "(Feature: {0}) is already exist", HttpStatus.BAD_REQUEST),
-    FEATURE_NM_DUPLICATED("E0301", "Feature명({0})은 이미 등록되어있습니다)", HttpStatus.BAD_REQUEST),
-    FEATURE_NOT_FOUND("E0302", "(featureId: {0}) is not found", HttpStatus.NOT_FOUND),
+    FEATURE_KO_NM_DUPLICATED("E0301", "Feature 한글명({0})은 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
+    FEATURE_EN_NM_DUPLICATED("E0302", "Feature 영문명({0})은 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
+    FEATURE_NOT_FOUND("E0303", "피쳐 ID({0})를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
     // user
     USER_FEATURE_DUPLICATED("E0401", "관심 Feature에 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),

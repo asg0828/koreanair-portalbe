@@ -11,6 +11,7 @@ public class CommonConstants {
 	//common
 	public static final String API_BO_PREFIX = "/bo";
 	public static final String API_FO_PREFIX = "/fo";
+	public static final String API_EXT_PREFIX = "/ext";
 	public static final String EMPTY_STRING = "";
 	public static final String UNKNOWN = "unknown";
 
