@@ -140,7 +140,7 @@ public class FileService {
      *
      * @param
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public List<FileModel> selectFileList(FileModel model) {
 
         return fileMapper.selectFileList(model);
@@ -151,7 +151,7 @@ public class FileService {
      *
      * @param fileId
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public FileModel selectFile(String fileId) {
 
         return fileMapper.selectByFileId(fileId);

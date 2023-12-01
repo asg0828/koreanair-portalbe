@@ -69,7 +69,7 @@ public class NoticeService {
      * @param
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public NoticeResDto.NoticesResult getNotices (PagingDto pagingDto, NoticeReqDto.SearchNotice searchDto) {
         pagingDto.setPaging(noticeMapper.selectCount(searchDto));
 
@@ -85,7 +85,7 @@ public class NoticeService {
      * @param noticeId
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public NoticeResDto getNotice(String noticeId) {
         NoticeResDto notice = noticeMapper.selectByNoticeId(noticeId);
 
