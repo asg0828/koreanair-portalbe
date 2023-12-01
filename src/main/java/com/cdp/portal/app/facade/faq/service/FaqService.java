@@ -37,7 +37,7 @@ public class FaqService {
      * @param
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public FaqResDto.FaqsResult getFaqs (PagingDto pagingDto, FaqReqDto.SearchFaq searchDto) {
         pagingDto.setPaging(faqMapper.selectCount(searchDto));
 
@@ -53,7 +53,7 @@ public class FaqService {
      * @param faqId
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public FaqResDto getFaq(String faqId) {
             FaqResDto faq = faqMapper.selectByFaqId(faqId);
 
@@ -66,7 +66,7 @@ public class FaqService {
     }
 
     /**
-     * 공지사항 등록
+     * FAQ 등록
      * @param dto
      */
     @Transactional

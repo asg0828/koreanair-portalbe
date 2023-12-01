@@ -75,7 +75,7 @@ public class QnaService {
      * @param
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public QnaResDto.QnasResult getQnas(PagingDto pagingDto, QnaReqDto.SearchQna searchDto) {
         pagingDto.setPaging(qnaMapper.selectCount(searchDto));
 
@@ -90,7 +90,7 @@ public class QnaService {
      * @param qnaId
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public QnaResDto getQna(String qnaId) {
         QnaResDto qna = qnaMapper.selectByQnaId(qnaId);
         if (qna != null) {

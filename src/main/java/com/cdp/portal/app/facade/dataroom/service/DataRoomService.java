@@ -67,7 +67,7 @@ public class DataRoomService {
      * @param
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public DataRoomResDto.DataRoomsResult getDataRooms(PagingDto pagingDto, DataRoomReqDto.SearchDataRoom searchDto) {
         pagingDto.setPaging(dataRoomMapper.selectCount(searchDto));
 
@@ -84,7 +84,7 @@ public class DataRoomService {
      * @param dataId
      * @return
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public DataRoomResDto getData(String dataId) {
         DataRoomResDto dataroom = dataRoomMapper.selectByDataId(dataId);
         if (dataroom != null) {
