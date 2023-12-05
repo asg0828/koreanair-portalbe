@@ -71,6 +71,8 @@ cloud:
     accessKey: ASIAZSST2FO6D5V6Q6FU
     secretKey: 1/4ACdh4Ed1mfPQw3k70bXWcPjmWUXCVB/CA95Ao
 
+hr:
+  arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY
 
 # AWS Properties
 aws-props:

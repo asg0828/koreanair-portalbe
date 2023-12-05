@@ -70,6 +70,9 @@ public class SessionService {
 	@Value("${local.hr.password}")
 	private String hrApiPassword;
 
+	@Value("${hr.arn}")
+	private String hrArn;
+
 	@Value("${spring.config.activate.on-profile}")
     private String profile;
 
@@ -205,11 +208,14 @@ public class SessionService {
 		String password = null;
 
 		try {
-//			if("local".equals(profile)) {
-				uri = hrApiUrl;
-				id = hrApiId;
-				password = hrApiPassword;
-//			}
+			if(!"local".equals(profile)) {
+				getSecretsManager();
+				System.out.println("getSecretsManager invoked");
+			}
+
+			uri = hrApiUrl;
+			id = hrApiId;
+			password = hrApiPassword;
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -261,8 +267,7 @@ public class SessionService {
 	//HR 정보 조회 API 권한용 ARN
 	public void getSecretsManager() {
         try {
-            var getSecretValueRequest = new GetSecretValueRequest()
-                    .withSecretId("arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY");
+            var getSecretValueRequest = new GetSecretValueRequest().withSecretId(hrArn);
             GetSecretValueResult getSecretValueResult = null;
             getSecretValueResult = secretsManagerClient.getSecretValue(getSecretValueRequest);
 
@@ -271,7 +276,13 @@ public class SessionService {
 //                System.out.println("secret ======> : " + secret);
 
                 var jObject = new JSONObject(secret);
-//                this.dbPassword = jObject.getString("password");
+                this.hrApiUrl = jObject.getString("HTTP URL");
+                this.hrApiId = jObject.getString("ID");
+                this.hrApiPassword = jObject.getString("Password");
+
+                System.out.println("hrApiUrl : " + hrApiUrl);
+                System.out.println("hrApiId : " + hrApiId);
+                System.out.println("hrApiPassword : " + hrApiPassword);
             }
         } catch (Exception e) {
             throw new AWSSecretsManagerException("SecretManager Exception Occured : " + e.getMessage());

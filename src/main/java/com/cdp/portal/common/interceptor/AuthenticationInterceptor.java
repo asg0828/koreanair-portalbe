@@ -24,8 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationInterceptor implements HandlerInterceptor {
 	private static final String HTTP_METHOD_OPTIONS = "OPTIONS";
 	private static final String HTTP_METHOD_POST = "POST";
-	private static final String HTTP_METHOD_DELETE = "DELETE";
-	private static final String SESSION_URI = ".*/session/v1/.*";
+	private static final String SESSION_URI = ".*/session/v1/login";
 	private final AuthenticationService authenticationService;
 
 	@Override
@@ -37,7 +36,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 		/*
 		 * EXCEPTION VERSION - 로그인 구현 후 사용
 		 * */
-		if (!(isMatched && (HTTP_METHOD_POST.equals(request.getMethod()) || HTTP_METHOD_DELETE.equals(request.getMethod()))) && !HTTP_METHOD_OPTIONS.equals(request.getMethod())) {
+		if (!(isMatched && HTTP_METHOD_POST.equals(request.getMethod())) && !HTTP_METHOD_OPTIONS.equals(request.getMethod())) {
 			String sessionId = request.getHeader(CommonConstants.X_SESSION_ID);
 			if (ObjectUtils.isEmpty(sessionId)) {
 				throw new CdpPortalException(CdpPortalError.SESSION_EXPIRE);

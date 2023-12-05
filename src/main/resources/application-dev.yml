@@ -52,6 +52,9 @@ cloud:
     secrets-manager:
       db-password-arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/cdp/app-Yufwll
 
+hr:
+  arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY
+
 # AWS Properties
 aws-props:
   bucket-name: awsdc-s3-dlk-dev-cdp-portalobject
