@@ -109,7 +109,6 @@ public class SessionService {
 			String givenName = (String) payload.get("given_name");
 			*/
 
-			String employeeNumber = null;
 			try {
 
 				// TODO: HR 조회 API 정보 얻기
@@ -178,10 +177,6 @@ public class SessionService {
 				// TODO: 마지막 로그인 일시 업데이트
 			} catch (CdpPortalException e) {
 				log.error(e.getMessage());
-				if (ObjectUtils.isEmpty(employeeNumber)) {
-					employeeNumber = email.substring(0, email.indexOf('@')).toUpperCase();
-				}
-
 				// TODO: 로그인 실패 로그 저장 필요?
 				// actionHistoryService.createActionHistory(null, null, null, ActionCode.LOGIN_FAIL.name(), employeeNumber, null);
 
@@ -189,11 +184,6 @@ public class SessionService {
 
 			} catch (Exception e) {
 				log.error(e.getMessage());
-//				if (ObjectUtils.isEmpty(employeeNumber)) {
-//					employeeNumber = email.substring(0, email.indexOf('@')).toUpperCase();
-//				}
-//				employeeNumber = email.substring(0, email.indexOf('@')).toUpperCase();
-
 				// TODO: 로그인 실패 로그 저장 필요?
 				// actionHistoryService.createActionHistory(null, null, null, ActionCode.LOGIN_FAIL.name(), employeeNumber, null);
 
@@ -215,11 +205,11 @@ public class SessionService {
 		String password = null;
 
 		try {
-			if("local".equals(profile)) {
+//			if("local".equals(profile)) {
 				uri = hrApiUrl;
 				id = hrApiId;
 				password = hrApiPassword;
-			}
+//			}
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
