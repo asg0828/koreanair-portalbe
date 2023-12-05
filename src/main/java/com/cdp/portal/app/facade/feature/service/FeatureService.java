@@ -17,6 +17,7 @@ import com.cdp.portal.app.facade.feature.model.FeatureModel;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
+import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -53,8 +54,8 @@ public class FeatureService {
                 .enrDeptCode(dto.getEnrDeptCode())
                 .featureRelTb(dto.getFeatureRelTb())
                 .featureDsc(dto.getFeatureDsc())
-                .rgstId("admin")    // TODO: 로그인한 사용자 세팅
-                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .rgstId(SessionScopeUtil.getContextSession().getUserId())
+                .modiId(SessionScopeUtil.getContextSession().getUserId())
                 .build();
         
         featureMapper.insert(featureModel);
@@ -62,7 +63,7 @@ public class FeatureService {
     
     @Transactional(readOnly = true)
     public FeatureResDto.Feature getFeature(final String featureId) {
-        FeatureResDto.Feature feature = featureMapper.selectByFeatureIdAndUserId(featureId, "admin");   // TODO: 로그인한 사용자 세팅
+        FeatureResDto.Feature feature = featureMapper.selectByFeatureIdAndUserId(featureId, SessionScopeUtil.getContextSession().getUserId());
         if (Objects.isNull(feature)) {
             throw CdpPortalError.FEATURE_NOT_FOUND.exception(featureId);
         }
@@ -84,7 +85,7 @@ public class FeatureService {
         pagingDto.setPaging(featureMapper.selectCount(searchDto));
         
         return FeatureResDto.FeaturesResult.builder()
-                .contents(featureMapper.selects(pagingDto, searchDto, "admin"))   // TODO: 로그인한 사용자 세팅
+                .contents(featureMapper.selects(pagingDto, searchDto, SessionScopeUtil.getContextSession().getUserId()))
                 .search(searchDto)
                 .page(pagingDto)
                 .build();
@@ -111,7 +112,7 @@ public class FeatureService {
                 .enrDeptCode(dto.getEnrDeptCode())
                 .featureRelTb(dto.getFeatureRelTb())
                 .featureDsc(dto.getFeatureDsc())
-                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .modiId(SessionScopeUtil.getContextSession().getUserId())
                 .build();
         
         featureMapper.update(featureModel);
@@ -131,8 +132,8 @@ public class FeatureService {
                     .enrDeptCode(dto.getEnrDeptCode())
                     .featureRelTb(dto.getFeatureRelTb())
                     .featureDsc(dto.getFeatureDsc())
-                    .rgstId("admin")    // TODO: 로그인한 사용자 세팅
-                    .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                    .rgstId(SessionScopeUtil.getContextSession().getUserId())
+                    .modiId(SessionScopeUtil.getContextSession().getUserId())
                     .build();
             
             featureHistMapper.insert(featureHistModel);
@@ -146,7 +147,7 @@ public class FeatureService {
             throw CdpPortalError.FEATURE_NOT_FOUND.exception(featureId);
         }
         
-        featureMapper.updateDelYnByFeatureId(featureId, "admin");  // TODO: 로그인한 사용자 세팅
+        featureMapper.updateDelYnByFeatureId(featureId, SessionScopeUtil.getContextSession().getUserId());
     }
             
     

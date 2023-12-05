@@ -1,6 +1,7 @@
 package com.cdp.portal.app.facade.user.service;
 
-import java.util.Arrays;import java.util.List;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import com.cdp.portal.app.facade.user.mapper.UserFeatureMapper;
 import com.cdp.portal.app.facade.user.model.UserFeatureModel;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
+import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +32,7 @@ public class UserFeatureService {
         UserFeatureModel userFeatureModel = UserFeatureModel.builder()
                 .userId(userId)
                 .featureId(dto.getFeatureId())
-                .rgstId("admin")    // TODO: 로그인한 사용자 세팅
+                .rgstId(SessionScopeUtil.getContextSession().getUserId())
                 .build();
         
         userFeatureMapper.insert(userFeatureModel);
@@ -65,7 +67,7 @@ public class UserFeatureService {
     
     @Transactional(readOnly = true)
     public List<UserFeatureResDto.UserPopularFeatures> getUserPopularFeatures() {
-        return userFeatureMapper.selectPopularFeatures("admin"); // TODO: 로그인한 사용자 세팅
+        return userFeatureMapper.selectPopularFeatures(SessionScopeUtil.getContextSession().getUserId());
     }
 
 }
