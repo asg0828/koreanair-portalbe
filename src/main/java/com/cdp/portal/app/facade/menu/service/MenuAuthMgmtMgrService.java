@@ -9,6 +9,7 @@ import org.springframework.util.ObjectUtils;
 import com.cdp.portal.app.facade.menu.dto.response.MenuAuthMgmtResDto;
 import com.cdp.portal.app.facade.menu.mapper.MenuAuthMgmtMgrMapper;
 import com.cdp.portal.app.facade.menu.model.MenuAuthModel;
+import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,8 +27,8 @@ public class MenuAuthMgmtMgrService {
     			menuAuthMgmtMgrMapper.insert(MenuAuthModel.builder()
 	        		.authId(authId)
 	        		.menuId(menuId)
-	        		.rgstId("admin")    // TODO: 로그인한 사용자 세팅
-	                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+	        		.rgstId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+	                .modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
 	    			.build()));
     	}
     }

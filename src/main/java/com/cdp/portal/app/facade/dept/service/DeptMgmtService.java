@@ -15,6 +15,7 @@ import com.cdp.portal.app.facade.dept.model.DeptAuthModel;
 import com.cdp.portal.app.facade.dept.model.DeptModel;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.enumeration.CdpPortalError;
+import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,16 +51,16 @@ public class DeptMgmtService {
     				.deptNm(c.getDeptNm())
     				.upDeptCode(c.getUpDeptCode())
     				.ordSeq(c.getOrdSeq())
-    				.rgstId("admin")    // TODO: 로그인한 사용자 세팅
-    	            .modiId("admin")    // TODO: 로그인한 사용자 세팅
+    				.rgstId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+    	            .modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
     				.build());
 
     		if(!ObjectUtils.isEmpty(c.getMgrAuthId())) {
     			deptAuthMapper.insertMgrAuth(DeptAuthModel.builder()
     					.deptCode(c.getDeptCode())
     					.authId(c.getMgrAuthId())
-    					.rgstId("admin")    // TODO: 로그인한 사용자 세팅
-        	            .modiId("admin")    // TODO: 로그인한 사용자 세팅
+    					.rgstId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+        	            .modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
     					.build());
     		}
 
@@ -67,8 +68,8 @@ public class DeptMgmtService {
     			deptAuthMapper.insertUserAuth(DeptAuthModel.builder()
     					.deptCode(c.getDeptCode())
     					.authId(c.getUserAuthId())
-    					.rgstId("admin")    // TODO: 로그인한 사용자 세팅
-    					.modiId("admin")    // TODO: 로그인한 사용자 세팅
+    					.rgstId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+    					.modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
     					.build());
     		}
     	});
@@ -84,14 +85,14 @@ public class DeptMgmtService {
 	    			.deptNm(c.getDeptNm())
 	    			.upDeptCode(c.getUpDeptCode())
 	    			.ordSeq(c.getOrdSeq())
-	    			.modiId("admin")    // TODO: 로그인한 사용자 세팅
+	    			.modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
 	    			.build());
 
     		DeptAuthModel mgrDeptAuthModel = DeptAuthModel.builder()
     				.deptCode(c.getDeptCode())
     				.authId(c.getMgrAuthId())
-    				.rgstId("admin")    // TODO: 로그인한 사용자 세팅
-    				.modiId("admin")    // TODO: 로그인한 사용자 세팅
+    				.rgstId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+    				.modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
     				.build();
 
     		//수정시 무조건 권한 삭제 후 생성
@@ -104,8 +105,8 @@ public class DeptMgmtService {
     		DeptAuthModel userDeptAuthModel = DeptAuthModel.builder()
     				.deptCode(c.getDeptCode())
     				.authId(c.getUserAuthId())
-    				.rgstId("admin")    // TODO: 로그인한 사용자 세팅
-    				.modiId("admin")    // TODO: 로그인한 사용자 세팅
+    				.rgstId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+    				.modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
     				.build();
 
     		//수정시 무조건 권한 삭제 후 생성

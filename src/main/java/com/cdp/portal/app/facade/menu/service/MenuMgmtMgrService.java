@@ -14,6 +14,7 @@ import com.cdp.portal.app.facade.menu.model.MenuModel;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.enumeration.CdpPortalError;
+import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,8 +51,8 @@ public class MenuMgmtMgrService {
     				.menuUrl(c.getMenuUrl())
     				.ordSeq(c.getOrdSeq())
     				.useYn(c.getUseYn())
-    				.rgstId("admin")    // TODO: 로그인한 사용자 세팅
-    	            .modiId("admin")    // TODO: 로그인한 사용자 세팅
+    				.rgstId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+    	            .modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
     				.build());
     	});
 
@@ -69,7 +70,7 @@ public class MenuMgmtMgrService {
     				.menuUrl(c.getMenuUrl())
     				.ordSeq(c.getOrdSeq())
     				.useYn(c.getUseYn())
-	    			.modiId("admin")    // TODO: 로그인한 사용자 세팅
+	    			.modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
 	    			.build());
     	});
 

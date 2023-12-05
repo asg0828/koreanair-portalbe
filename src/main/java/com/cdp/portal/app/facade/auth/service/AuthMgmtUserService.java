@@ -15,6 +15,7 @@ import com.cdp.portal.app.facade.dept.mapper.DeptAuthMapper;
 import com.cdp.portal.app.facade.egroup.mapper.EgroupAuthMapper;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.enumeration.CdpPortalError;
+import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,8 +35,8 @@ public class AuthMgmtUserService {
         		.authId(authId)
         		.authNm(dto.getAuthNm())
         		.authDsc(dto.getAuthDsc())
-                .rgstId("admin")    // TODO: 로그인한 사용자 세팅
-                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .rgstId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+                .modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
                 .build();
 
         authMgmtUserMapper.insert(authModel);
@@ -61,7 +62,7 @@ public class AuthMgmtUserService {
         		.authId(authId)
         		.authNm(dto.getAuthNm())
         		.authDsc(dto.getAuthDsc())
-                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
                 .build();
 
         authMgmtUserMapper.update(authModel);

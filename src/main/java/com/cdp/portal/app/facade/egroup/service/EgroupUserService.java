@@ -10,6 +10,7 @@ import com.cdp.portal.app.facade.egroup.dto.request.EgroupMgmtReqDto.EgroupUserU
 import com.cdp.portal.app.facade.egroup.dto.response.EgroupMgmtResDto;
 import com.cdp.portal.app.facade.egroup.mapper.EgroupUserMapper;
 import com.cdp.portal.app.facade.egroup.model.EgroupUserModel;
+import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,7 +36,7 @@ public class EgroupUserService {
     		egroupUserMapper.update(EgroupUserModel.builder()
     	    		.groupCode(c.getGroupCode())
     	    		.userIds(c.getUserIds())
-    	    		.modiId("admin")    // TODO: 로그인한 사용자 세팅
+    	    		.modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
     	    		.build());
     	});
     }
