@@ -15,6 +15,7 @@ import com.cdp.portal.app.facade.table.model.TableSpecModel;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
+import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,8 +49,8 @@ public class TableSpecService {
                 .srcTbNm(dto.getSrcTbNm())
                 .srcDbCd(dto.getSrcDbCd())
                 .mtsDsc(dto.getMtsDsc())
-                .rgstId("admin")    // TODO: 로그인한 사용자 세팅
-                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .rgstId(SessionScopeUtil.getContextSession().getUserId())
+                .modiId(SessionScopeUtil.getContextSession().getUserId())
                 .build();
         
         tableSpecMapper.insert(tableSpecModel);
@@ -64,8 +65,8 @@ public class TableSpecService {
                     .mcsDef(columnSpec.getMcsDef())
                     .srcClNm(columnSpec.getSrcClNm())
                     .clFm(columnSpec.getClFm())
-                    .rgstId("admin")    // TODO: 로그인한 사용자 세팅
-                    .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                    .rgstId(SessionScopeUtil.getContextSession().getUserId())
+                    .modiId(SessionScopeUtil.getContextSession().getUserId())
                     .build();
             
             tableColumnSpecMapper.insert(tableColumnSpecModel);
@@ -113,7 +114,7 @@ public class TableSpecService {
                 .srcTbNm(dto.getSrcTbNm())
                 .srcDbCd(dto.getSrcDbCd())
                 .mtsDsc(dto.getMtsDsc())
-                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .modiId(SessionScopeUtil.getContextSession().getUserId())
                 .build();
         
         tableSpecMapper.update(tableSpecModel);
@@ -131,8 +132,8 @@ public class TableSpecService {
                     .mcsDef(columnSpec.getMcsDef())
                     .srcClNm(columnSpec.getSrcClNm())
                     .clFm(columnSpec.getClFm())
-                    .rgstId("admin")    // TODO: 로그인한 사용자 세팅
-                    .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                    .rgstId(SessionScopeUtil.getContextSession().getUserId())
+                    .modiId(SessionScopeUtil.getContextSession().getUserId())
                     .build();
             
             tableColumnSpecMapper.insert(tableColumnSpecModel);
@@ -148,10 +149,10 @@ public class TableSpecService {
         }
         
         /* update table spec delYn */
-        tableSpecMapper.updateDelYnById("admin", mtsId);
+        tableSpecMapper.updateDelYnById(SessionScopeUtil.getContextSession().getUserId(), mtsId);
         
         /* update table column spec delYn */
-        tableColumnSpecMapper.updateDelYnByMtsId("admin", mtsId);
+        tableColumnSpecMapper.updateDelYnByMtsId(SessionScopeUtil.getContextSession().getUserId(), mtsId);
     }
 
 }
