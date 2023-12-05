@@ -116,8 +116,9 @@ public class SessionService {
 				/*{"HTTP URL":"https://wd3-impl-services1.workday.com/ccx/service/customreport2/koreanair/INT-CDP-ISU/RT-INT-HR-001_Worker_Data_With_Email?Email_Address=e.lee%40koreanair.com&format=json","ID":"INT-CDP-ISU","Password":"Welcome2KAWD!"}*/
 				// getSecretsManager();
 
+				HrInfo hrInfo = getEmployeeHrInfo(email);
+//				HrInfo hrInfo = getEmployeeHrInfo("pj.uhlee@kalmate.net");
 //				HrInfo hrInfo = getEmployeeHrInfo("ymson@koreanair.com");
-				HrInfo hrInfo = getEmployeeHrInfo("pj.uhlee@kalmate.net");
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.wjjung@kalmate.net");
 
 //				System.out.println("hrInfo : ");
@@ -129,6 +130,7 @@ public class SessionService {
 					.build();
 				}
 
+				// TODO: 존재 하지 않는 사용자인경우 insert 필요
 				UserMgmtResDto.User user = userMgmtService.getUser(hrInfo.getEEID());
 
 				// TODO: HR 팀/부서가 포털 팀/부서와 다를때 업데이트
