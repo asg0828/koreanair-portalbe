@@ -11,6 +11,7 @@ import com.cdp.portal.app.facade.code.dto.response.CodeResDto;
 import com.cdp.portal.app.facade.code.mapper.CodeMapper;
 import com.cdp.portal.app.facade.code.model.CodeModel;
 import com.cdp.portal.common.enumeration.CdpPortalError;
+import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,8 +47,8 @@ public class CodeService {
                     .codeNm(dto.getGroupNm())
                     .codeDsc(dto.getGroupDsc())
                     .useYn(dto.getGroupUseYn())
-                    .rgstId("admin")    // TODO: 로그인한 사용자 세팅
-                    .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                    .rgstId(SessionScopeUtil.getContextSession().getUserId())
+                    .modiId(SessionScopeUtil.getContextSession().getUserId())
                     .build();
             
             codeMapper.insertCode(codeModel);
@@ -58,7 +59,7 @@ public class CodeService {
                     .codeNm(dto.getGroupNm())
                     .codeDsc(dto.getGroupDsc())
                     .useYn(dto.getGroupUseYn())
-                    .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                    .modiId(SessionScopeUtil.getContextSession().getUserId())
                     .build();
             
             codeMapper.updateCode(codeModel);
@@ -93,8 +94,8 @@ public class CodeService {
                     .codeDsc(dto.getCodeDsc())
                     .ordSeq(dto.getOrdSeq())
                     .useYn(dto.getUseYn())
-                    .rgstId("admin")    // TODO: 로그인한 사용자 세팅
-                    .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                    .rgstId(SessionScopeUtil.getContextSession().getUserId())
+                    .modiId(SessionScopeUtil.getContextSession().getUserId())
                     .build();
             
             codeMapper.insertCode(codeModel);
@@ -106,7 +107,7 @@ public class CodeService {
                     .codeDsc(dto.getCodeDsc())
                     .ordSeq(dto.getOrdSeq())
                     .useYn(dto.getUseYn())
-                    .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                    .modiId(SessionScopeUtil.getContextSession().getUserId())
                     .build();
             
             codeMapper.updateCode(codeModel);
@@ -131,7 +132,7 @@ public class CodeService {
                 .codeDsc(dto.getCodeDsc())
                 .ordSeq(dto.getOrdSeq())
                 .useYn(dto.getUseYn())
-                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .modiId(SessionScopeUtil.getContextSession().getUserId())
                 .build();
         
         codeMapper.updateCode(codeModel);
