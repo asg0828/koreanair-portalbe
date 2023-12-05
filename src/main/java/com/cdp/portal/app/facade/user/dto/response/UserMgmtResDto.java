@@ -5,9 +5,8 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.cdp.portal.app.facade.feature.dto.request.FeatureReqDto;
+import com.cdp.portal.app.facade.menu.dto.response.MenuMgmtResDto;
 import com.cdp.portal.app.facade.user.dto.request.UserMgmtReqDto;
-import com.cdp.portal.app.facade.user.dto.response.UserFeatureResDto.UserFeatures;
 import com.cdp.portal.common.dto.ApiResDto;
 import com.cdp.portal.common.dto.PagingDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -173,6 +172,12 @@ public class UserMgmtResDto {
 
         @Schema(description = "이전 예외그룹 관리자권한명", example = "")
         private String bfEMgrAuthNm;
+
+        @Schema(description = "접근 가능 관리자 메뉴 목록", example = "")
+        private MenuMgmtResDto.MenuByAuth menuByAuthMgr;
+
+        @Schema(description = "접근 가능 사용자 메뉴 목록", example = "")
+        private MenuMgmtResDto.MenuByAuth menuByAuthUser;
 
         @Schema(description = "등록자ID", example = "admin")
         private String rgstId;

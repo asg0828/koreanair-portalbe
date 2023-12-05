@@ -86,10 +86,25 @@ public class MenuMgmtMgrService {
 
     }
 
-    public MenuMgmtResDto.MenuMgmtResult getDepts(MenuMgmtReqDto.SearchMenu searchDto) {
+    public MenuMgmtResDto.MenuMgmtResult getMenus(MenuMgmtReqDto.SearchMenu searchDto) {
         return MenuMgmtResDto.MenuMgmtResult.builder()
                 .contents(menuMgmtMgrMapper.selectAll(searchDto))
                 .search(searchDto)
                 .build();
     }
+
+    public MenuMgmtResDto.MenuByAuth getMenusByAuthMgr(MenuMgmtReqDto.SearchMenuByAuth searchDto) {
+    	return MenuMgmtResDto.MenuByAuth.builder()
+    			.menus(menuMgmtMgrMapper.selectByAuthIdMgrMenus(searchDto))
+    			.search(searchDto)
+    			.build();
+    }
+
+    public MenuMgmtResDto.MenuByAuth getMenusByAuthUser(MenuMgmtReqDto.SearchMenuByAuth searchDto) {
+    	return MenuMgmtResDto.MenuByAuth.builder()
+    			.menus(menuMgmtMgrMapper.selectByAuthIdUserMenus(searchDto))
+    			.search(searchDto)
+    			.build();
+    }
+
 }

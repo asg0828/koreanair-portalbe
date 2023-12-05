@@ -16,19 +16,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.model.AWSSecretsManagerException;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
+import com.cdp.portal.app.facade.menu.dto.request.MenuMgmtReqDto;
+import com.cdp.portal.app.facade.menu.service.MenuMgmtMgrService;
 import com.cdp.portal.app.facade.session.dto.SessionDto;
 import com.cdp.portal.app.facade.session.dto.SessionRequestDto;
+import com.cdp.portal.app.facade.session.dto.UserHrInfoDto;
+import com.cdp.portal.app.facade.session.dto.UserHrInfoDto.HrInfo;
 import com.cdp.portal.app.facade.session.repository.SessionRepository;
+import com.cdp.portal.app.facade.user.dto.response.UserMgmtResDto;
+import com.cdp.portal.app.facade.user.service.UserMgmtService;
 import com.cdp.portal.common.dto.ApiResDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 import com.cdp.portal.common.error.exception.CdpPortalException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -38,6 +43,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 //import com.kal.stpc.config.MenuByRoleIdConfig;
+import com.google.gson.Gson;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,13 +55,23 @@ public class SessionService {
 
 	private final SessionRepository sessionRepository;
 	private final AWSSecretsManager secretsManagerClient;
-//	private final PssService pssService;
-//	private final ActionHistoryService actionHistoryService;
-//	private final MenuByRoleIdConfig menuByRoleIdConfig;
-//	private final MenuService menuService;
+	private final UserMgmtService userMgmtService;
+	private final MenuMgmtMgrService menuMgmtMgrService;
 
 	@Value("${api.cdp.client_id}")
-	private String CLIENT_ID;
+	private String clientId;
+
+	@Value("${local.hr.url}")
+	private String hrApiUrl;
+
+	@Value("${local.hr.id}")
+	private String hrApiId;
+
+	@Value("${local.hr.password}")
+	private String hrApiPassword;
+
+	@Value("${spring.config.activate.on-profile}")
+    private String profile;
 
 	public ApiResDto<SessionDto> createSession(SessionRequestDto sessionRequest) {
 
@@ -65,10 +81,10 @@ public class SessionService {
 		HttpTransport transport = new NetHttpTransport();
 		JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-				// Specify the CLIENT_ID of the app that accesses the backend:
-				.setAudience(Collections.singletonList(CLIENT_ID))
+				// Specify the clientId of the app that accesses the backend:
+				.setAudience(Collections.singletonList(clientId))
 				// Or, if multiple clients access the backend:
-				// .setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
+				// .setAudience(Arrays.asList(clientId_1, clientId_2, clientId_3))
 				.build();
 
 		GoogleIdToken idToken = null;
@@ -76,44 +92,79 @@ public class SessionService {
 			idToken = verifier.verify(sessionRequest.getGoogleIdToken());
 		} catch (GeneralSecurityException | IOException e) {
 			log.error(e.getMessage());
-//			throw new CustomBusinessException(StatusCodeConstants.INVALID_GOOGLE_ID_TOKEN);
+			throw new CdpPortalException(CdpPortalError.INVALID_GOOGLE_ID_TOKEN);
 		}
 		if (idToken != null) {
 			Payload payload = idToken.getPayload();
 
-			String userId = payload.getSubject();
+			String subject = payload.getSubject();
 
-			String email = payload.getEmail();
-			boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
 			String name = (String) payload.get("name");
+			String email = payload.getEmail();
+			/*
+			boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
 			String pictureUrl = (String) payload.get("picture");
 			String locale = (String) payload.get("locale");
 			String familyName = (String) payload.get("family_name");
 			String givenName = (String) payload.get("given_name");
+			*/
 
 			String employeeNumber = null;
 			try {
 
-				//HR 정보 조회용
-//				getSecretsManager();
+				// TODO: HR 조회 API 정보 얻기
+				/*{"HTTP URL":"https://wd3-impl-services1.workday.com/ccx/service/customreport2/koreanair/INT-CDP-ISU/RT-INT-HR-001_Worker_Data_With_Email?Email_Address=e.lee%40koreanair.com&format=json","ID":"INT-CDP-ISU","Password":"Welcome2KAWD!"}*/
+				// getSecretsManager();
 
-				employeeNumber = getEmployeeNumberFromGoogle(sessionRequest.getGoogleAccessToken());
+//				HrInfo hrInfo = getEmployeeHrInfo("ymson@koreanair.com");
+				HrInfo hrInfo = getEmployeeHrInfo("pj.uhlee@kalmate.net");
+//				HrInfo hrInfo = getEmployeeHrInfo("pj.wjjung@kalmate.net");
 
-				if (ObjectUtils.isEmpty(employeeNumber)) {
-					employeeNumber = email.substring(0, email.indexOf('@')).toUpperCase();
+//				System.out.println("hrInfo : ");
+//				System.out.println(hrInfo.getEEID());
+
+				if (ObjectUtils.isEmpty(hrInfo)) {
+					hrInfo = HrInfo.builder()
+					.EEID(email.substring(0, email.indexOf('@')).toLowerCase())
+					.build();
 				}
 
-				// PSS Portal 정보 조회
-//				UserRoleDto userRoleDto = pssService.retrievePssRole(employeeNumber);
+				UserMgmtResDto.User user = userMgmtService.getUser(hrInfo.getEEID());
 
-				// 권한에 따른 메뉴 할당
-//				userRoleDto.setMenus(
-//						menuService.createAllowMenusWithParentMenuId(menuByRoleIdConfig.getMenus().get(userRoleDto.getRoleId())));
+				// TODO: HR 팀/부서가 포털 팀/부서와 다를때 업데이트
+				if(!ObjectUtils.isEmpty(hrInfo.getTeam_Code()) && !hrInfo.getTeam_Code().equals(user.getDeptCode())){
+					// TODO: 팀/부서 코드 업데이트
+				}
 
-				SessionDto sessionInfo = SessionDto.builder().memberName(name).email(email).employeeNumber(employeeNumber)
-//						.roleId(userRoleDto.getRoleId()).roleName(userRoleDto.getRoleName()).menus(userRoleDto.getMenus())
-						.googleIdToken(sessionRequest.getGoogleIdToken()).googleAccessToken(sessionRequest.getGoogleAccessToken())
-						.sessionId(userId + ':' + UUID.randomUUID()).build();
+				if(!ObjectUtils.isEmpty(user.getApldMgrAuthId()))
+					user.setMenuByAuthMgr(menuMgmtMgrService.getMenusByAuthMgr(MenuMgmtReqDto.SearchMenuByAuth.builder()
+							.authId(user.getApldMgrAuthId())
+							.authNm(user.getApldMgrAuthNm())
+							.build()));
+
+				if(!ObjectUtils.isEmpty(user.getApldUserAuthId()))
+					user.setMenuByAuthUser(menuMgmtMgrService.getMenusByAuthUser(MenuMgmtReqDto.SearchMenuByAuth.builder()
+							.authId(user.getApldUserAuthId())
+							.authNm(user.getApldUserAuthNm())
+							.build()));
+
+				SessionDto sessionInfo = SessionDto.builder()
+						.userId(user.getUserId())
+						.userNm(user.getUserNm())
+						.userEmail(email)
+						.deptCode(user.getDeptCode())
+						.deptNm(user.getDeptNm())
+						.upDeptCode(user.getUpDeptCode())
+						.upDeptNm(user.getUpDeptNm())
+						.apldMgrAuthId(user.getApldMgrAuthId())
+						.apldMgrAuthNm(user.getApldMgrAuthNm())
+						.apldUserAuthId(user.getApldUserAuthId())
+						.apldUserAuthNm(user.getApldUserAuthNm())
+						.menuByAuthMgr(user.getMenuByAuthMgr())
+						.menuByAuthUser(user.getMenuByAuthUser())
+						.googleIdToken(sessionRequest.getGoogleIdToken())
+						.googleAccessToken(sessionRequest.getGoogleAccessToken())
+						.sessionId(subject + ':' + UUID.randomUUID()).build();
 
 				sessionRepository.createSession(sessionInfo.getSessionId(), sessionInfo);
 
@@ -122,61 +173,97 @@ public class SessionService {
 
 				result = ApiResDto.success(sessionInfo);
 
-//				actionHistoryService.createActionHistory(null, null, null, ActionCode.LOGIN_SUCCESS.name(), employeeNumber, null);
+				// TODO: 마지막 로그인 일시 업데이트
 			} catch (CdpPortalException e) {
 				log.error(e.getMessage());
 				if (ObjectUtils.isEmpty(employeeNumber)) {
 					employeeNumber = email.substring(0, email.indexOf('@')).toUpperCase();
 				}
 
-//				actionHistoryService.createActionHistory(null, null, null, ActionCode.LOGIN_FAIL.name(), employeeNumber, null);
+				// TODO: 로그인 실패 로그 저장 필요?
+				// actionHistoryService.createActionHistory(null, null, null, ActionCode.LOGIN_FAIL.name(), employeeNumber, null);
 
 				throw new CdpPortalException(e.getError(), e.getMessage());
 
 			} catch (Exception e) {
 				log.error(e.getMessage());
-				if (ObjectUtils.isEmpty(employeeNumber)) {
-					employeeNumber = email.substring(0, email.indexOf('@')).toUpperCase();
-				}
-				employeeNumber = email.substring(0, email.indexOf('@')).toUpperCase();
+//				if (ObjectUtils.isEmpty(employeeNumber)) {
+//					employeeNumber = email.substring(0, email.indexOf('@')).toUpperCase();
+//				}
+//				employeeNumber = email.substring(0, email.indexOf('@')).toUpperCase();
 
-//				actionHistoryService.createActionHistory(null, null, null, ActionCode.LOGIN_FAIL.name(), employeeNumber, null);
+				// TODO: 로그인 실패 로그 저장 필요?
+				// actionHistoryService.createActionHistory(null, null, null, ActionCode.LOGIN_FAIL.name(), employeeNumber, null);
 
-				throw new CdpPortalException(CdpPortalError.INTERNAL_SERVER_ERROR, e.getMessage());
+				throw new CdpPortalException(CdpPortalError.INTERNAL_SERVER_ERROR);
 			}
 
 		} else {
 			log.info("Invalid ID token.");
+			throw new CdpPortalException(CdpPortalError.INVALID_GOOGLE_ID_TOKEN);
 		}
 
 		return result;
 	}
 
-	private String getEmployeeNumberFromGoogle(String accessToken) {
-		String employeeNumber = "";
+	private HrInfo getEmployeeHrInfo(String email) {
+		HrInfo hrInfo = null;
+		String uri = null;
+		String id = null;
+		String password = null;
 
 		try {
-			final String uri = "https://people.googleapis.com/v1/people/me?personFields=externalIds";
+			if("local".equals(profile)) {
+				uri = hrApiUrl;
+				id = hrApiId;
+				password = hrApiPassword;
+			}
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.set("Authorization", "Bearer " + accessToken);
+			headers.setBasicAuth(id, password);
 
 			HttpEntity<String> entity = new HttpEntity<>("", headers);
 
-			RestTemplate restTemplate = new RestTemplate();
-			ResponseEntity<String> respEntity = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
+	                .queryParam("Email_Address", email);
 
-			ObjectMapper objectMapper = new ObjectMapper();
-			JsonNode jsonNode = objectMapper.readTree(respEntity.getBody());
-			employeeNumber = jsonNode.at("/externalIds/0/value").asText();
+			RestTemplate restTemplate = new RestTemplate();
+			ResponseEntity<String> respEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
+
+			Gson gson = new Gson();
+			UserHrInfoDto.HrInfoResult hrInfoResult = gson.fromJson(respEntity.getBody(), UserHrInfoDto.HrInfoResult.class);
+
+			if(hrInfoResult.getReport_Entry() != null && hrInfoResult.getReport_Entry().size() > 0) {
+				hrInfo = hrInfoResult.getReport_Entry().get(0);
+			}
+
+			/*
+			 {
+			    "Report_Entry": [
+			        {
+			            "Status": "1",
+			            "Department_Korean": "IT전략실",
+			            "Team_English": "Data Architecture Team",
+			            "Department_Code": "SELXW",
+			            "Department_English": "IT Strategy Department",
+			            "Team_Korean": "Data기획팀",
+			            "EEID": "1151706",
+			            "Eng_Name": "SON, YU MIN",
+			            "Team_Code": "SELXWX",
+			            "Kor_Name": "손유민"
+			        }
+			    ]
+			}
+			 * */
+
 		} catch (Exception e) {
 			log.error(e.getMessage());
-//			throw new CustomBusinessException(StatusCodeConstants.RETRIEVE_EMPLOYEE_NUMBER_FROM_GOOGLE_ERROR);
+			throw new CdpPortalException(CdpPortalError.RETRIEVE_EMPLOYEE_INFO_ERROR);
 		}
 
-		return employeeNumber;
+		return hrInfo;
 	}
 
 	//HR 정보 조회 API 권한용 ARN

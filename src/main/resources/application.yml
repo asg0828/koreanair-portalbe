@@ -56,3 +56,8 @@ local:
     password:
       master-password: h@#Ru0Ro
       slave-password: G$BRl5$B
+  hr:
+    url: https://wd3-impl-services1.workday.com/ccx/service/customreport2/koreanair/INT-CDP-ISU/RT-INT-HR-001_Worker_Data_With_Email?Email_Address=e.lee%40koreanair.com&format=json
+    id: INT-CDP-ISU
+    password: Welcome2KAWD!
+  

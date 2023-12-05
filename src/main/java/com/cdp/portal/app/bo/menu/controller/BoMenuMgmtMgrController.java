@@ -62,6 +62,6 @@ public class BoMenuMgmtMgrController {
         		.menuNm(menuNm)
                 .build();
 
-        return ResponseEntity.ok(ApiResDto.success(menuMgmtMgrService.getDepts(searchDto)));
+        return ResponseEntity.ok(ApiResDto.success(menuMgmtMgrService.getMenus(searchDto)));
     }
 }

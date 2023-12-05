@@ -13,6 +13,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import com.cdp.portal.app.facade.session.dto.SessionDto;
 import com.cdp.portal.app.facade.session.service.AuthenticationService;
 import com.cdp.portal.common.constants.CommonConstants;
+import com.cdp.portal.common.enumeration.CdpPortalError;
+import com.cdp.portal.common.error.exception.CdpPortalException;
 import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -30,39 +32,39 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 		Pattern pattern = Pattern.compile(SESSION_URI);
 		Matcher matcher = pattern.matcher(request.getRequestURI());
 		boolean isMatched = matcher.find();
-		
+
 		/*
 		 * EXCEPTION VERSION - 로그인 구현 후 사용
 		 * */
-//		if (!(isMatched && HTTP_METHOD_POST.equals(request.getMethod())) && !HTTP_METHOD_OPTIONS.equals(request.getMethod())) {
-//			String sessionId = request.getHeader(CommonConstants.X_SESSION_ID);
-//			if (ObjectUtils.isEmpty(sessionId)) {
-//				throw new CdpPortalException(CdpPortalError.SESSION_EXPIRE);
-//			}
-//
-//			SessionDto sessionUser = authenticationService.getSession(sessionId);
-//
-//			if (sessionUser == null) {
-//				throw new CdpPortalException(CdpPortalError.SESSION_EXPIRE);
-//			} else {
-//				SessionScopeUtil.setContextSession(sessionUser);
-//			}
-//		}
-
-		/*
-		 * NON EXCEPTION VERSION - 임시 주석 (로그인 없이 API 개발용) 
-		 * */
 		if (!(isMatched && HTTP_METHOD_POST.equals(request.getMethod())) && !HTTP_METHOD_OPTIONS.equals(request.getMethod())) {
 			String sessionId = request.getHeader(CommonConstants.X_SESSION_ID);
-			
-			if (!ObjectUtils.isEmpty(sessionId)) {
-				SessionDto sessionUser = authenticationService.getSession(sessionId);
-				
-				if (sessionUser != null) {
-					SessionScopeUtil.setContextSession(sessionUser);
-				}
+			if (ObjectUtils.isEmpty(sessionId)) {
+				throw new CdpPortalException(CdpPortalError.SESSION_EXPIRE);
+			}
+
+			SessionDto sessionUser = authenticationService.getSession(sessionId);
+
+			if (sessionUser == null) {
+				throw new CdpPortalException(CdpPortalError.SESSION_EXPIRE);
+			} else {
+				SessionScopeUtil.setContextSession(sessionUser);
 			}
 		}
+
+		/*
+		 * NON EXCEPTION VERSION - 임시 주석 (로그인 없이 API 개발용)
+		 * */
+//		if (!(isMatched && HTTP_METHOD_POST.equals(request.getMethod())) && !HTTP_METHOD_OPTIONS.equals(request.getMethod())) {
+//			String sessionId = request.getHeader(CommonConstants.X_SESSION_ID);
+//
+//			if (!ObjectUtils.isEmpty(sessionId)) {
+//				SessionDto sessionUser = authenticationService.getSession(sessionId);
+//
+//				if (sessionUser != null) {
+//					SessionScopeUtil.setContextSession(sessionUser);
+//				}
+//			}
+//		}
 
 		return true;
 	}

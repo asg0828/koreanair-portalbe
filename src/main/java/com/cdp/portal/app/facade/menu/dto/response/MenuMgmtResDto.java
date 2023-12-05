@@ -64,4 +64,20 @@ public class MenuMgmtResDto {
 
     }
 
+	@Getter
+	@ToString
+	@Builder
+	@NoArgsConstructor(access = AccessLevel.PROTECTED)
+	@AllArgsConstructor
+	@Schema(description = "권한별 메뉴 목록")
+	public static class MenuByAuth {
+
+		@Schema(description = "권한 ID", nullable = false)
+		private MenuMgmtReqDto.SearchMenuByAuth search;
+
+		@Schema(description = "메뉴 목록", nullable = false)
+		private List<MenuMgmt> menus;
+
+	}
+
 }

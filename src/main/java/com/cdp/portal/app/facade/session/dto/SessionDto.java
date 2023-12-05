@@ -2,10 +2,12 @@ package com.cdp.portal.app.facade.session.dto;
 
 import java.util.List;
 
+import com.cdp.portal.app.facade.menu.dto.response.MenuMgmtResDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,10 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Setter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Schema(description = "Session")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
@@ -21,43 +26,52 @@ public class SessionDto {
 
 	@Schema(description = "세션ID", example = "105273373997504583166:4300dd41-5a65-42eb-a856-ee48358c430f", nullable = false)
 	private String sessionId;
-	
-	@Schema(description = "사번", example = "PJ.UHLEE", nullable = false)
-	private String employeeNumber;
-	
-	@Schema(description = "이메일", example = "pj.uhlee@kalmate.net", nullable = false)
-	private String email;
-	
-	@Schema(description = "이름", example = "홍길동", nullable = false)
-	private String memberName;
-	
-	@Schema(description = "권한ID", example = "xxx", nullable = true, hidden = true)
-	private String roleId;
-	
-	@Schema(description = "권한명", example = "xxx", nullable = true, hidden = true)
-	private String roleName;
-//	private List<ParentMenuDto> menus;
-	
-	@Schema(description = "googleAccessToken", example = "xxx", nullable = true, hidden = true)
+
+	@Schema(description = "사용자 ID(사번)", example = "PJ.UHLEE", nullable = false)
+	private String userId;
+
+	@Schema(description = "사용자 명", example = "홍길동", nullable = false)
+	private String userNm;
+
+	@Schema(description = "사용자 이메일", example = "pj.uhlee@kalmate.net", nullable = false)
+	private String userEmail;
+
+    @Schema(description = "부서(팀)코드", example = "")
+    private String deptCode;
+
+    @Schema(description = "부서(팀)명", example = "")
+    private String deptNm;
+
+    @Schema(description = "상위 부서코드", example = "")
+    private String upDeptCode;
+
+    @Schema(description = "상위 부서명", example = "")
+    private String upDeptNm;
+
+    @Schema(description = "적용 사용자권한 ID - 최종 적용된 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
+    private String apldUserAuthId;
+
+    @Schema(description = "적용 사용자권한명 - 최종 적용된 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
+    private String apldUserAuthNm;
+
+    @Schema(description = "적용 관리자권한 ID - 최종 적용된 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
+    private String apldMgrAuthId;
+
+    @Schema(description = "적용 관리자권한명 - 최종 적용된 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
+    private String apldMgrAuthNm;
+
+    @Schema(description = "접근 가능 관리자 메뉴 목록", example = "")
+    private MenuMgmtResDto.MenuByAuth menuByAuthMgr;
+
+    @Schema(description = "접근 가능 사용자 메뉴 목록", example = "")
+    private MenuMgmtResDto.MenuByAuth menuByAuthUser;
+
+	@Schema(description = "googleAccessToken", example = "", hidden = true)
 	@Setter
 	private String googleAccessToken;
-	
-	@Schema(description = "googleIdToken", example = "xxx", nullable = true, hidden = true)
+
+	@Schema(description = "googleIdToken", example = "", hidden = true)
 	@Setter
 	private String googleIdToken;
 
-	@Builder
-	public SessionDto(String sessionId, String email, String memberName, String employeeNumber, String roleId, String roleName,
-//			List<ParentMenuDto> menus,
-			String googleAccessToken, String googleIdToken) {
-		this.sessionId = sessionId;
-		this.email = email;
-		this.memberName = memberName;
-		this.employeeNumber = employeeNumber;
-		this.roleId = roleId;
-		this.roleName = roleName;
-//		this.menus = menus;
-		this.googleAccessToken = googleAccessToken;
-		this.googleIdToken = googleIdToken;
-	}
 }

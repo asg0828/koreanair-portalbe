@@ -19,20 +19,20 @@ public class UserMgmtService {
 
     public UserMgmtResDto.UsersResult getUsers(PagingDto pagingDto, UserMgmtReqDto.SearchUser searchDto) {
         pagingDto.setPaging(userMgmtMapper.selectCount(searchDto));
-        
+
         return UserMgmtResDto.UsersResult.builder()
                 .contents(userMgmtMapper.selectAll(pagingDto, searchDto))
                 .search(searchDto)
                 .page(pagingDto)
                 .build();
     }
-    
+
     public UserMgmtResDto.User getUser(final String userId) {
     	UserMgmtResDto.User user = userMgmtMapper.selectById(userId);
         if (Objects.isNull(user)) {
-            throw CdpPortalError.FEATURE_NOT_FOUND.exception(userId);
+            throw CdpPortalError.USER_NOT_EXISTS.exception(userId);
         }
-        
+
         return user;
     }
 }

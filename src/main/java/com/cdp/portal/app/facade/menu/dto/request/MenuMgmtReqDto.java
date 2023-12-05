@@ -52,4 +52,19 @@ public class MenuMgmtReqDto {
         private String menuNm;
 
     }
+
+	@Getter
+	@Schema(description = "메뉴 권한 조건 검색")
+	@NoArgsConstructor(access = AccessLevel.PROTECTED)
+	@AllArgsConstructor
+	@Builder
+	public static class SearchMenuByAuth {
+
+		@Schema(description = "권한 ID", example = "")
+		private String authId;
+
+		@Schema(description = "권한 명", nullable = false)
+		private String authNm;
+
+	}
 }

@@ -23,6 +23,8 @@ public enum CdpPortalError {
     GOOGLE_ID_TOKEN_REQUIRED("E0008", "GOOGLE_ID_TOKEN_REQUIRED", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED("E0009", "SESSION_EXPIRE", HttpStatus.UNAUTHORIZED),
     SESSION_EXPIRE("E0010", "SESSION_EXPIRE", HttpStatus.FORBIDDEN),
+    RETRIEVE_EMPLOYEE_INFO_ERROR("E0011", "RETRIEVE_EMPLOYEE_INFO_ERROR", HttpStatus.UNAUTHORIZED),
+    INVALID_GOOGLE_ID_TOKEN("E00012", "INVALID_GOOGLE_ID_TOKEN", HttpStatus.UNAUTHORIZED),
 
     // code
     CODE_NOT_FOUND("E0101", "Request (codeId: {0}) on (groupId: {1}) is not found", HttpStatus.NOT_FOUND),
@@ -31,7 +33,7 @@ public enum CdpPortalError {
     // table
     MTS_EN_NM_DUPLICATED("E0201", "테이블정의영문명({0})은 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
     TABLE_SPEC_NOT_FOUND("E0202", "테이블정의 ID({0})를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    
+
     // feature
     FEATURE_KO_NM_DUPLICATED("E0301", "Feature 한글명({0})은 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
     FEATURE_EN_NM_DUPLICATED("E0302", "Feature 영문명({0})은 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
@@ -40,6 +42,7 @@ public enum CdpPortalError {
     // user
     USER_FEATURE_DUPLICATED("E0401", "관심 Feature에 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
     USER_FEATURE_NOT_EXISTS("E0402", "관심 Feature에 등록 되어있지않습니다.", HttpStatus.BAD_REQUEST),
+    USER_NOT_EXISTS("E0403", "존재 하지 않는 사용자 입니다.", HttpStatus.BAD_REQUEST),
 
 	// dept
 	DEPT_CODE_DUPLICATED("E0501", "부서 코드({0})은 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),

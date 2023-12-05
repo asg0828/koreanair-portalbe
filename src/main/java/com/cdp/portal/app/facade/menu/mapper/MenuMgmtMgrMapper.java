@@ -24,4 +24,7 @@ public interface MenuMgmtMgrMapper {
 
 	Boolean isExistsByMenuId(@Param("menuId") String menuId);
 
+	List<MenuMgmtResDto.MenuMgmt> selectByAuthIdMgrMenus(@Param("search") MenuMgmtReqDto.SearchMenuByAuth searchDto);
+
+	List<MenuMgmtResDto.MenuMgmt> selectByAuthIdUserMenus(@Param("search") MenuMgmtReqDto.SearchMenuByAuth searchDto);
 }
