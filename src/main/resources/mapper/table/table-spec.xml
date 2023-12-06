@@ -61,7 +61,7 @@
 			, T.MODI_ID
 			, T.MODI_DT
 		FROM
-			T_META_TB_SPEC T INNER JOIN T_CODE C ON T.SRC_DB_CD = C.CODE_ID
+			T_META_TB_SPEC T LEFT JOIN T_CODE C ON T.SRC_DB_CD = C.CODE_ID
 		<include refid="selectWhere"/>
 		ORDER BY T.RGST_DT DESC
 		<include refid="paging.pagingOffsetSQL" />
