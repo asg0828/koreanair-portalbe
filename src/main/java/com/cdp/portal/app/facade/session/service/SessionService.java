@@ -115,7 +115,8 @@ public class SessionService {
 			*/
 
 			try {
-				HrInfo hrInfo = getEmployeeHrInfo(email);
+//				HrInfo hrInfo = getEmployeeHrInfo(email);
+				HrInfo hrInfo = null;	//임시
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.uhlee@kalmate.net");
 //				HrInfo hrInfo = getEmployeeHrInfo("ymson@koreanair.com");
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.wjjung@kalmate.net");
