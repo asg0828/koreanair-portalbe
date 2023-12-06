@@ -33,7 +33,8 @@ spring:
   redis:
     host: redis-oneid-dev.koreanair.com
     port: 6980
-    session-ttl: 1200
+    #session-ttl: 1200
+    session-ttl: 32400
     
 logging:
   level:
