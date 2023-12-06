@@ -92,4 +92,12 @@ public class MenuMgmtUserService {
                 .search(searchDto)
                 .build();
     }
+
+    public MenuMgmtResDto.MenuByAuth getMenusByAuthUser(MenuMgmtReqDto.SearchMenuByAuth searchDto) {
+    	return MenuMgmtResDto.MenuByAuth.builder()
+    			.menus(menuMgmtUserMapper.selectByAuthIdUserMenus(searchDto))
+    			.search(searchDto)
+    			.build();
+    }
+
 }

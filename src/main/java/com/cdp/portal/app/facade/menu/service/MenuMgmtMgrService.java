@@ -101,11 +101,4 @@ public class MenuMgmtMgrService {
     			.build();
     }
 
-    public MenuMgmtResDto.MenuByAuth getMenusByAuthUser(MenuMgmtReqDto.SearchMenuByAuth searchDto) {
-    	return MenuMgmtResDto.MenuByAuth.builder()
-    			.menus(menuMgmtMgrMapper.selectByAuthIdUserMenus(searchDto))
-    			.search(searchDto)
-    			.build();
-    }
-
 }

@@ -24,6 +24,7 @@ import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
 import com.cdp.portal.app.facade.menu.dto.request.MenuMgmtReqDto;
 import com.cdp.portal.app.facade.menu.service.MenuMgmtMgrService;
+import com.cdp.portal.app.facade.menu.service.MenuMgmtUserService;
 import com.cdp.portal.app.facade.session.dto.SessionDto;
 import com.cdp.portal.app.facade.session.dto.SessionRequestDto;
 import com.cdp.portal.app.facade.session.dto.UserHrInfoDto;
@@ -57,6 +58,7 @@ public class SessionService {
 	private final AWSSecretsManager secretsManagerClient;
 	private final UserMgmtService userMgmtService;
 	private final MenuMgmtMgrService menuMgmtMgrService;
+	private final MenuMgmtUserService menuMgmtUserService;
 
 	@Value("${api.cdp.client_id}")
 	private String clientId;
@@ -113,18 +115,10 @@ public class SessionService {
 			*/
 
 			try {
-
-				// TODO: HR 조회 API 정보 얻기
-				/*{"HTTP URL":"https://wd3-impl-services1.workday.com/ccx/service/customreport2/koreanair/INT-CDP-ISU/RT-INT-HR-001_Worker_Data_With_Email?Email_Address=e.lee%40koreanair.com&format=json","ID":"INT-CDP-ISU","Password":"Welcome2KAWD!"}*/
-				// getSecretsManager();
-
 				HrInfo hrInfo = getEmployeeHrInfo(email);
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.uhlee@kalmate.net");
 //				HrInfo hrInfo = getEmployeeHrInfo("ymson@koreanair.com");
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.wjjung@kalmate.net");
-
-//				System.out.println("hrInfo : ");
-//				System.out.println(hrInfo.getEEID());
 
 				if (ObjectUtils.isEmpty(hrInfo)) {
 					hrInfo = HrInfo.builder()
@@ -147,7 +141,7 @@ public class SessionService {
 							.build()));
 
 				if(!ObjectUtils.isEmpty(user.getApldUserAuthId()))
-					user.setMenuByAuthUser(menuMgmtMgrService.getMenusByAuthUser(MenuMgmtReqDto.SearchMenuByAuth.builder()
+					user.setMenuByAuthUser(menuMgmtUserService.getMenusByAuthUser(MenuMgmtReqDto.SearchMenuByAuth.builder()
 							.authId(user.getApldUserAuthId())
 							.authNm(user.getApldUserAuthNm())
 							.build()));
@@ -237,25 +231,6 @@ public class SessionService {
 				hrInfo = hrInfoResult.getReport_Entry().get(0);
 			}
 
-			/*
-			 {
-			    "Report_Entry": [
-			        {
-			            "Status": "1",
-			            "Department_Korean": "IT전략실",
-			            "Team_English": "Data Architecture Team",
-			            "Department_Code": "SELXW",
-			            "Department_English": "IT Strategy Department",
-			            "Team_Korean": "Data기획팀",
-			            "EEID": "1151706",
-			            "Eng_Name": "SON, YU MIN",
-			            "Team_Code": "SELXWX",
-			            "Kor_Name": "손유민"
-			        }
-			    ]
-			}
-			 * */
-
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			throw new CdpPortalException(CdpPortalError.RETRIEVE_EMPLOYEE_INFO_ERROR);
@@ -273,7 +248,6 @@ public class SessionService {
 
             if (getSecretValueResult.getSecretString() != null) {
                 var secret = getSecretValueResult.getSecretString();
-//                System.out.println("secret ======> : " + secret);
 
                 var jObject = new JSONObject(secret);
                 this.hrApiUrl = jObject.getString("HTTP URL");

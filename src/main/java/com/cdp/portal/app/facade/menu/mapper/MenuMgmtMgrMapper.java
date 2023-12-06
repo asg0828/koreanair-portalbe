@@ -26,5 +26,4 @@ public interface MenuMgmtMgrMapper {
 
 	List<MenuMgmtResDto.MenuMgmt> selectByAuthIdMgrMenus(@Param("search") MenuMgmtReqDto.SearchMenuByAuth searchDto);
 
-	List<MenuMgmtResDto.MenuMgmt> selectByAuthIdUserMenus(@Param("search") MenuMgmtReqDto.SearchMenuByAuth searchDto);
 }
