@@ -1,0 +1,12 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdp.portal.app.facade.report.mapper.ReportMapper">
+
+    <select id="selectVipReservationStatus" resultType="ReportResDto">
+        SELECT
+        *
+        FROM
+        T_REPORT
+        WHERE CATEGORY = 'vip'
+    </select>
+
+</mapper>
