@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -35,6 +36,8 @@ import com.cdp.portal.app.facade.user.service.UserMgmtService;
 import com.cdp.portal.common.dto.ApiResDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 import com.cdp.portal.common.error.exception.CdpPortalException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -43,7 +46,6 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-//import com.kal.stpc.config.MenuByRoleIdConfig;
 import com.google.gson.Gson;
 
 import lombok.RequiredArgsConstructor;
@@ -115,10 +117,10 @@ public class SessionService {
 			*/
 
 			try {
-				HrInfo hrInfo = getEmployeeHrInfo(email);
+//				HrInfo hrInfo = getEmployeeHrInfo(email);
 //				HrInfo hrInfo = null;	//임시
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.uhlee@kalmate.net");
-//				HrInfo hrInfo = getEmployeeHrInfo("ymson@koreanair.com");
+				HrInfo hrInfo = getEmployeeHrInfo("ymson@koreanair.com");
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.wjjung@kalmate.net");
 
 				if (ObjectUtils.isEmpty(hrInfo)) {
@@ -225,14 +227,16 @@ public class SessionService {
 			RestTemplate restTemplate = new RestTemplate();
 			ResponseEntity<String> respEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
 
-			System.out.println(" ===========> respEntity.getBody() : " + respEntity.getBody());
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonNode = objectMapper.readTree(respEntity.getBody());
+			UserHrInfoDto.HrInfoResult readValue = objectMapper.readValue(respEntity.getBody(), UserHrInfoDto.HrInfoResult.class);
 
-//			Gson gson = new Gson();
-//			UserHrInfoDto.HrInfoResult hrInfoResult = gson.fromJson(respEntity.getBody(), UserHrInfoDto.HrInfoResult.class);
-//
-//			if(hrInfoResult.getReport_Entry() != null && hrInfoResult.getReport_Entry().size() > 0) {
-//				hrInfo = hrInfoResult.getReport_Entry().get(0);
-//			}
+			Gson gson = new Gson();
+			UserHrInfoDto.HrInfoResult hrInfoResult = gson.fromJson(jsonNode.toString(), UserHrInfoDto.HrInfoResult.class);
+
+			if(hrInfoResult.getReport_Entry() != null && hrInfoResult.getReport_Entry().size() > 0) {
+				hrInfo = hrInfoResult.getReport_Entry().get(0);
+			}
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
