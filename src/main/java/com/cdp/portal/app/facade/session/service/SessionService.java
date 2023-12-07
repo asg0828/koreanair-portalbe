@@ -117,10 +117,10 @@ public class SessionService {
 			*/
 
 			try {
-//				HrInfo hrInfo = getEmployeeHrInfo(email);
+				HrInfo hrInfo = getEmployeeHrInfo(email);
 //				HrInfo hrInfo = null;	//임시
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.uhlee@kalmate.net");
-				HrInfo hrInfo = getEmployeeHrInfo("ymson@koreanair.com");
+//				HrInfo hrInfo = getEmployeeHrInfo("ymson@koreanair.com");
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.wjjung@kalmate.net");
 
 				if (ObjectUtils.isEmpty(hrInfo)) {
@@ -229,7 +229,6 @@ public class SessionService {
 
 			ObjectMapper objectMapper = new ObjectMapper();
 			JsonNode jsonNode = objectMapper.readTree(respEntity.getBody());
-			UserHrInfoDto.HrInfoResult readValue = objectMapper.readValue(respEntity.getBody(), UserHrInfoDto.HrInfoResult.class);
 
 			Gson gson = new Gson();
 			UserHrInfoDto.HrInfoResult hrInfoResult = gson.fromJson(jsonNode.toString(), UserHrInfoDto.HrInfoResult.class);
