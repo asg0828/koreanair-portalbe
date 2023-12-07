@@ -21,6 +21,8 @@ public class ReportModel {
     private int rank;
     @Schema(description = "이름", example = "홍길동")
     private String userNm;
+    @Schema(description = "회원번호", example = "112917446366")
+    private String skypassNm;
     @Schema(description = "vip 회원분류", example = "SSSA")
     private String vipType;
     @Schema(description = "확약된 pnrCount", example = "1")
