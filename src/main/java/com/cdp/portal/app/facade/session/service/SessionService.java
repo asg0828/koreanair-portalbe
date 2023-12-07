@@ -115,8 +115,8 @@ public class SessionService {
 			*/
 
 			try {
-//				HrInfo hrInfo = getEmployeeHrInfo(email);
-				HrInfo hrInfo = null;	//임시
+				HrInfo hrInfo = getEmployeeHrInfo(email);
+//				HrInfo hrInfo = null;	//임시
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.uhlee@kalmate.net");
 //				HrInfo hrInfo = getEmployeeHrInfo("ymson@koreanair.com");
 //				HrInfo hrInfo = getEmployeeHrInfo("pj.wjjung@kalmate.net");
@@ -225,12 +225,14 @@ public class SessionService {
 			RestTemplate restTemplate = new RestTemplate();
 			ResponseEntity<String> respEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
 
-			Gson gson = new Gson();
-			UserHrInfoDto.HrInfoResult hrInfoResult = gson.fromJson(respEntity.getBody(), UserHrInfoDto.HrInfoResult.class);
+			System.out.println(" ===========> respEntity.getBody() : " + respEntity.getBody());
 
-			if(hrInfoResult.getReport_Entry() != null && hrInfoResult.getReport_Entry().size() > 0) {
-				hrInfo = hrInfoResult.getReport_Entry().get(0);
-			}
+//			Gson gson = new Gson();
+//			UserHrInfoDto.HrInfoResult hrInfoResult = gson.fromJson(respEntity.getBody(), UserHrInfoDto.HrInfoResult.class);
+//
+//			if(hrInfoResult.getReport_Entry() != null && hrInfoResult.getReport_Entry().size() > 0) {
+//				hrInfo = hrInfoResult.getReport_Entry().get(0);
+//			}
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
