@@ -18,7 +18,7 @@ public class ReportService {
     private final ReportMapper reportMapper;
 
     /**
-     * 정형 보고서 목록 조회
+     * VIP 고객 현황 목록 조회
      * @param
      * @return
      */
@@ -27,6 +27,19 @@ public class ReportService {
 
         return ReportResDto.ReportsResult.builder()
                 .contents(reportMapper.selectVipReservationStatus())
+                .build();
+    }
+
+    /**
+     * 구매 기여도 TOP 100 목록 조회
+     * @param
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ReportResDto.ReportsResult getPurchaseContribution (String criteria) {
+
+        return ReportResDto.ReportsResult.builder()
+                .contents(reportMapper.selectPurchaseContribution(criteria))
                 .build();
     }
 }

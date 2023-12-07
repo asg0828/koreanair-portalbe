@@ -9,4 +9,5 @@ import java.util.List;
 public interface ReportMapper {
 
     List<ReportResDto> selectVipReservationStatus();
+    List<ReportResDto> selectPurchaseContribution(String criteria);
 }

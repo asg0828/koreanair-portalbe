@@ -4,6 +4,7 @@ import com.cdp.portal.app.facade.report.service.ReportService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,5 +41,20 @@ public class FoReportRestController {
     @GetMapping(value = "/v1/vip", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getVipReservationStatus() {
         return ResponseEntity.ok(ApiResDto.success(reportService.getVipReservationStatus()));
+    }
+
+    /**
+     * 구매기여도 TOP 100
+     * @return
+     */
+    @Operation(summary = "구매 기여도 TOP 100 조회", description = "구매 기여도 TOP 100 조회한다.", tags = { "report" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResCodeResDtos.class)))
+    }
+    )
+    @Parameter(name ="criteria" , required = true, description = "조회기준", example = "1 year")
+    @GetMapping(value = "/v1/purchase-contribution/{criteria}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPurchaseContribution(@PathVariable String criteria) {
+        return ResponseEntity.ok(ApiResDto.success(reportService.getPurchaseContribution(criteria)));
     }
 }

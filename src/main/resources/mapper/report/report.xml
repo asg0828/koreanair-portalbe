@@ -3,10 +3,41 @@
 
     <select id="selectVipReservationStatus" resultType="ReportResDto">
         SELECT
-        *
+        one_id,
+        criteria,
+        category,
+        rank,
+        user_nm,
+        skypass_nm,
+        vip_type,
+        confirmed_pnr_count,
+        scheduled_intl_flight_date,
+        last_intl_flight_date
         FROM
         T_REPORT
         WHERE CATEGORY = 'vip'
     </select>
+
+    <select id="selectPurchaseContribution" resultType="ReportResDto">
+        SELECT
+            one_id,
+            criteria,
+            category,
+            rank,
+            user_nm,
+            skypass_nm,
+            vip_type,
+            purchase_amount,
+            purchase_count,
+            domestic_purchase_amount,
+            intl_purchase_amount,
+            fr_count,
+            pr_count
+        FROM
+            T_REPORT
+        WHERE category = 'contribution'
+          and criteria = #{criteria}
+    </select>
+
 
 </mapper>

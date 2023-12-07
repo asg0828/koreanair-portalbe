@@ -32,4 +32,19 @@ public class ReportModel {
     @Schema(description = "국제선 최근 탑승일", example = "2023-12-06")
     private String lastIntlFlightDate;
 
+    // 구매기여도 TOP 100
+    @Schema(description = "구매 금액", example = "111000000")
+    private int purchaseAmount;
+    @Schema(description = "구매 금액", example = "111000000")
+    private int purchaseCount;
+    @Schema(description = "국내선 구매 금액", example = "111000000")
+    private int domesticPurchaseAmount;
+    @Schema(description = "국제선 구매 금액", example = "111000000")
+    private int intlPurchaseAmount;
+    @Schema(description = "FR 구매횟수", example = "1")
+    private int frCount ;
+    @Schema(description = "PR 구매횟수", example = "1")
+    private int prCount ;
+
+
 }
