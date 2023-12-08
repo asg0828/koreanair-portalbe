@@ -43,16 +43,16 @@ public class EgroupMgmtResDto {
         private int ordSeq;
 
         @Schema(description = "사용자권한 ID", example = "")
-        private String eUserAuthId;
+        private String userAuthId;
 
         @Schema(description = "사용자권한명", example = "")
-        private String eUserAuthNm;
+        private String userAuthNm;
 
         @Schema(description = "관리자권한 ID", example = "")
-        private String eMgrAuthId;
+        private String mgrAuthId;
 
         @Schema(description = "관리자권한명", example = "")
-        private String eMgrAuthNm;
+        private String mgrAuthNm;
     }
 
 	@Getter
