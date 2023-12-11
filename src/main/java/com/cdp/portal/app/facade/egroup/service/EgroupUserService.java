@@ -1,5 +1,6 @@
 package com.cdp.portal.app.facade.egroup.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,10 +34,21 @@ public class EgroupUserService {
 	@Transactional
     public void update(List<EgroupUserUpdate> dtos) {
 		dtos.forEach(c -> {
+			Arrays.stream(c.getUserIds()).forEach(s -> {
+				egroupUserMapper.updateBeforeGroupCode(s);
+			});
+
+			// 사용자 기존 권한 그룹 NULL 업데이트
+			egroupUserMapper.updateGroupCodeToNullByNotInUsers(EgroupUserModel.builder()
+					.groupCode(c.getGroupCode())
+    	    		.userIds(c.getUserIds())
+    	    		.modiId(SessionScopeUtil.getContextSession().getUserId())
+    	    		.build());
+
     		egroupUserMapper.update(EgroupUserModel.builder()
     	    		.groupCode(c.getGroupCode())
     	    		.userIds(c.getUserIds())
-    	    		.modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+    	    		.modiId(SessionScopeUtil.getContextSession().getUserId())
     	    		.build());
     	});
     }

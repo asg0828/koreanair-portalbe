@@ -20,4 +20,8 @@ public interface EgroupUserMapper {
 
 	Long updateGroupCodeToNull(EgroupUserModel egroupUserModel);
 
+	Long updateBeforeGroupCode(@Param("userId") String userId);
+
+	Long updateGroupCodeToNullByNotInUsers(EgroupUserModel egroupUserModel);
+
 }

@@ -27,6 +27,26 @@
          </foreach>
     </update>
 
+    <update id="updateGroupCodeToNullByNotInUsers" parameterType="EgroupUserModel">
+        UPDATE T_USER
+           SET GROUP_CODE = NULL
+             , BF_GROUP_CODE = #{groupCode}
+             , MODI_ID = #{modiId}
+             , MODI_DT = now()
+         WHERE GROUP_CODE = #{groupCode}
+           AND USER_ID NOT IN
+         <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+              #{userId}
+         </foreach>
+    </update>
+
+    <update id="updateBeforeGroupCode" parameterType="EgroupUserModel">
+        UPDATE T_USER
+           SET BF_GROUP_CODE = GROUP_CODE
+             , GROUP_UPDT_DT = now()
+         WHERE USER_ID = #{userId}
+    </update>
+
     <update id="updateGroupCodeToNull" parameterType="EgroupUserModel">
         UPDATE T_USER
            SET GROUP_CODE = NULL

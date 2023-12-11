@@ -2,7 +2,6 @@ package com.cdp.portal.app.facade.egroup.dto.response;
 
 import java.util.List;
 
-import com.cdp.portal.app.facade.dept.dto.request.DeptMgmtReqDto;
 import com.cdp.portal.app.facade.egroup.dto.request.EgroupMgmtReqDto;
 import com.cdp.portal.common.dto.ApiResDto;
 

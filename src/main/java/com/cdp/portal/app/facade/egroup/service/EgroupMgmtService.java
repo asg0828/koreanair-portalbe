@@ -106,16 +106,16 @@ public class EgroupMgmtService {
     			egroupAuthMapper.insertMgrAuth(EgroupAuthModel.builder()
         				.groupCode(c.getGroupCode())
         				.authId(c.getMgrAuthId())
-        				.rgstId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
-        				.modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+        				.rgstId(SessionScopeUtil.getContextSession().getUserId())
+        				.modiId(SessionScopeUtil.getContextSession().getUserId())
         				.build());
     		}
 
     		EgroupAuthModel userEgroupAuthModel = EgroupAuthModel.builder()
     				.groupCode(c.getGroupCode())
     				.authId(c.getUserAuthId())
-    				.rgstId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
-    				.modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+    				.rgstId(SessionScopeUtil.getContextSession().getUserId())
+    				.modiId(SessionScopeUtil.getContextSession().getUserId())
     				.build();
 
     		//수정시 무조건 권한 삭제 후 생성
@@ -137,22 +137,11 @@ public class EgroupMgmtService {
     		egroupAuthMapper.deleteUserAuthByGroupCode(c.getGroupCode());
     		egroupUserMapper.updateGroupCodeToNull(EgroupUserModel.builder()
     				.groupCode(c.getGroupCode())
-    				.modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+    				.modiId(SessionScopeUtil.getContextSession().getUserId())
     				.build());
     	});
 
     }
-
-//    @Transactional
-//    public void egroupUserUpdate(List<EgroupUserUpdate> dtos) {
-//    	dtos.forEach(c -> {
-//    		egroupUserMapper.update(EgroupUserModel.builder()
-//    	    		.groupCode(c.getGroupCode())
-//    	    		.userIds(c.getUserIds())
-//    	    		.modiId("admin")    // TODO: 로그인한 사용자 세팅
-//    	    		.build());
-//    	});
-//    }
 
     public EgroupMgmtResDto.EgroupsResult getEgroups(EgroupMgmtReqDto.SearchEgroup searchDto) {
 
