@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = CommonConstants.API_BO_PREFIX + "/report")
+@RequestMapping(value = CommonConstants.API_FO_PREFIX + "/report")
 @Tag(name = "report", description = "정형 보고서 API")
 public class FoReportRestController {
 
