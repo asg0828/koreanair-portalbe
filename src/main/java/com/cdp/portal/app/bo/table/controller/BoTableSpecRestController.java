@@ -61,7 +61,7 @@ public class BoTableSpecRestController {
     @Parameter(name ="pageSize", required = false, description = "페이지 사이즈", example = "10")
     @Parameter(name ="searchTable", required = false, description = "검색 테이블", example = "")
     @Parameter(name ="dataSetConditions", required = false, description = "테이터셋 조건(mtsEnNm: 테이블정의영문명, mtsKoNm: 테이블정의한글명, mtsDef: 테이블정의, srcTbNm: 원천테이블명)", example = "")
-    @Parameter(name ="srcDbCd", required = false, description = "DB코드(코드 그룹 ID: DBMS)", example = "POSTGRESQL")
+    @Parameter(name ="srcDbCd", required = false, description = "DB코드(코드 그룹 ID: DBMS)", example = "")
     @GetMapping(value = "/v1/table-specs", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getTableSpecs(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
