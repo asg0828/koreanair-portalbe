@@ -1,0 +1,27 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.log.mapper.LogUserMapper">
+
+	<insert id="insert" parameterType="LogUserModel">
+		INSERT INTO CDP.T_LOG_USER(
+			LOG_DT
+			, USER_ID
+			, CLIENT_IP
+			, RQST_URI
+			, RQST_METHOD
+			, RQST_QUERY
+			, RQST_BODY
+			, RSPT_BODY
+		) VALUES (
+			#{logDt}
+			, #{userId}
+			, #{clientIp}
+			, #{rqstUri}
+			, #{rqstMethod}
+			, #{rqstQuery}
+			, #{rqstBody}::json
+			, #{rsptBody}::json
+		) 
+	</insert>
+
+
+</mapper>
