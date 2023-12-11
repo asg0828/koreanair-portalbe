@@ -18,9 +18,7 @@ import com.cdp.portal.common.enumeration.CdpPortalError;
 import com.cdp.portal.common.util.SessionScopeUtil;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TableSpecService {
@@ -38,7 +36,6 @@ public class TableSpecService {
         
         /* insert table spec */
         final String mtsId = idUtil.getMetaTblId();
-        log.debug("##### createTableSpec mtsId: {}", mtsId);
         
         TableSpecModel tableSpecModel = TableSpecModel.builder()
                 .mtsId(mtsId)

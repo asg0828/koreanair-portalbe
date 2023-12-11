@@ -63,7 +63,7 @@
 		FROM
 			T_META_TB_SPEC T LEFT JOIN T_CODE C ON T.SRC_DB_CD = C.CODE_ID
 		<include refid="selectWhere"/>
-		ORDER BY T.MTS_ID ASC
+		ORDER BY T.MTS_ID DESC
 		<include refid="paging.pagingOffsetSQL" />
 	</select>
 	

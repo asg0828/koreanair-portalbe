@@ -91,7 +91,7 @@
 	
 	<select id="selects" resultType="com.cdp.portal.app.facade.feature.dto.response.FeatureResDto$Feature">
 		SELECT 
-			row_number() OVER (ORDER BY Z.FEATURE_ID ASC) AS row_num
+			row_number() OVER (ORDER BY Z.FEATURE_ID DESC) AS row_num
 			, Z.*
 			, Z.SE_GRP_ID AS featureSeGrp
 			, (SELECT SE_NM FROM T_FEATURE_SE WHERE SE_ID = Z.SE_GRP_ID) AS featureSeGrpNm
