@@ -40,7 +40,7 @@ public class LogMgrReqDto {
         @Schema(description = "요청 바디")
         private String rqstBody;
 
-        @Schema(description = "응답바디")
+        @Schema(description = "응답 바디")
         private String rsptBody;
         
     }
