@@ -10,4 +10,7 @@ public interface ReportMapper {
 
     List<ReportResDto> selectVipReservationStatus();
     List<ReportResDto> selectPurchaseContribution(String criteria);
+    List<ReportResDto> selectIntlBoardingTop100(String criteria);
+    List<ReportResDto> selectDomesticBoardingTop100(String criteria);
+    List<ReportResDto> selectTotalMileageTop100(String criteria);
 }
