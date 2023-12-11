@@ -14,10 +14,10 @@ spring:
         connection-timeout: 10000
         pool-name: cdp-master
     slave:
-      jdbc-url: jdbc:postgresql://rds-cdp-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
+      jdbc-url: jdbc:log4jdbc:postgresql://rds-cdp-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
       username: cdpdevdb_user
       password: G$BRl5$B
-      driver-class-name: org.postgresql.Driver
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
       hikari:
         minimum-idle: 5
         maximum-pool-size: 20
@@ -44,8 +44,7 @@ logging:
       springframework: debug
     com:
       cdp:
-        portal:
-          app: debug
+        portal: debug
       zaxxer:
         hikari: off
     jdbc:
