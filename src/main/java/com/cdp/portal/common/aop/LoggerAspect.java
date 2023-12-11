@@ -66,7 +66,7 @@ public class LoggerAspect {
 //                log.debug("Request session : {}", this.getUserId());
 //                log.debug("Request uri : {}", request.getRequestURI());
 //                log.debug("Request method : {}", request.getMethod());
-//                log.debug("Request query : {}", request.getQueryString());
+//                log.debug("Request query : {}", commonUtil.getDecodedQueryStr(request.getQueryString()));
 //                log.debug("Request body : {}", this.getRequestBodyStr(request));
             }
             
@@ -102,7 +102,7 @@ public class LoggerAspect {
                 .clientIp(commonUtil.getClientIP(request))
                 .rqstUri(request.getRequestURI())
                 .rqstMethod(request.getMethod())
-                .rqstQuery(request.getQueryString())
+                .rqstQuery(commonUtil.getDecodedQueryStr(request.getQueryString()))
                 .rqstBody(this.getRequestBodyStr(request))
                 .rsptBody(this.getResponseBodyStr(result))
                 .build();
@@ -117,7 +117,7 @@ public class LoggerAspect {
                 .clientIp(commonUtil.getClientIP(request))
                 .rqstUri(request.getRequestURI())
                 .rqstMethod(request.getMethod())
-                .rqstQuery(request.getQueryString())
+                .rqstQuery(commonUtil.getDecodedQueryStr(request.getQueryString()))
                 .rqstBody(this.getRequestBodyStr(request))
                 .rsptBody(this.getResponseBodyStr(result))
                 .build();

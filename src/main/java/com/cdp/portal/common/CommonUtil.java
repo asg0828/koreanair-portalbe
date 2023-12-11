@@ -3,8 +3,10 @@ package com.cdp.portal.common;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -339,5 +341,24 @@ public class CommonUtil {
 			}
 		}
 		return serverMac;
+	}
+	
+	/**
+	 * 인코딩된 쿼리 문자열을 디코딩 
+	 * @param query
+	 * @return
+	 */
+	public String getDecodedQueryStr(String query) {
+	    if (StringUtils.isEmpty(query)) return null;
+	    
+	    String result = StringUtils.EMPTY;
+	    
+	    try {
+	        result = URLDecoder.decode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+	    
+	    return result;
 	}
 }
