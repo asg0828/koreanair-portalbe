@@ -39,5 +39,66 @@
           and criteria = #{criteria}
     </select>
 
+    <select id="selectIntlBoardingTop100" resultType="ReportResDto">
+        SELECT
+            one_id,
+            criteria,
+            category,
+            rank,
+            user_nm,
+            skypass_nm,
+            vip_type,
+            intl_income_amount,
+            intl_bonus_boarding_count,
+            intl_fr_count,
+            intl_pr_count,
+            intl_avg_boarding_cycle,
+            frequented_intl_route_top1,
+            frequented_intl_route_top2
+        FROM
+            T_REPORT
+        WHERE category = 'intlBoarding'
+          and criteria = #{criteria}
+    </select>
+
+    <select id="selectDomesticBoardingTop100" resultType="ReportResDto">
+        SELECT
+            one_id,
+            criteria,
+            category,
+            rank,
+            user_nm,
+            skypass_nm,
+            vip_type,
+            domestic_income_amount,
+            domestic_bonus_boarding_count,
+            domestic_pr_boarding_count,
+            domestic_avg_boarding_cycle
+        FROM
+            T_REPORT
+        WHERE category = 'domesticBoarding'
+          and criteria = #{criteria}
+    </select>
+
+    <select id="selectTotalMileageTop100" resultType="ReportResDto">
+        SELECT
+            one_id,
+            criteria,
+            category,
+            rank,
+            user_nm,
+            skypass_nm,
+            vip_type,
+            total_mileage,
+            total_flight_mileage,
+            total_etc_mileage,
+            available_mileage,
+            family_available_mileage,
+            mileage_partner_card_yn
+        FROM
+            T_REPORT
+        WHERE category = 'totalMileage'
+          and criteria = #{criteria}
+    </select>
 
 </mapper>

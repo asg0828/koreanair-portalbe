@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Slf4j
@@ -76,7 +77,7 @@ public class FileService {
     public ByteArrayResource getByteArrayResource(FileModel model) {
         ByteArrayResource resource = null;
         try {
-            File file = new File(model.getSavePath(), model.getSaveFileNm());
+            File file = new File(model.getSavePath(), String.valueOf(model.getSaveFileNm()));
 
             resource = new ByteArrayResource(IOUtils.toByteArray(new FileInputStream(file)));
         } catch (IOException e) {
@@ -98,6 +99,7 @@ public class FileService {
 
         for (MultipartFile file : files) {
             String fileNm = file.getOriginalFilename();
+            String fileUUID = idUtil.getUUID();
             String fileExtsn = "";
 
             if (fileNm != null) {
@@ -116,7 +118,7 @@ public class FileService {
                     .fileExtsn(fileExtsn)
                     .savePath("board")
                     .fileSize(file.getSize())
-                    .saveFileNm(fileNm)
+                    .saveFileNm(fileUUID)
                     .inputStream(file.getResource().getInputStream())
                     .storageSe("S3")
                     .bucketNm("awsdc-s3-dlk-dev-cdp-portalobject")
