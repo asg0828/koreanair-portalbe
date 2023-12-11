@@ -56,7 +56,6 @@ public class FoReportRestController {
         ReportReqDto.SearchReport searchDto = ReportReqDto.SearchReport.builder()
                 .searchReport(searchReport)
                 .searchConditions(searchConditions)
-
                 .build();
 
         return ResponseEntity.ok(ApiResDto.success(reportService.getVipReservationStatus(pagingDto,searchDto)));
