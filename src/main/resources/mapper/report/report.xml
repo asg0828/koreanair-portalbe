@@ -1,6 +1,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cdp.portal.app.facade.report.mapper.ReportMapper">
 
+    <select id="selectCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM
+        T_REPORT
+        WHERE category = 'vip'
+    </select>
+
     <select id="selectVipReservationStatus" resultType="ReportResDto">
         SELECT
         one_id,
@@ -37,6 +45,7 @@
             T_REPORT
         WHERE category = 'contribution'
           and criteria = #{criteria}
+        <include refid="paging.pagingOffsetSQL" />
     </select>
 
     <select id="selectIntlBoardingTop100" resultType="ReportResDto">

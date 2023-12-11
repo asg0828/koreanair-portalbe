@@ -1,7 +1,8 @@
 package com.cdp.portal.app.facade.report.service;
 
-import com.cdp.portal.app.facade.notice.mapper.NoticeMapper;
+import com.cdp.portal.app.facade.report.dto.request.ReportReqDto;
 import com.cdp.portal.app.facade.report.mapper.ReportMapper;
+import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 import com.cdp.portal.app.facade.report.dto.response.ReportResDto;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,15 @@ public class ReportService {
      * @param
      * @return
      */
-    @Transactional(readOnly = true)
-    public ReportResDto.ReportsResult getVipReservationStatus () {
+    @Transactional
+    public ReportResDto.ReportsResult getVipReservationStatus (PagingDto pagingDto, ReportReqDto.SearchReport searchDto) {
+
+        pagingDto.setPaging(reportMapper.selectCount(searchDto));
 
         return ReportResDto.ReportsResult.builder()
-                .contents(reportMapper.selectVipReservationStatus())
+                .contents(reportMapper.selectVipReservationStatus(pagingDto))
+                .search(searchDto)
+                .page(pagingDto)
                 .build();
     }
 
