@@ -46,7 +46,6 @@
             T_REPORT
         WHERE category = 'contribution'
           and criteria = #{criteria}
-        <include refid="paging.pagingOffsetSQL" />
     </select>
 
     <select id="selectIntlBoardingTop100" resultType="ReportResDto">
