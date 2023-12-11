@@ -25,7 +25,6 @@ public class ReportService {
      */
     @Transactional
     public ReportResDto.ReportsResult getVipReservationStatus (PagingDto pagingDto, ReportReqDto.SearchReport searchDto) {
-
         pagingDto.setPaging(reportMapper.selectCount(searchDto));
 
         return ReportResDto.ReportsResult.builder()

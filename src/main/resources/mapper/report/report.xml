@@ -24,6 +24,7 @@
         FROM
         T_REPORT
         WHERE CATEGORY = 'vip'
+        <include refid="paging.pagingOffsetSQL" />
     </select>
 
     <select id="selectPurchaseContribution" resultType="ReportResDto">
