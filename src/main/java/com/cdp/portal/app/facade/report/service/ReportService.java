@@ -42,4 +42,43 @@ public class ReportService {
                 .contents(reportMapper.selectPurchaseContribution(criteria))
                 .build();
     }
+
+    /**
+     * 국제선 탑승 횟수 TOP 100 목록 조회
+     * @param
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ReportResDto.ReportsResult getIntlBoardingTop100 (String criteria) {
+
+        return ReportResDto.ReportsResult.builder()
+                .contents(reportMapper.selectIntlBoardingTop100(criteria))
+                .build();
+    }
+
+    /**
+     * 국내선 탑승 횟수 TOP 100 목록 조회
+     * @param
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ReportResDto.ReportsResult getDomesticBoardingTop100 (String criteria) {
+
+        return ReportResDto.ReportsResult.builder()
+                .contents(reportMapper.selectDomesticBoardingTop100(criteria))
+                .build();
+    }
+
+    /**
+     * 마일리지 적립 TOP 100 목록 조회
+     * @param
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ReportResDto.ReportsResult getTotalMileageTop100 (String criteria) {
+
+        return ReportResDto.ReportsResult.builder()
+                .contents(reportMapper.selectTotalMileageTop100(criteria))
+                .build();
+    }
 }
