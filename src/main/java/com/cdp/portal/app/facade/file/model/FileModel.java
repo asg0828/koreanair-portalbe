@@ -7,7 +7,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.InputStream;
 import java.sql.Timestamp;
-import java.util.UUID;
 
 @Getter
 @Setter
