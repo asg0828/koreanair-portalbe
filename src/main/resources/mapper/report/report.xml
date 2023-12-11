@@ -11,6 +11,10 @@
 
     <select id="selectVipReservationStatus" resultType="ReportResDto">
         SELECT
+        row_number() OVER (ORDER BY Z.rank ASC) AS row_num
+        ,Z.*
+        FROM (
+        SELECT
         one_id,
         criteria,
         category,
@@ -23,8 +27,9 @@
         last_intl_flight_date
         FROM
         T_REPORT
-        WHERE CATEGORY = 'vip'
-        <include refid="paging.pagingOffsetSQL" />
+        WHERE CATEGORY = 'vip' )
+        Z
+        <include refid="paging.pagingOffsetSQL"/>
     </select>
 
     <select id="selectPurchaseContribution" resultType="ReportResDto">
