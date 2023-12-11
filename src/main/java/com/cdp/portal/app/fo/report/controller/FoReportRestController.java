@@ -1,12 +1,12 @@
 package com.cdp.portal.app.fo.report.controller;
 
+import com.cdp.portal.app.facade.report.dto.request.ReportReqDto;
+import com.cdp.portal.app.facade.report.dto.response.ReportResDto;
 import com.cdp.portal.app.facade.report.service.ReportService;
+import com.cdp.portal.common.dto.PagingDto;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cdp.portal.app.facade.code.dto.response.CodeResDto.ApiResCodeResDtos;
 import com.cdp.portal.common.constants.CommonConstants;
@@ -35,12 +35,31 @@ public class FoReportRestController {
      */
     @Operation(summary = "정형 보고서 VIP 고객현황 조회", description = "정형 보고서 VIP 고객현황을 조회한다.", tags = { "report" })
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResCodeResDtos.class)))
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ReportResDto.ReportResDtoResult.class)))
     }
     )
+    @Parameter(name ="page", required = false, description = "페이지", example = "1")
+    @Parameter(name ="pageSize", required = false, description = "페이지 사이즈", example = "10")
+    @Parameter(name ="searchReport", required = false, description = "Report 검색", example = "")
+    @Parameter(name ="searchConditions", required = false, description = "", example = "")
     @GetMapping(value = "/v1/vip", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getVipReservationStatus() {
-        return ResponseEntity.ok(ApiResDto.success(reportService.getVipReservationStatus()));
+    public ResponseEntity<?> getVipReservationStatus( @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                                      @RequestParam(value = "searchReport", required = false, defaultValue = "") String searchReport,
+                                                      @RequestParam(value = "searchConditions", required = false, defaultValue = "") String[] searchConditions) {
+
+        PagingDto pagingDto = PagingDto.builder()
+                .page(page)
+                .pageSize(pageSize)
+                .build();
+
+        ReportReqDto.SearchReport searchDto = ReportReqDto.SearchReport.builder()
+                .searchReport(searchReport)
+                .searchConditions(searchConditions)
+
+                .build();
+
+        return ResponseEntity.ok(ApiResDto.success(reportService.getVipReservationStatus(pagingDto,searchDto)));
     }
 
     /**
