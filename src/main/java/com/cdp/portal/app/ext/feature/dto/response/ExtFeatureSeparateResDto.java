@@ -1,5 +1,7 @@
 package com.cdp.portal.app.ext.feature.dto.response;
 
+import java.util.List;
+
 import com.cdp.portal.common.dto.ApiResDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,7 +20,7 @@ import lombok.ToString;
 @Schema(description = "피쳐 구분 응답")
 public class ExtFeatureSeparateResDto {
     
-    public static class ApiResExtFeatureSeparateResDtos extends ApiResDto<ExtFeatureSeparateResDto> {}
+    public static class ApiResExtFeatureSeparateResDtos extends ApiResDto<List<ExtFeatureSeparateResDto>> {}
     
     @Schema(description = "구분ID", example = "CUSTOMER_SERVICE")
     private String seId;
