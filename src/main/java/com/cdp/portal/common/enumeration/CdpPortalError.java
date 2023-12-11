@@ -52,7 +52,9 @@ public enum CdpPortalError {
 	AUTH_NOT_FOUND("E0602", "권한 ID({0})를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
 
 	// menu
-	MENU_ID_NOT_FOUND("E0702", "메뉴 ID({0})를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
+	MENU_ID_NOT_FOUND("E0701", "메뉴 ID({0})를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
+	USER_QUICK_MENU_DUPLICATED("E0702", "퀵메뉴에 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
+	USER_QUICK_MENU_NOT_EXISTS("E0703", "퀵메뉴에 등록 되어있지않습니다.", HttpStatus.BAD_REQUEST)
 	;
 
     private String code;

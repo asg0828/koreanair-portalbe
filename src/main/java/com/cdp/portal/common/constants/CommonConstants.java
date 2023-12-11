@@ -14,6 +14,7 @@ public class CommonConstants {
 	public static final String API_EXT_PREFIX = "/ext";
 	public static final String EMPTY_STRING = "";
 	public static final String UNKNOWN = "unknown";
+	public static final String SYSTEM_ID = "SYSTEM";		//DB insert, update 시 시스템 자동 오퍼레이션인 경우 rgst_id, modi_id 용
 
 	//session
 	public static final String SESSION_NAME = "sessionInfo";
