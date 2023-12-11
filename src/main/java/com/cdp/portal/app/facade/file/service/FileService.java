@@ -77,7 +77,7 @@ public class FileService {
     public ByteArrayResource getByteArrayResource(FileModel model) {
         ByteArrayResource resource = null;
         try {
-            File file = new File(model.getSavePath(), String.valueOf(model.getSaveFileNm()));
+            File file = new File(model.getSavePath(), model.getSaveFileNm());
 
             resource = new ByteArrayResource(IOUtils.toByteArray(new FileInputStream(file)));
         } catch (IOException e) {
