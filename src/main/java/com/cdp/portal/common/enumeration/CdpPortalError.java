@@ -43,6 +43,7 @@ public enum CdpPortalError {
     USER_FEATURE_DUPLICATED("E0401", "관심 Feature에 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
     USER_FEATURE_NOT_EXISTS("E0402", "관심 Feature에 등록 되어있지않습니다.", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTS("E0403", "존재 하지 않는 사용자 입니다.", HttpStatus.BAD_REQUEST),
+    USER_INVALID_ID("E0404", "유효하지 않은 사용자 요청입니다.", HttpStatus.BAD_REQUEST),
 
 	// dept
 	DEPT_CODE_DUPLICATED("E0501", "부서 코드({0})은 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
