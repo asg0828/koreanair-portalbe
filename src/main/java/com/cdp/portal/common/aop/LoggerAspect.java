@@ -35,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-//@Aspect
+@Aspect
 @Component
 @RequiredArgsConstructor
 public class LoggerAspect {
@@ -51,7 +51,7 @@ public class LoggerAspect {
     }
 
     @Around("loggerPointCut()")
-    public Object methodLogger(ProceedingJoinPoint proceedingJoinPoint) {
+    public Object methodLogger(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch();
         Object result = null;
         
@@ -83,8 +83,8 @@ public class LoggerAspect {
                     this.createLogUser(request, result);
                 } 
             }
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (Throwable throwable) {
+            throw throwable;
         } finally {
             stopWatch.stop();
             
