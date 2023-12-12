@@ -20,9 +20,6 @@ import lombok.NoArgsConstructor;
 @Schema(description = "사용자 모델")
 public class UserModel {
 
-  	@Schema(description = "행번", nullable = false)
-	private int rownum;
-
     @Schema(description = "사용자 ID", nullable = false)
     private String userId;
 
@@ -87,78 +84,6 @@ public class UserModel {
 
     @Schema(description = "수정구분", example = "")
     private String modiSe;
-
-    @Schema(description = "적용 사용자권한 ID - 최종 적용된 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
-    private String apldUserAuthId;
-
-    @Schema(description = "적용 사용자권한명 - 최종 적용된 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
-    private String apldUserAuthNm;
-
-    @Schema(description = "적용 관리자권한 ID - 최종 적용된 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
-    private String apldMgrAuthId;
-
-    @Schema(description = "적용 관리자권한명 - 최종 적용된 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
-    private String apldMgrAuthNm;
-
-    @Schema(description = "이전 적용 사용자권한 ID - 최종 적용된 이전 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
-    private String bfApldUserAuthId;
-
-    @Schema(description = "이전 적용 사용자권한명 - 최종 적용된 이전 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
-    private String bfApldUserAuthNm;
-
-    @Schema(description = "이전 적용 관리자권한 ID - 최종 적용된 이전 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
-    private String bfApldMgrAuthId;
-
-    @Schema(description = "이전 적용 관리자권한명 - 최종 적용된 이전 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
-    private String bfApldMgrAuthNm;
-
-    @Schema(description = "사용자권한 ID", example = "")
-    private String userAuthId;
-
-    @Schema(description = "사용자권한명", example = "")
-    private String userAuthNm;
-
-    @Schema(description = "관리자권한 ID", example = "")
-    private String mgrAuthId;
-
-    @Schema(description = "관리자권한명", example = "")
-    private String mgrAuthNm;
-
-    @Schema(description = "예외그룹 사용자권한 ID", example = "")
-    private String eUserAuthId;
-
-    @Schema(description = "예외그룹 사용자권한명", example = "")
-    private String eUserAuthNm;
-
-    @Schema(description = "예외그룹 관리자권한 ID", example = "")
-    private String eMgrAuthId;
-
-    @Schema(description = "예외그룹 관리자권한명", example = "")
-    private String eMgrAuthNm;
-
-    @Schema(description = "이전 사용자권한 ID", example = "")
-    private String bfUserAuthId;
-
-    @Schema(description = "이전 사용자권한명", example = "")
-    private String bfUserAuthNm;
-
-    @Schema(description = "이전 관리자권한 ID", example = "")
-    private String bfMgrAuthId;
-
-    @Schema(description = "이전 관리자권한명", example = "")
-    private String bfMgrAuthNm;
-
-    @Schema(description = "이전 예외그룹 사용자권한 ID", example = "")
-    private String bfEUserAuthId;
-
-    @Schema(description = "이전 예외그룹 사용자권한명", example = "")
-    private String bfEUserAuthNm;
-
-    @Schema(description = "이전 예외그룹 관리자권한 ID", example = "")
-    private String bfEMgrAuthId;
-
-    @Schema(description = "이전 예외그룹 관리자권한명", example = "")
-    private String bfEMgrAuthNm;
 
     @Schema(description = "등록자ID", example = "admin")
     private String rgstId;

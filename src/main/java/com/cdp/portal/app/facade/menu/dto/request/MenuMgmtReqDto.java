@@ -60,11 +60,12 @@ public class MenuMgmtReqDto {
 	@Builder
 	public static class SearchMenuByAuth {
 
-		@Schema(description = "권한 ID", example = "")
+		@Schema(description = "권한 ID", nullable = false)
 		private String authId;
 
-		@Schema(description = "권한 명", nullable = false)
+		@Schema(description = "권한 명", example = "")
 		private String authNm;
 
 	}
+
 }

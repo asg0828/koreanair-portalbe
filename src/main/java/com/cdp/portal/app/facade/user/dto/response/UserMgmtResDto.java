@@ -197,6 +197,19 @@ public class UserMgmtResDto {
     }
 
     @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @Schema(description = "사용자 적용 권한")
+    public static class UserApldAuth {
+        @Schema(description = "적용 사용자권한 ID - 최종 적용된 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
+        private String apldUserAuthId;
+
+        @Schema(description = "적용 관리자권한 ID - 최종 적용된 부서(팀)/예외그룹 중 예외그룹 우선 권한", example = "")
+        private String apldMgrAuthId;
+    }
+
+    @Getter
     @ToString
     @Builder
     @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -66,6 +66,12 @@ public class SessionDto {
     @Schema(description = "접근 가능 사용자 메뉴 목록", example = "")
     private MenuMgmtResDto.MenuByAuth menuByAuthUser;
 
+//    @Schema(description = "사용자 퀵 메뉴 목록", example = "")
+//    private MenuMgmtResDto.QuickMenuByUser quickMenuUser;
+//
+//    @Schema(description = "관리자 퀵 메뉴 목록", example = "")
+//    private MenuMgmtResDto.QuickMenuByUser quickMenuMgr;
+
 	@Schema(description = "googleAccessToken", example = "", hidden = true)
 	@Setter
 	private String googleAccessToken;

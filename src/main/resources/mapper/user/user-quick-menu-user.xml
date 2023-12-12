@@ -1,0 +1,97 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.user.mapper.UserQuickMenuUserMapper">
+
+    <select id="selectByAuthIdUserQuickMenus" resultType="com.cdp.portal.app.facade.user.dto.response.UserQuickMenuResDto$QuickMenu">
+        WITH RECURSIVE TEMP_T_USER_SYS_MENU (
+                 MENU_NM
+               , CONNECT_BY_ROOT
+               , MENU_ID
+               , UP_MENU_ID
+               , AUTH_ID
+               , LEVEL
+               , PATH
+               , CYCLE
+               ) AS (
+                     SELECT MENU_NM
+                          , USM.MENU_ID AS CONNECT_BY_ROOT
+                          , USM.MENU_ID
+                          , USM.UP_MENU_ID
+                          , USMA.AUTH_ID
+                          , 1 AS level
+                          , ARRAY[USM.MENU_ID::TEXT]
+                          , FALSE
+                       FROM T_USER_SYS_MENU USM
+                            INNER JOIN T_USER_SYS_MENU_AUTH USMA
+                                ON USM.MENU_ID = USMA.MENU_ID
+                                AND USMA.AUTH_ID = #{search.authId}
+                      WHERE UP_MENU_ID IS NULL
+                      UNION ALL
+                     SELECT USM.MENU_NM
+                          , CONNECT_BY_ROOT
+                          , USM.MENU_ID
+                          , USM.UP_MENU_ID
+                          , USMA.AUTH_ID
+                          , LEVEL + 1
+                          , PATH||USM.MENU_ID
+                          , USM.MENU_ID = ANY(PATH)
+                       FROM T_USER_SYS_MENU USM
+                            INNER JOIN TEMP_T_USER_SYS_MENU TTUSM
+                                ON TTUSM.MENU_ID = USM.UP_MENU_ID
+                            INNER JOIN T_USER_SYS_MENU_AUTH USMA
+                                ON USM.MENU_ID = USMA.MENU_ID
+                                AND USMA.AUTH_ID = #{search.authId}
+                                AND NOT CYCLE
+                    )
+                     SELECT LPAD(' ', 4*(LEVEL-1)) || MENU_NM AS PADDED_MENU_NM
+                          , MENU_NM
+                          , CONNECT_BY_ROOT
+                          , TUSM.MENU_ID
+                          , UP_MENU_ID
+                          , LEVEL
+                          , PATH
+                          , AUTH_ID
+                       FROM TEMP_T_USER_SYS_MENU TUSM
+                            INNER JOIN T_QCK_MENU_USER QMU
+                            ON TUSM.MENU_ID = QMU.MENU_ID AND QMU.USER_ID = #{search.userId}
+                      ORDER BY PATH
+    </select>
+
+    <select id="isExistsByUserIdAndMenuId" parameterType="String" resultType="Boolean">
+        SELECT EXISTS
+            (
+                SELECT 1
+                FROM
+                    T_QCK_MENU_USER
+                WHERE
+                    USER_ID = #{userId}
+                AND
+                    MENU_ID = #{menuId}
+                LIMIT 1
+            )
+    </select>
+
+    <insert id="insert" parameterType="UserQuickMenuModel">
+        INSERT INTO T_QCK_MENU_USER(
+               USER_ID
+             , MENU_ID
+             , RGST_ID
+             , RGST_DT
+             , MODI_ID
+             , MODI_DT
+        ) VALUES (
+               #{userId}
+             , #{menuId}
+             , #{rgstId}
+             , now()
+             , #{modiId}
+             , now()
+        )
+    </insert>
+
+    <delete id="delete" parameterType="String">
+        DELETE FROM T_QCK_MENU_USER
+         WHERE USER_ID = #{userId}
+           AND MENU_ID = #{menuId}
+    </delete>
+
+</mapper>

@@ -1,14 +1,13 @@
 package com.cdp.portal.app.facade.user.service;
 
-import java.util.Objects;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cdp.portal.app.facade.user.dto.request.UserMgmtReqDto;
 import com.cdp.portal.app.facade.user.dto.response.UserMgmtResDto;
 import com.cdp.portal.app.facade.user.mapper.UserMgmtMapper;
+import com.cdp.portal.app.facade.user.model.UserModel;
 import com.cdp.portal.common.dto.PagingDto;
-import com.cdp.portal.common.enumeration.CdpPortalError;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,11 +27,25 @@ public class UserMgmtService {
     }
 
     public UserMgmtResDto.User getUser(final String userId) {
-    	UserMgmtResDto.User user = userMgmtMapper.selectById(userId);
-        if (Objects.isNull(user)) {
-            throw CdpPortalError.USER_NOT_EXISTS.exception(userId);
-        }
+        return userMgmtMapper.selectById(userId);
+    }
 
-        return user;
+    public UserMgmtResDto.UserApldAuth selectApldAuthByUser(final String userId) {
+    	return userMgmtMapper.selectApldAuthByUser(userId);
+    }
+
+    @Transactional
+    public void createUser(UserModel userModel) {
+    	userMgmtMapper.insert(userModel);
+    }
+
+    @Transactional
+    public void changeUserDept(UserModel userModel) {
+    	userMgmtMapper.updateDept(userModel);
+    }
+
+    @Transactional
+    public void upToDateUserLoginDate(UserModel userModel) {
+    	userMgmtMapper.updateLastLogin(userModel);
     }
 }

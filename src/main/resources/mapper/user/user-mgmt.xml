@@ -195,4 +195,88 @@
                 ) Z
     </select>
 
+    <insert id="insert" parameterType="UserModel">
+        INSERT INTO T_USER(
+               USER_ID
+             , USER_NM
+             , USER_EMAIL
+             , DEPT_CODE
+             , UP_DEPT_CODE
+             , LAST_LOG_DT
+             , USE_YN
+             , RGST_ID
+			 , RGST_DT
+			 , MODI_ID
+			 , MODI_DT
+        ) VALUES (
+               #{userId}
+			 , #{userNm}
+			 , #{userEmail}
+			 , #{deptCode}
+			 , #{upDeptCode}
+			 , now()
+			 , #{useYn}
+			 , #{rgstId}
+             , now()
+             , #{modiId}
+             , now()
+        )
+    </insert>
+
+    <update id="updateDept" parameterType="UserModel">
+        UPDATE T_USER
+           SET DEPT_CODE = #{deptCode}
+             , UP_DEPT_CODE = #{upDeptCode}
+             , BF_DEPT_CODE = #{bfDeptCode}
+             , BF_UP_DEPT_CODE = #{bfUpDeptCode}
+             , DEPT_UPDT_DT = now()
+             , MODI_ID = #{modiId}
+             , MODI_DT = now()
+         WHERE USER_ID = #{userId}
+    </update>
+
+    <update id="updateLastLogin" parameterType="UserModel">
+        UPDATE T_USER
+           SET LAST_LOG_DT = now()
+             , MODI_ID = #{modiId}
+             , MODI_DT = now()
+         WHERE USER_ID = #{userId}
+    </update>
+
+    <select id="selectApldAuthByUser" resultType="com.cdp.portal.app.facade.user.dto.response.UserMgmtResDto$UserApldAuth">
+        SELECT CASE WHEN Z.E_USER_AUTH_ID IS NULL THEN Z.USER_AUTH_ID ELSE Z.E_USER_AUTH_ID END AS APLD_USER_AUTH_ID
+             , CASE WHEN Z.E_MGR_AUTH_ID IS NULL THEN Z.MGR_AUTH_ID ELSE Z.E_MGR_AUTH_ID END AS APLD_MGR_AUTH_ID
+          FROM (
+                SELECT USER_ID
+                     , USER_NM
+                     , USA.AUTH_ID AS USER_AUTH_ID
+                     , MSA.AUTH_ID AS MGR_AUTH_ID
+                     , UEA.AUTH_ID AS E_USER_AUTH_ID
+                     , MEA.AUTH_ID AS E_MGR_AUTH_ID
+                     , U.RGST_DT
+                  FROM T_USER U
+                       LEFT JOIN T_DEPT D
+                           ON U.DEPT_CODE = D.DEPT_CODE
+                       LEFT JOIN T_USER_AUTH UA
+                           ON D.DEPT_CODE = UA.DEPT_CODE
+                       LEFT JOIN T_MGR_AUTH MA
+                           ON D.DEPT_CODE = MA.DEPT_CODE
+                       LEFT JOIN T_USER_SYS_AUTH USA
+                           ON UA.AUTH_ID = USA.AUTH_ID
+                       LEFT JOIN T_MGR_SYS_AUTH MSA
+                           ON MA.AUTH_ID = MSA.AUTH_ID
+                       LEFT JOIN T_EGROUP E
+                           ON U.GROUP_CODE = E.GROUP_CODE
+                       LEFT JOIN T_USER_EGROUP_AUTH UEA
+                           ON E.GROUP_CODE = UEA.GROUP_CODE
+                       LEFT JOIN T_MGR_EGROUP_AUTH MEA
+                           ON E.GROUP_CODE = MEA.GROUP_CODE
+                       LEFT JOIN T_USER_SYS_AUTH USA2
+                           ON UEA.AUTH_ID = USA2.AUTH_ID
+                       LEFT JOIN T_MGR_SYS_AUTH MSA2
+                           ON MEA.AUTH_ID = MSA2.AUTH_ID
+                 WHERE USER_ID = #{userId}
+                   AND USE_YN = 'Y'
+                ) Z
+    </select>
 </mapper>

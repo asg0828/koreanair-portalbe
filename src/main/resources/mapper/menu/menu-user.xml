@@ -147,4 +147,5 @@
                           , AUTH_ID
                        FROM TEMP_T_USER_SYS_MENU ORDER BY PATH
     </select>
+
 </mapper>
