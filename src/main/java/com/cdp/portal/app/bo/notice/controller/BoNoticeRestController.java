@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping(value = CommonConstants.API_BO_PREFIX + "/board")
 @Tag(name = "board", description = "게시물 관리 API")
-public class NoticeRestController {
+public class BoNoticeRestController {
     private final NoticeService noticeService;
 
     @Operation(summary = "공지사항 등록", description = "공지사항을 등록한다.")

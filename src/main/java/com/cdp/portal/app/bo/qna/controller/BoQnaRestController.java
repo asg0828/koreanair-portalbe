@@ -3,7 +3,6 @@ package com.cdp.portal.app.bo.qna.controller;
 import com.cdp.portal.app.facade.qna.dto.request.QnaReqDto;
 import com.cdp.portal.app.facade.qna.dto.response.QnaResDto;
 
-import com.cdp.portal.app.facade.qna.model.QnaModel;
 import com.cdp.portal.app.facade.qna.service.QnaService;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.PagingDto;
@@ -23,13 +22,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = CommonConstants.API_BO_PREFIX + "/board")
 @Tag(name = "qna", description = "QNA 관리 API")
-public class QnaRestController {
+public class BoQnaRestController {
     private final QnaService qnaService;
 
     @Operation(summary = "Q&A 등록 API", description = "Q&A를 등록한다.")
