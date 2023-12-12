@@ -108,7 +108,7 @@
     </select>
 
     <select id="selectByNoticeId" parameterType="String" resultType="NoticeResDto">
-        SELECT ROW_NUMBER() OVER (ORDER BY A.ORD_SEQ ASC) AS ROWNUM,
+        SELECT ROW_NUMBER() OVER (ORDER BY A.NOTICE_ID ASC) AS ROWNUM,
                A.NOTICE_ID,
                A.SJ,
                A.CN,
@@ -144,10 +144,10 @@
                         MODI_ID,
                         MODI_DT,
                         DEL_YN,
-                        LEAD(NOTICE_ID) OVER (ORDER BY ORD_SEQ) AS NEXT_ID,
-                        LEAD(SJ) OVER (ORDER BY ORD_SEQ) AS NEXT_SJ,
-                        LAG(NOTICE_ID) OVER (ORDER BY ORD_SEQ) AS PRE_ID,
-                        LAG(SJ) OVER (ORDER BY ORD_SEQ) AS PRE_SJ
+                        LEAD(NOTICE_ID) OVER (ORDER BY NOTICE_ID) AS NEXT_ID,
+                        LEAD(SJ) OVER (ORDER BY NOTICE_ID) AS NEXT_SJ,
+                        LAG(NOTICE_ID) OVER (ORDER BY NOTICE_ID) AS PRE_ID,
+                        LAG(SJ) OVER (ORDER BY NOTICE_ID) AS PRE_SJ
                  FROM T_BBS_NOTICE
                  WHERE DEL_YN = 'N'
              ) A
