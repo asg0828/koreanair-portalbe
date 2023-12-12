@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -32,7 +32,9 @@ import com.cdp.portal.app.facade.session.dto.UserHrInfoDto;
 import com.cdp.portal.app.facade.session.dto.UserHrInfoDto.HrInfo;
 import com.cdp.portal.app.facade.session.repository.SessionRepository;
 import com.cdp.portal.app.facade.user.dto.response.UserMgmtResDto;
+import com.cdp.portal.app.facade.user.model.UserModel;
 import com.cdp.portal.app.facade.user.service.UserMgmtService;
+import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.ApiResDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 import com.cdp.portal.common.error.exception.CdpPortalException;
@@ -107,7 +109,12 @@ public class SessionService {
 			String subject = payload.getSubject();
 
 			String name = (String) payload.get("name");
+
 			String email = payload.getEmail();
+//			String email = "pj.wjjung@kalmate.net";
+//			String email = "pj.yjshim@kalmate.net";
+//			String email = "pj.thoonkim@kalmate.net";
+
 			/*
 			boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
 			String pictureUrl = (String) payload.get("picture");
@@ -118,10 +125,6 @@ public class SessionService {
 
 			try {
 				HrInfo hrInfo = getEmployeeHrInfo(email);
-//				HrInfo hrInfo = null;	//임시
-//				HrInfo hrInfo = getEmployeeHrInfo("pj.uhlee@kalmate.net");
-//				HrInfo hrInfo = getEmployeeHrInfo("ymson@koreanair.com");
-//				HrInfo hrInfo = getEmployeeHrInfo("pj.wjjung@kalmate.net");
 
 				if (ObjectUtils.isEmpty(hrInfo)) {
 					hrInfo = HrInfo.builder()
@@ -129,26 +132,55 @@ public class SessionService {
 					.build();
 				}
 
-				// TODO: 존재 하지 않는 사용자인경우 insert 필요
 				UserMgmtResDto.User user = userMgmtService.getUser(hrInfo.getEEID());
 
-				// TODO: HR 팀/부서가 포털 팀/부서와 다를때 업데이트
-				if(!ObjectUtils.isEmpty(hrInfo.getTeam_Code()) && !hrInfo.getTeam_Code().equals(user.getDeptCode())){
-					// TODO: 팀/부서 코드 업데이트
+				//self-feature 부서 등록 테스트용 사용자 리스트
+				String[] sfTestUsers = {"pj.tjeom", "pj.wjjung", "pj.uklee", "pj.gilee", "pj.yjshim", "pj.thoonkim"};
+
+				//self-feature 사용자 신규 등록 및 부서 정보 최신화에서 제외
+				if(!Arrays.asList(sfTestUsers).contains(hrInfo.getEEID())) {
+					if (Objects.isNull(user)) {		//신규 사용자
+			        	userMgmtService.createUser(UserModel.builder()
+			                    .userId(hrInfo.getEEID())
+			                    .userNm(name)
+			                    .userEmail(email)
+			                    .deptCode(hrInfo.getTeam_Code())
+			                    .upDeptCode(hrInfo.getDepartment_Code())
+			                    .useYn("Y")
+			                    .rgstId(CommonConstants.SYSTEM_ID)
+			                    .modiId(CommonConstants.SYSTEM_ID)
+			                    .build());
+
+			        	user = userMgmtService.getUser(hrInfo.getEEID());	//insert 이후 재 조회용
+			        }else if(!Objects.equals(hrInfo.getTeam_Code(), user.getDeptCode())){	//기존 사용자 but 부서 코드 변경시
+						userMgmtService.changeUserDept(UserModel.builder()
+			                    .userId(hrInfo.getEEID())
+			                    .deptCode(hrInfo.getTeam_Code())
+			                    .upDeptCode(hrInfo.getDepartment_Code())
+			                    .bfDeptCode(user.getDeptCode())
+			                    .bfUpDeptCode(user.getUpDeptCode())
+			                    .modiId(CommonConstants.SYSTEM_ID)
+			                    .build());
+
+						user = userMgmtService.getUser(hrInfo.getEEID());	//update 된 부서 코드에 적용된 권한 재 조회용
+			        }
 				}
 
+ 		        /* 권한별 접근 가능 메뉴 조회 - 관리자 */
 				if(!ObjectUtils.isEmpty(user.getApldMgrAuthId()))
 					user.setMenuByAuthMgr(menuMgmtMgrService.getMenusByAuthMgr(MenuMgmtReqDto.SearchMenuByAuth.builder()
 							.authId(user.getApldMgrAuthId())
 							.authNm(user.getApldMgrAuthNm())
 							.build()));
 
+				/* 권한별 접근 가능 메뉴 조회 - 사용자 */
 				if(!ObjectUtils.isEmpty(user.getApldUserAuthId()))
 					user.setMenuByAuthUser(menuMgmtUserService.getMenusByAuthUser(MenuMgmtReqDto.SearchMenuByAuth.builder()
 							.authId(user.getApldUserAuthId())
 							.authNm(user.getApldUserAuthNm())
 							.build()));
 
+				/* 세션 만들기 */
 				SessionDto sessionInfo = SessionDto.builder()
 						.userId(user.getUserId())
 						.userNm(user.getUserNm())
@@ -174,7 +206,12 @@ public class SessionService {
 
 				result = ApiResDto.success(sessionInfo);
 
-				// TODO: 마지막 로그인 일시 업데이트
+				/* 마지막 로그인 일시 업데이트 */
+				userMgmtService.upToDateUserLoginDate(UserModel.builder()
+	                    .userId(hrInfo.getEEID())
+	                    .modiId(CommonConstants.SYSTEM_ID)
+	                    .build());
+
 			} catch (CdpPortalException e) {
 				log.error(e.getMessage());
 				// TODO: 로그인 실패 로그 저장 필요?
