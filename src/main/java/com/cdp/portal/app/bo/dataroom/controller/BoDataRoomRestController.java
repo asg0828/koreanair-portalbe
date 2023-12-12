@@ -19,14 +19,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = CommonConstants.API_BO_PREFIX + "/board")
 @Tag(name = "board", description = "자료실 관리 API")
-public class DataRoomRestController {
+public class BoDataRoomRestController {
     private final DataRoomService dataRoomService;
 
     @Operation(summary = "자료실 등록 API", description = "자료를 등록한다.")

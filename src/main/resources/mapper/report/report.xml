@@ -27,8 +27,8 @@
         last_intl_flight_date
         FROM
         T_REPORT
-        WHERE CATEGORY = 'vip' )
-        Z
+        WHERE CATEGORY = 'vip'
+        ) Z
         <include refid="paging.pagingOffsetSQL"/>
     </select>
 
