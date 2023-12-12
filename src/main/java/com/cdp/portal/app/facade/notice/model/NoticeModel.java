@@ -67,5 +67,13 @@ public class NoticeModel {
     private String[] fileIds;
     @Schema(description = "파일 정보")
     private List<FileModel> fileList;
+    @Schema(description = "다음 글 제목")
+    private String nextSj;
+    @Schema(description = "다음 글 id")
+    private String nextId;
+    @Schema(description = "이전 글 제목")
+    private String preSj;
+    @Schema(description = "이전 글 아이디")
+    private String preId;
 
 }

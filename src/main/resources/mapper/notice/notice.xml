@@ -108,25 +108,50 @@
     </select>
 
     <select id="selectByNoticeId" parameterType="String" resultType="NoticeResDto">
-        SELECT ROW_NUMBER() OVER (ORDER BY ORD_SEQ ASC) AS ROWNUM,
-               NOTICE_ID,
-               SJ,
-               CN,
-               IMPORTANT_YN,
-               ORD_SEQ,
-               VIEW_CNT,
-               POPUP_YN,
-               START_DT,
-               END_DT,
-               USE_YN,
-               RGST_ID,
-               RGST_DT,
-               MODI_ID,
-               MODI_DT,
-               DEL_YN
-        FROM T_BBS_NOTICE
-        WHERE NOTICE_ID = #{noticeId}
-        ORDER BY ROWNUM
+        SELECT ROW_NUMBER() OVER (ORDER BY A.ORD_SEQ ASC) AS ROWNUM,
+               A.NOTICE_ID,
+               A.SJ,
+               A.CN,
+               A.IMPORTANT_YN,
+               A.ORD_SEQ,
+               A.VIEW_CNT,
+               A.POPUP_YN,
+               A.START_DT,
+               A.END_DT,
+               A.USE_YN,
+               A.RGST_ID,
+               A.RGST_DT,
+               A.MODI_ID,
+               A.MODI_DT,
+               A.DEL_YN,
+               A.NEXT_ID,
+               A.NEXT_SJ,
+               A.PRE_ID,
+               A.PRE_SJ
+        FROM (
+                 SELECT NOTICE_ID,
+                        SJ,
+                        CN,
+                        IMPORTANT_YN,
+                        ORD_SEQ,
+                        VIEW_CNT,
+                        POPUP_YN,
+                        START_DT,
+                        END_DT,
+                        USE_YN,
+                        RGST_ID,
+                        RGST_DT,
+                        MODI_ID,
+                        MODI_DT,
+                        DEL_YN,
+                        LEAD(NOTICE_ID) OVER (ORDER BY ORD_SEQ) AS NEXT_ID,
+                        LEAD(SJ) OVER (ORDER BY ORD_SEQ) AS NEXT_SJ,
+                        LAG(NOTICE_ID) OVER (ORDER BY ORD_SEQ) AS PRE_ID,
+                        LAG(SJ) OVER (ORDER BY ORD_SEQ) AS PRE_SJ
+                 FROM T_BBS_NOTICE
+                 WHERE DEL_YN = 'N'
+             ) A
+        WHERE A.NOTICE_ID = #{noticeId}
     </select>
 
     <update id="updateNotice" parameterType="noticeModel">

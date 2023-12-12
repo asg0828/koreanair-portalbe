@@ -117,27 +117,53 @@
     </select>
 
     <select id="selectByQnaId" parameterType="String" resultType="QnaResDto">
-        SELECT TBQ.QNA_ID,
-               TBQ.CL_CODE,
-               TBQ.SJ,
-               TBQ.CN,
-               TBQ.ANSW,
-               TBQ.ANSW_RGST_ID,
-               TBQ.ANSW_RGST_DT,
-               TBQ.OPEN_YN,
-               TBQ.QNA_STAT,
-               TBQ.BF_QNA_ID,
-               TBQ.VIEW_CNT,
-               TBQ.USE_YN,
-               TBQ.RGST_ID,
-               TBQ.RGST_DT,
-               tu.user_nm as rgst_nm,
-               (SELECT DEPT_NM FROM T_DEPT WHERE DEPT_CODE = TU.DEPT_CODE) AS RGST_DEPT_NM,
-               TBQ.MODI_ID,
-               TBQ.MODI_DT,
-               TBQ.DEL_YN
-        FROM T_BBS_QNA TBQ
-             left outer join t_user tu on TBQ.rgst_id = tu.user_id
+        SELECT ROW_NUMBER() OVER (ORDER BY A.QNA_ID ASC) AS ROWNUM,
+               A.QNA_ID,
+               A.CL_CODE,
+               A.SJ,
+               A.CN,
+               A.ANSW,
+               A.ANSW_RGST_ID,
+               A.ANSW_RGST_DT,
+               A.OPEN_YN,
+               A.QNA_STAT,
+               A.BF_QNA_ID,
+               A.VIEW_CNT,
+               A.USE_YN,
+               A.RGST_ID,
+               A.RGST_DT,
+               A.MODI_ID,
+               A.MODI_DT,
+               A.DEL_YN,
+               A.NEXT_ID,
+               A.NEXT_SJ,
+               A.PRE_ID,
+               A.PRE_SJ
+        FROM (
+              SELECT QNA_ID,
+                     CL_CODE,
+                     SJ,
+                     CN,
+                     ANSW,
+                     ANSW_RGST_ID,
+                     ANSW_RGST_DT,
+                     OPEN_YN,
+                     QNA_STAT,
+                     BF_QNA_ID,
+                     VIEW_CNT,
+                     USE_YN,
+                     RGST_ID,
+                     RGST_DT,
+                     MODI_ID,
+                     MODI_DT,
+                     DEL_YN,
+                     LEAD(QNA_ID) OVER (ORDER BY QNA_ID)  AS NEXT_ID,
+                     LEAD(SJ) OVER (ORDER BY QNA_ID) AS NEXT_SJ,
+                     LAG(QNA_ID) OVER (ORDER BY QNA_ID) AS PRE_ID,
+                     LAG(SJ) OVER (ORDER BY QNA_ID)  AS PRE_SJ
+              FROM T_BBS_QNA
+              WHERE DEL_YN = 'N'
+              ) A
         WHERE QNA_ID = #{qnaId}
     </select>
 

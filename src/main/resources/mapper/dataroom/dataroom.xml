@@ -68,17 +68,38 @@
 
 
     <select id="selectByDataId" parameterType="String" resultType="DataRoomResDto">
-        SELECT DATA_ID,
-               SJ,
-               CN,
-               VIEW_CNT,
-               USE_YN,
-               RGST_ID,
-               RGST_DT,
-               MODI_ID,
-               MODI_DT,
-               DEL_YN
-        FROM T_BBS_DATA
+        SELECT ROW_NUMBER() OVER (ORDER BY A.DATA_ID ASC) AS ROWNUM,
+               A.DATA_ID,
+               A.SJ,
+               A.CN,
+               A.VIEW_CNT,
+               A.USE_YN,
+               A.RGST_ID,
+               A.RGST_DT,
+               A.MODI_ID,
+               A.MODI_DT,
+               A.DEL_YN,
+               A.NEXT_ID,
+               A.NEXT_SJ,
+               A.PRE_ID,
+               A.PRE_SJ
+        FROM (SELECT DATA_ID,
+                     SJ,
+                     CN,
+                     VIEW_CNT,
+                     USE_YN,
+                     RGST_ID,
+                     RGST_DT,
+                     MODI_ID,
+                     MODI_DT,
+                     DEL_YN,
+                     LEAD(DATA_ID) OVER (ORDER BY DATA_ID) AS NEXT_ID,
+                     LEAD(SJ) OVER (ORDER BY DATA_ID)      AS NEXT_SJ,
+                     LAG(DATA_ID) OVER (ORDER BY DATA_ID)  AS PRE_ID,
+                     LAG(SJ) OVER (ORDER BY DATA_ID)       AS PRE_SJ
+              FROM T_BBS_DATA
+              WHERE DEL_YN = 'N'
+              ) A
         WHERE DATA_ID = #{dataId}
     </select>
 

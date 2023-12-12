@@ -100,19 +100,40 @@
 
     <select id="selectByFaqId" parameterType="String" resultType="FaqResDto">
         SELECT ROW_NUMBER() OVER (ORDER BY ORD_SEQ ASC) AS ROWNUM,
-               FAQ_ID,
-               CL_CODE,
-               QSTN,
-               ANSW,
-               ORD_SEQ,
-               VIEW_CNT,
-               USE_YN,
-               RGST_ID,
-               RGST_DT,
-               MODI_ID,
-               MODI_DT,
-               DEL_YN
-        FROM T_BBS_FAQ
+               A.FAQ_ID,
+               A.CL_CODE,
+               A.QSTN,
+               A.ANSW,
+               A.ORD_SEQ,
+               A.VIEW_CNT,
+               A.USE_YN,
+               A.RGST_ID,
+               A.RGST_DT,
+               A.MODI_ID,
+               A.MODI_DT,
+               A.DEL_YN,
+               A.NEXT_ID,
+               A.NEXT_SJ,
+               A.PRE_ID,
+               A.PRE_SJ
+        FROM (SELECT FAQ_ID,
+                     CL_CODE,
+                     QSTN,
+                     ANSW,
+                     ORD_SEQ,
+                     VIEW_CNT,
+                     USE_YN,
+                     RGST_ID,
+                     RGST_DT,
+                     MODI_ID,
+                     MODI_DT,
+                     DEL_YN,
+                     LEAD(FAQ_ID) OVER (ORDER BY ORD_SEQ) AS NEXT_ID,
+                     LEAD(QSTN) OVER (ORDER BY ORD_SEQ)        AS NEXT_SJ,
+                     LAG(FAQ_ID) OVER (ORDER BY ORD_SEQ)  AS PRE_ID,
+                     LAG(QSTN) OVER (ORDER BY ORD_SEQ)         AS PRE_SJ
+              FROM T_BBS_FAQ
+              WHERE DEL_YN = 'N') A
         WHERE FAQ_ID = #{faqId}
         ORDER BY ROWNUM
     </select>
