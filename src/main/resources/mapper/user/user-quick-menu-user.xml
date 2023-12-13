@@ -7,6 +7,9 @@
                , CONNECT_BY_ROOT
                , MENU_ID
                , UP_MENU_ID
+               , ORD_SEQ
+               , MENU_URL
+               , MENU_DSC
                , AUTH_ID
                , LEVEL
                , PATH
@@ -16,6 +19,9 @@
                           , USM.MENU_ID AS CONNECT_BY_ROOT
                           , USM.MENU_ID
                           , USM.UP_MENU_ID
+                          , USM.ORD_SEQ
+                          , USM.MENU_URL
+                          , USM.MENU_DSC
                           , USMA.AUTH_ID
                           , 1 AS level
                           , ARRAY[USM.MENU_ID::TEXT]
@@ -30,6 +36,9 @@
                           , CONNECT_BY_ROOT
                           , USM.MENU_ID
                           , USM.UP_MENU_ID
+                          , USM.ORD_SEQ
+                          , USM.MENU_URL
+                          , USM.MENU_DSC
                           , USMA.AUTH_ID
                           , LEVEL + 1
                           , PATH||USM.MENU_ID
@@ -42,17 +51,23 @@
                                 AND USMA.AUTH_ID = #{search.authId}
                                 AND NOT CYCLE
                     )
-                     SELECT LPAD(' ', 4*(LEVEL-1)) || MENU_NM AS PADDED_MENU_NM
-                          , MENU_NM
+                     SELECT LPAD(' ', 4*(LEVEL-1)) || TUSM.MENU_NM AS PADDED_MENU_NM
+                          , TUSM.MENU_NM
                           , CONNECT_BY_ROOT
                           , TUSM.MENU_ID
-                          , UP_MENU_ID
+                          , TUSM.UP_MENU_ID
+                          , USM2.MENU_NM AS UP_MENU_NM
+                          , TUSM.ORD_SEQ
+                          , TUSM.MENU_URL
+                          , TUSM.MENU_DSC
                           , LEVEL
                           , PATH
                           , AUTH_ID
                        FROM TEMP_T_USER_SYS_MENU TUSM
                             INNER JOIN T_QCK_MENU_USER QMU
-                            ON TUSM.MENU_ID = QMU.MENU_ID AND QMU.USER_ID = #{search.userId}
+                                ON TUSM.MENU_ID = QMU.MENU_ID AND QMU.USER_ID = #{search.userId}
+                            LEFT JOIN T_USER_SYS_MENU USM2
+                                ON TUSM.UP_MENU_ID = USM2.MENU_ID
                       ORDER BY PATH
     </select>
 

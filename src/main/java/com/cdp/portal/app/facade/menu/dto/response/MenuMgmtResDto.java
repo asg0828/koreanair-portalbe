@@ -28,11 +28,14 @@ public class MenuMgmtResDto {
 		@Schema(description = "메뉴 ID", example = "", nullable = false)
 		private String menuId;
 
+		@Schema(description = "메뉴 명", example = "", nullable = false)
+		private String menuNm;
+
 		@Schema(description = "상위 메뉴 ID", example = "")
 		private String upMenuId;
 
-		@Schema(description = "메뉴 명", example = "", nullable = false)
-		private String menuNm;
+		@Schema(description = "상위 메뉴 명", example = "")
+		private String upMenuNm;
 
 		@Schema(description = "메뉴 URL", example = "")
 		private String menuUrl;
