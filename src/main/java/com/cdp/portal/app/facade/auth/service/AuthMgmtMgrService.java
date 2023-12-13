@@ -42,6 +42,7 @@ public class AuthMgmtMgrService {
         authMgmtMgrMapper.insert(authModel);
     }
 
+    @Transactional(readOnly = true)
 	public List<AuthMgmtResDto.Auth> getAuthMgmtMgrs(){
 		return authMgmtMgrMapper.selectAll().stream().map(c -> AuthMgmtResDto.Auth.builder()
 				.authId(c.getAuthId())

@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class UserMgmtService {
 	private final UserMgmtMapper userMgmtMapper;
 
+	@Transactional(readOnly = true)
     public UserMgmtResDto.UsersResult getUsers(PagingDto pagingDto, UserMgmtReqDto.SearchUser searchDto) {
         pagingDto.setPaging(userMgmtMapper.selectCount(searchDto));
 
@@ -26,11 +27,13 @@ public class UserMgmtService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public UserMgmtResDto.User getUser(final String userId) {
         return userMgmtMapper.selectById(userId);
     }
 
-    public UserMgmtResDto.UserApldAuth selectApldAuthByUser(final String userId) {
+    @Transactional(readOnly = true)
+    public UserMgmtResDto.UserApldAuth getApldUserAuth(final String userId) {
     	return userMgmtMapper.selectApldAuthByUser(userId);
     }
 

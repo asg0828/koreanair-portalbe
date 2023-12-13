@@ -130,8 +130,8 @@ public class DeptMgmtService {
 
     }
 
+    @Transactional(readOnly = true)
     public DeptMgmtResDto.DeptsResult getDepts(DeptMgmtReqDto.SearchDept searchDto) {
-
         return DeptMgmtResDto.DeptsResult.builder()
                 .contents(deptMgmtMapper.selectAll(searchDto))
                 .search(searchDto)

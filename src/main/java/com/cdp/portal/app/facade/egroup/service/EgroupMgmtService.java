@@ -143,8 +143,8 @@ public class EgroupMgmtService {
 
     }
 
+    @Transactional(readOnly = true)
     public EgroupMgmtResDto.EgroupsResult getEgroups(EgroupMgmtReqDto.SearchEgroup searchDto) {
-
         return EgroupMgmtResDto.EgroupsResult.builder()
                 .contents(egroupMgmtMapper.selectAll(searchDto))
                 .search(searchDto)

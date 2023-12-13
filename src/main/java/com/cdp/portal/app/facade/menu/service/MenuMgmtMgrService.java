@@ -87,6 +87,7 @@ public class MenuMgmtMgrService {
 
     }
 
+    @Transactional(readOnly = true)
     public MenuMgmtResDto.MenuMgmtResult getMenus(MenuMgmtReqDto.SearchMenu searchDto) {
         return MenuMgmtResDto.MenuMgmtResult.builder()
                 .contents(menuMgmtMgrMapper.selectAll(searchDto))
@@ -94,6 +95,7 @@ public class MenuMgmtMgrService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public MenuMgmtResDto.MenuByAuth getMenusByAuthMgr(MenuMgmtReqDto.SearchMenuByAuth searchDto) {
     	return MenuMgmtResDto.MenuByAuth.builder()
     			.menus(menuMgmtMgrMapper.selectByAuthIdMgrMenus(searchDto))

@@ -21,7 +21,7 @@ public class UserQuickMenuMgrService {
 
 	@Transactional(readOnly = true)
     public UserQuickMenuResDto.QuickMenuByUser getUserQuickMenus(final String userId) {
-		UserMgmtResDto.UserApldAuth userApldAuth = userMgmtService.selectApldAuthByUser(userId);
+		UserMgmtResDto.UserApldAuth userApldAuth = userMgmtService.getApldUserAuth(userId);
 
 		UserQuickMenuReqDto.SearchQuickMenuByAuthUser search = UserQuickMenuReqDto.SearchQuickMenuByAuthUser.builder()
 			.authId(userApldAuth.getApldMgrAuthId())

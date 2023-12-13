@@ -33,6 +33,7 @@ public class MenuAuthMgmtMgrService {
     	}
     }
 
+    @Transactional(readOnly = true)
     public MenuAuthMgmtResDto.MenuAuthMgmtResult getMenuAuths(String authId) {
         return MenuAuthMgmtResDto.MenuAuthMgmtResult.builder()
                 .authId(authId)

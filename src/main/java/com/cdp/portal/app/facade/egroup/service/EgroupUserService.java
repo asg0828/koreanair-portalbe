@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class EgroupUserService {
 	private final EgroupUserMapper egroupUserMapper;
 
+	@Transactional(readOnly = true)
 	public List<EgroupMgmtResDto.EgroupUser> getEgroupUsers(final String groupCode){
 		return egroupUserMapper.selectByGroupCode(groupCode).stream().map(c -> EgroupMgmtResDto.EgroupUser.builder()
 				.userId(c.getUserId())
