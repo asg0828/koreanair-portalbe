@@ -13,6 +13,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -141,7 +142,6 @@ public class LoggerAspect {
     
     private String getRequestBodyStr(HttpServletRequest request) {
         String result = null;
-        JSONObject jObj = null;
         String line = null;
         
         try {
@@ -153,9 +153,17 @@ public class LoggerAspect {
             }
             
             if (!StringUtils.isEmpty(sb.toString())) {
-                jObj = new JSONObject(sb.toString());
+                String value = sb.toString();
                 
-                result = jObj.toString();
+                if (StringUtils.startsWith(value, "{") && StringUtils.endsWith(value, "}")) {
+                    JSONObject jObj = new JSONObject(sb.toString());
+                    
+                    result = jObj.toString();
+                } else if (StringUtils.startsWith(value, "[") && StringUtils.endsWith(value, "]")) {
+                    JSONArray obj = new JSONArray(value);
+                    
+                    result = obj.toString();
+                }
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -163,6 +171,7 @@ public class LoggerAspect {
         
         return result;
     }
+
     
     private String getResponseBodyStr(Object data) {
         String result = null;
