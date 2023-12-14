@@ -1,0 +1,66 @@
+spring:
+  config:
+    activate:
+      on-profile: prd
+  datasource:
+    master:
+      jdbc-url: jdbc:postgresql://rds-cdp-prd.koreanair.com:5957/cdpprddb?currentSchema=cdp
+      username: cdpdevdb_app
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        minimum-idle: 5
+        maximum-pool-size: 20
+        connection-timeout: 10000
+        pool-name: cdp-master
+    slave:
+      jdbc-url: jdbc:postgresql://rds-cdp-prd.koreanair.com:5957/cdpprddb?currentSchema=cdp
+      username: cdpdevdb_app
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        minimum-idle: 5
+        maximum-pool-size: 20
+        connection-timeout: 10000
+        pool-name: cdp-slave
+  mvc:
+    pathmatch:
+      matching-strategy: 'ant_path_matcher'
+  devtools:
+    livereload:
+      enabled: false
+    remote:
+      restart:
+        enabled: false
+  redis:
+    host: redis-oneid-prd.koreanair.com
+    port: 6980
+    session-ttl: 1200
+    
+logging:
+  level:
+    root: info
+    org:
+      springframework: debug
+    com:
+      cdp:
+        portal: debug
+  pattern:
+    console: "%date{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread]%cyan( %logger{10}) - %msg%n"
+      
+cloud:
+  aws:
+    region: ap-northeast-2
+    secrets-manager:
+      db-password-arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/prd/cdp/app-ZdwILX
+
+hr:
+  arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY
+
+# AWS Properties
+aws-props:
+  bucket-name: awsdc-s3-dlk-prd-cdp-portalobject
+  s3-uri : s3://awsdc-s3-dlk-prd-cdp-portalobject
+  file-path: "board"
+  page-size: "10"
+  time-zone: "Asia/Seoul"
+      
+      
