@@ -12,9 +12,9 @@ import java.util.List;
 @Mapper
 public interface ReportMapper {
 
-    List<ReportResDto> selectVipReservationStatus(@Param("paging") PagingDto pagingDto);
+    List<ReportResDto> selectVipReservationStatus(@Param("paging") PagingDto pagingDto, @Param("sortedColumn") String sortedColumn, @Param("sortedDirection") String sortedDirection);
 
-    int selectCount(@Param("search") ReportReqDto.SearchReport searchDto);
+    int selectCount();
     List<ReportResDto> selectPurchaseContribution(String criteria);
     List<ReportResDto> selectIntlBoardingTop100(String criteria);
     List<ReportResDto> selectDomesticBoardingTop100(String criteria);

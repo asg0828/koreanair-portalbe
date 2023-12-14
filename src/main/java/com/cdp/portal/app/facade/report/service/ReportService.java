@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,12 +26,13 @@ public class ReportService {
      * @return
      */
     @Transactional
-    public ReportResDto.ReportsResult getVipReservationStatus (PagingDto pagingDto, ReportReqDto.SearchReport searchDto) {
-        pagingDto.setPaging(reportMapper.selectCount(searchDto));
+    public ReportResDto.ReportsResult getVipReservationStatus (PagingDto pagingDto, String sortedColumn, String sortedDirection) {
+        pagingDto.setPaging(reportMapper.selectCount());
+
+        List<ReportResDto> sortedData = reportMapper.selectVipReservationStatus(pagingDto, sortedColumn, sortedDirection);
 
         return ReportResDto.ReportsResult.builder()
-                .contents(reportMapper.selectVipReservationStatus(pagingDto))
-                .search(searchDto)
+                .contents(sortedData)
                 .page(pagingDto)
                 .build();
     }
