@@ -11,8 +11,26 @@
 
     <select id="selectVipReservationStatus" resultType="ReportResDto">
         SELECT
-        row_number() OVER (ORDER BY Z.rank ASC) AS row_num
-        ,Z.*
+        row_number() OVER (ORDER BY
+        <choose>
+            <when test="sortedColumn == 'oneId'">Z.one_id</when>
+            <when test="sortedColumn == 'criteria'">Z.criteria</when>
+            <when test="sortedColumn == 'category'">Z.category</when>
+            <when test="sortedColumn == 'rank'">Z.rank</when>
+            <when test="sortedColumn == 'user_nm'">Z.user_nm</when>
+            <when test="sortedColumn == 'skypass_nm'">Z.skypass_nm</when>
+            <when test="sortedColumn == 'vip_type'">Z.vip_type</when>
+            <when test="sortedColumn == 'confirmed_pnr_count'">Z.confirmed_pnr_count</when>
+            <when test="sortedColumn == 'scheduled_intl_flight_date'">Z.scheduled_intl_flight_date</when>
+            <when test="sortedColumn == 'last_intl_flight_date'">Z.last_intl_flight_date</when>
+            <otherwise>Z.rank</otherwise>
+        </choose>
+        <choose>
+            <when test="sortedDirection == 'asc'">ASC</when>
+            <when test="sortedDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>) AS row_num,
+        Z.*
         FROM (
         SELECT
         one_id,

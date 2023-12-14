@@ -40,25 +40,19 @@ public class FoReportRestController {
     )
     @Parameter(name ="page", required = false, description = "페이지", example = "1")
     @Parameter(name ="pageSize", required = false, description = "페이지 사이즈", example = "10")
-    @Parameter(name ="searchReport", required = false, description = "Report 검색", example = "")
-    @Parameter(name ="searchConditions", required = false, description = "", example = "")
+    @Parameter(name ="sortedColumn", required = false, description = "정렬 페이지", example = "rank")
+    @Parameter(name ="sortedDirection", required = false, description = "정렬 방향", example = "asc")
     @GetMapping(value = "/v1/vip", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getVipReservationStatus( @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-                                                      @RequestParam(value = "searchReport", required = false, defaultValue = "") String searchReport,
-                                                      @RequestParam(value = "searchConditions", required = false, defaultValue = "") String[] searchConditions) {
-
+                                                      @RequestParam(value = "sortedColumn", required = false, defaultValue = "rank") String sortedColumn,
+                                                      @RequestParam(value = "sortedDirection", required = false, defaultValue = "asc") String sortedDirection) {
         PagingDto pagingDto = PagingDto.builder()
                 .page(page)
                 .pageSize(pageSize)
                 .build();
 
-        ReportReqDto.SearchReport searchDto = ReportReqDto.SearchReport.builder()
-                .searchReport(searchReport)
-                .searchConditions(searchConditions)
-                .build();
-
-        return ResponseEntity.ok(ApiResDto.success(reportService.getVipReservationStatus(pagingDto,searchDto)));
+        return ResponseEntity.ok(ApiResDto.success(reportService.getVipReservationStatus(pagingDto, sortedColumn, sortedDirection)));
     }
 
     /**
