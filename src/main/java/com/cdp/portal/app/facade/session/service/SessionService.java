@@ -114,6 +114,7 @@ public class SessionService {
 //			String email = "pj.wjjung@kalmate.net";
 //			String email = "pj.yjshim@kalmate.net";
 //			String email = "pj.thoonkim@kalmate.net";
+//			String email = "pj.skahn@kalmate.net";
 
 			/*
 			boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
