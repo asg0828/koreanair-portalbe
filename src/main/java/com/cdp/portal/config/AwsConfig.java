@@ -18,7 +18,7 @@ public class AwsConfig {
 
     @Bean("awsCredentialsProvider")
     @Primary
-    @Profile({CommonConstants.Profile.PROD, CommonConstants.Profile.DEV, CommonConstants.Profile.LOCAL})
+    @Profile({CommonConstants.Profile.PRD, CommonConstants.Profile.DEV, CommonConstants.Profile.LOCAL})
     public AWSCredentialsProvider awsCredentialsProvider() {
         return new STSAssumeRoleSessionCredentialsProvider.Builder(roleArn, "SESSION_NAME")
                 .build();
@@ -26,7 +26,7 @@ public class AwsConfig {
 
     @Bean("amazonS3")
     @Primary
-    @Profile({CommonConstants.Profile.PROD, CommonConstants.Profile.DEV, CommonConstants.Profile.LOCAL})
+    @Profile({CommonConstants.Profile.PRD, CommonConstants.Profile.DEV, CommonConstants.Profile.LOCAL})
     public AmazonS3 amazonS3(AWSCredentialsProvider awsCredentialsProvider) {
         AWSCredentialsProviderChain credentialsProviderChain = new AWSCredentialsProviderChain(
                 awsCredentialsProvider,

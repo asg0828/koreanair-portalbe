@@ -53,7 +53,7 @@ cloud:
       db-password-arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/prd/cdp/app-ZdwILX
 
 hr:
-  arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY
+  arn: arn:aws:secretsmanager:us-east-1:993398491107:secret:secret/dlk/prd/cdp-Ye6TOa
 
 # AWS Properties
 aws-props:
