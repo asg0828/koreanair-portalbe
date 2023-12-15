@@ -20,7 +20,7 @@
             <when test="sortedColumn == 'userNm'">Z.user_nm</when>
             <when test="sortedColumn == 'skypassNm'">Z.skypass_nm</when>
             <when test="sortedColumn == 'vipType'">Z.vip_type</when>
-            <when test="sortedColumn == 'confirmedpnrcount'">Z.confirmed_pnr_count</when>
+            <when test="sortedColumn == 'confirmedPnrCount'">Z.confirmed_pnr_count</when>
             <when test="sortedColumn == 'scheduledIntlFlightDate'">Z.scheduled_intl_flight_date</when>
             <when test="sortedColumn == 'lastIntlFlightDate'">Z.last_intl_flight_date</when>
             <otherwise>Z.scheduled_intl_flight_date</otherwise>
