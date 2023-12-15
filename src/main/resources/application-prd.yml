@@ -5,7 +5,7 @@ spring:
   datasource:
     master:
       jdbc-url: jdbc:postgresql://rds-cdp-prd.koreanair.com:5957/cdpprddb?currentSchema=cdp
-      username: cdpdevdb_app
+      username: cdpprddb_app
       driver-class-name: org.postgresql.Driver
       hikari:
         minimum-idle: 5
@@ -14,7 +14,7 @@ spring:
         pool-name: cdp-master
     slave:
       jdbc-url: jdbc:postgresql://rds-cdp-prd.koreanair.com:5957/cdpprddb?currentSchema=cdp
-      username: cdpdevdb_app
+      username: cdpprddb_app
       driver-class-name: org.postgresql.Driver
       hikari:
         minimum-idle: 5
