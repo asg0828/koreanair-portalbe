@@ -1,5 +1,4 @@
-#FROM amazoncorretto:11-alpine3.17-jdk
-FROM public.ecr.aws/amazoncorretto/amazoncorretto:11
+FROM public.ecr.aws/docker/library/amazoncorretto:11-alpine3.17-jdk
 ENV AWS_XRAY_CONTEXT_MISSING LOG_ERROR
 ENV LC_ALL=C.UTF-8
 ARG SPRING_PROFILE=dev
