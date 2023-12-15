@@ -86,14 +86,10 @@ public class SessionService {
 
 		ApiResDto<SessionDto> result = null;
 
-		// google access token verify
 		HttpTransport transport = new NetHttpTransport();
 		JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
 		GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-				// Specify the clientId of the app that accesses the backend:
 				.setAudience(Collections.singletonList(clientId))
-				// Or, if multiple clients access the backend:
-				// .setAudience(Arrays.asList(clientId_1, clientId_2, clientId_3))
 				.build();
 
 		GoogleIdToken idToken = null;
@@ -105,11 +101,8 @@ public class SessionService {
 		}
 		if (idToken != null) {
 			Payload payload = idToken.getPayload();
-
 			String subject = payload.getSubject();
-
 			String name = (String) payload.get("name");
-
 			String email = payload.getEmail();
 //			String email = "pj.wjjung@kalmate.net";
 //			String email = "pj.yjshim@kalmate.net";
@@ -125,7 +118,10 @@ public class SessionService {
 			*/
 
 			try {
-				HrInfo hrInfo = getEmployeeHrInfo(email);
+//				HrInfo hrInfo = getEmployeeHrInfo(email);
+				HrInfo hrInfo = null;
+				// TODO: PRD 에서는 임시 우회 해야 할지도
+
 
 				if (ObjectUtils.isEmpty(hrInfo)) {
 					hrInfo = HrInfo.builder()
