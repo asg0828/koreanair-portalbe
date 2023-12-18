@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.json.JSONObject;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -30,25 +31,25 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @RequiredArgsConstructor
 public class DataSourceConfig {
-	
+
 	private final AWSSecretsManager secretsManagerClient;
 	private String dbPassword;
-	
+
 	@Value("${spring.config.activate.on-profile}")
     private String profile;
-	
+
 	@Value("${local.database.password.master-password}")
     private String localDbMasterPassword;
-	
+
 	@Value("${local.database.password.slave-password}")
 	private String localDbSlavePassword;
-	
+
     @Value("${cloud.aws.secrets-manager.db-password-arn}")
     String dbPasswordSecretManagerArn;
-    
+
     private static final String MASTER_DATASOURCE = "masterDataSource";
     private static final String SLAVE_DATASOURCE = "slaveDataSource";
-    
+
     @Bean(MASTER_DATASOURCE)
     @ConfigurationProperties(prefix = "spring.datasource.master")
     public DataSource masterDataSource() {
@@ -61,10 +62,10 @@ public class DataSourceConfig {
             }
             cdpMasterDataSource.setPassword(dbPassword);
         }
-        
+
         return cdpMasterDataSource;
     }
-    
+
     @Bean(SLAVE_DATASOURCE)
     @ConfigurationProperties(prefix = "spring.datasource.slave")
     public DataSource slaveDataSource() {
@@ -77,32 +78,32 @@ public class DataSourceConfig {
             }
             cdpSlaveDataSource.setPassword(dbPassword);
         }
-        
+
         return cdpSlaveDataSource;
     }
-    
+
     @Bean
     @DependsOn({MASTER_DATASOURCE, SLAVE_DATASOURCE})
     public DataSource routingDataSource(@Qualifier(MASTER_DATASOURCE) DataSource masterDataSource, @Qualifier(SLAVE_DATASOURCE) DataSource slaveDataSource) {
         RoutingDataSource routingDataSource = new RoutingDataSource();
-        
+
         Map<Object, Object> datasourceMap = new HashMap<>();
         datasourceMap.put("master", masterDataSource);
         datasourceMap.put("slave", slaveDataSource);
-        
+
         routingDataSource.setTargetDataSources(datasourceMap);
         routingDataSource.setDefaultTargetDataSource(masterDataSource);
-        
+
         return routingDataSource;
     }
-    
+
     @Bean
     @Primary
     @DependsOn("routingDataSource")
     public DataSource dataSource(DataSource routingDataSource) {
         return new LazyConnectionDataSourceProxy(routingDataSource);
     }
-    
+
     public void getSecretsManagerDbPassword() {
         try {
             var getSecretValueRequest = new GetSecretValueRequest()
