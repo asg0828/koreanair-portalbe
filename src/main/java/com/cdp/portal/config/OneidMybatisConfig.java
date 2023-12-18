@@ -27,11 +27,8 @@ public class OneidMybatisConfig {
 
 	private final ApplicationContext applicationContext;
 
-	private final DataSource oneidDataSource;
-
-	@Qualifier("oneidSqlSessionFactory")
-	@Bean
-	public SqlSessionFactory oneidSqlSessionFactory() throws Exception {
+	@Bean("oneidSqlSessionFactory")
+	public SqlSessionFactory oneidSqlSessionFactory(@Qualifier("oneidDataSource") DataSource dataSource) throws Exception {
 		Resource[] resources=null;
 		try {
 			resources=new PathMatchingResourcePatternResolver().getResources("classpath:mapper/**/*.xml");
@@ -41,14 +38,14 @@ public class OneidMybatisConfig {
 		}
 
 		SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
-		sessionFactory.setDataSource(oneidDataSource);
+		sessionFactory.setDataSource(dataSource);
 		sessionFactory.setConfigLocation(applicationContext.getResource("classpath:mybatis/mybatis-config.xml"));
 		sessionFactory.setMapperLocations(resources);
 
 		return sessionFactory.getObject();
 	}
 
-	@Bean(name="oneidSqlSessionTemplate")
+	@Bean("oneidSqlSessionTemplate")
 	public SqlSessionTemplate oneidSqlSessionTemplate(@Qualifier("oneidSqlSessionFactory") SqlSessionFactory oneidSqlSessionFactory) {
 		if(oneidSqlSessionFactory == null) {
 			log.debug(">> oneidSqlSessionFactory is null");

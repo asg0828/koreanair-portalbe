@@ -1,7 +1,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cdp.portal.app.facade.auth.mapper.AuthMgmtMgrMapper">
 
-    <select id="selectAll1234" resultType="AuthModel">
+    <select id="selectAll" resultType="AuthModel">
         SELECT ROW_NUMBER() OVER (ORDER BY RGST_DT ASC) AS ROWNUM
              , AUTH_ID
              , AUTH_CL
@@ -10,7 +10,7 @@
           FROM T_MGR_SYS_AUTH
     </select>
 
-    <select id="selectById1234" resultType="AuthModel">
+    <select id="selectById" resultType="AuthModel">
         SELECT ROW_NUMBER() OVER (ORDER BY RGST_DT ASC) AS ROWNUM
              , AUTH_ID
              , AUTH_CL
@@ -20,7 +20,7 @@
          WHERE AUTH_ID = #{authId}
     </select>
 
-    <insert id="insert1234" parameterType="AuthModel">
+    <insert id="insert" parameterType="AuthModel">
         INSERT INTO T_MGR_SYS_AUTH (
                AUTH_ID
              , AUTH_NM
@@ -40,7 +40,7 @@
         )
     </insert>
 
-    <update id="update1234" parameterType="AuthModel">
+    <update id="update" parameterType="AuthModel">
         UPDATE
             T_MGR_SYS_AUTH
         SET
@@ -52,17 +52,17 @@
             AUTH_ID = #{authId}
     </update>
 
-    <delete id="delete1234" parameterType="String">
+    <delete id="delete" parameterType="String">
         DELETE FROM T_MGR_SYS_AUTH
          WHERE AUTH_ID = #{authId}
     </delete>
 
-    <delete id="deleteMgrMenuByAuthId1234" parameterType="String">
+    <delete id="deleteMgrMenuByAuthId" parameterType="String">
         DELETE FROM T_MGR_SYS_MENU_AUTH
          WHERE AUTH_ID = #{authId}
     </delete>
 
-    <delete id="deleteMgrMenuByMenuId1234" parameterType="String">
+    <delete id="deleteMgrMenuByMenuId" parameterType="String">
         DELETE FROM T_MGR_SYS_MENU_AUTH
          WHERE MENU_ID = #{menuId}
     </delete>

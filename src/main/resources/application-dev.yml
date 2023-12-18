@@ -21,6 +21,15 @@ spring:
         maximum-pool-size: 20
         connection-timeout: 10000
         pool-name: cdp-slave
+    oneid:
+      jdbc-url: jdbc:postgresql://oneiddb-dev.koreanair.com:5957/oneiddevdb?charSet=UTF-8
+      username: oneiddevdb_app
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        minimum-idle: 5
+        maximum-pool-size: 20
+        connection-timeout: 10000
+        pool-name: cdp-oneid
   mvc:
     pathmatch:
       matching-strategy: 'ant_path_matcher'

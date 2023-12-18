@@ -22,16 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @RequiredArgsConstructor
 @MapperScan(basePackages="com.**.mapper", annotationClass = org.apache.ibatis.annotations.Mapper.class, sqlSessionFactoryRef = "cdpSqlSessionFactory")
-//@MapperScan(basePackages="com.**.mapper", annotationClass = CdpMapper.class, sqlSessionFactoryRef = "cdpSqlSessionFactory")
 public class CdpMybatisConfig {
 
 	private final ApplicationContext applicationContext;
 
-	private final DataSource oneidDataSource;
-
-	@Qualifier("cdpSqlSessionFactory")
-	@Bean
-	public SqlSessionFactory cdpSqlSessionFactory() throws Exception {
+	@Bean("cdpSqlSessionFactory")
+	public SqlSessionFactory cdpSqlSessionFactory(@Qualifier("routingDataSource") DataSource dataSource) throws Exception {
 		Resource[] resources=null;
 		try {
 			resources=new PathMatchingResourcePatternResolver().getResources("classpath:mapper/**/*.xml");
@@ -41,14 +37,14 @@ public class CdpMybatisConfig {
 		}
 
 		SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
-		sessionFactory.setDataSource(oneidDataSource);
+		sessionFactory.setDataSource(dataSource);
 		sessionFactory.setConfigLocation(applicationContext.getResource("classpath:mybatis/mybatis-config.xml"));
 		sessionFactory.setMapperLocations(resources);
 
 		return sessionFactory.getObject();
 	}
 
-	@Bean(name="cdpSqlSessionTemplate")
+	@Bean("cdpSqlSessionTemplate")
 	public SqlSessionTemplate cdpSqlSessionTemplate(@Qualifier("cdpSqlSessionFactory") SqlSessionFactory cdpSqlSessionFactory) {
 		if(cdpSqlSessionFactory == null) {
 			log.debug(">> cdpSqlSessionFactory is null");

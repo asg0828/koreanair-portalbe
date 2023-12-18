@@ -8,5 +8,10 @@
 		<setting name="jdbcTypeForNull" value="NULL" />
 		<setting name="callSettersOnNulls" value="true"/>
 		<setting name="defaultExecutorType" value="REUSE" />
+		<setting name="useGeneratedKeys" value="false" />
+		<setting name="cacheEnabled" value="false" />
 	</settings>
+	<typeAliases>
+      <package name="com.cdp.portal"/>
+    </typeAliases>
 </configuration>

@@ -44,11 +44,16 @@ public class DataSourceConfig {
 	@Value("${local.database.password.slave-password}")
 	private String localDbSlavePassword;
 
+	@Value("${local.database.password.oneid-password}")
+	private String localDbOneidPassword;
+
     @Value("${cloud.aws.secrets-manager.db-password-arn}")
     String dbPasswordSecretManagerArn;
 
     private static final String MASTER_DATASOURCE = "masterDataSource";
     private static final String SLAVE_DATASOURCE = "slaveDataSource";
+    private static final String ROUTING_DATASOURCE = "routingDataSource";
+    private static final String ONEID_DATASOURCE = "oneidDataSource";
 
     @Bean(MASTER_DATASOURCE)
     @ConfigurationProperties(prefix = "spring.datasource.master")
@@ -100,6 +105,7 @@ public class DataSourceConfig {
     @Bean
     @Primary
     @DependsOn("routingDataSource")
+    @Qualifier(ROUTING_DATASOURCE)
     public DataSource dataSource(DataSource routingDataSource) {
         return new LazyConnectionDataSourceProxy(routingDataSource);
     }
@@ -121,6 +127,23 @@ public class DataSourceConfig {
             log.error(e.getMessage());
             throw new AWSSecretsManagerException("SecretManager Exception Occured : " + e.getMessage());
         }
+    }
+
+    @Bean(ONEID_DATASOURCE)
+    @ConfigurationProperties(prefix = "spring.datasource.oneid")
+    public DataSource oneidDataSource() {
+    	var oneidDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
+    	if ("local".equals(profile)) {
+    		oneidDataSource.setPassword(localDbOneidPassword);
+        } else {
+            if (dbPassword == null) {
+//                getSecretsManagerDbPassword();
+            	// TODO: 개발, 운영시 arn 필요
+            }
+            oneidDataSource.setPassword(dbPassword);
+        }
+
+        return oneidDataSource;
     }
 
 }
