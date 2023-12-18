@@ -9,6 +9,7 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -36,7 +37,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-//@Aspect
+@Aspect
 @Component
 @RequiredArgsConstructor
 public class LoggerAspect {
@@ -68,7 +69,7 @@ public class LoggerAspect {
 //                log.debug("Request uri : {}", request.getRequestURI());
 //                log.debug("Request method : {}", request.getMethod());
 //                log.debug("Request query : {}", commonUtil.getDecodedQueryStr(request.getQueryString()));
-//                log.debug("Request body : {}", this.getRequestBodyStr(request));
+//                log.debug("Request body : {}", !this.isMultipartFormDataContentType(request) ? this.getRequestBodyStr(request) : null);
             }
             
             result = proceedingJoinPoint.proceed();
@@ -96,6 +97,11 @@ public class LoggerAspect {
         return result;
     }
     
+    /**
+     * 관리자 로그 등록
+     * @param request
+     * @param result
+     */
     private void createLogMgr(HttpServletRequest request, Object result) {
         LogMgrReqDto.CreateLogMgr dto = LogMgrReqDto.CreateLogMgr.builder()
                 .logDt(LocalDateTime.now())
@@ -104,13 +110,18 @@ public class LoggerAspect {
                 .rqstUri(request.getRequestURI())
                 .rqstMethod(request.getMethod())
                 .rqstQuery(commonUtil.getDecodedQueryStr(request.getQueryString()))
-                .rqstBody(this.getRequestBodyStr(request))
+                .rqstBody(!this.isMultipartFormDataContentType(request) ? this.getRequestBodyStr(request) : null)
                 .rsptBody(this.getResponseBodyStr(result))
                 .build();
         
         logMgrService.createLogMgr(dto);
     }
     
+    /**
+     * 사용자 로그 등록
+     * @param request
+     * @param result
+     */
     private void createLogUser(HttpServletRequest request, Object result) {
         LogUserReqDto.CreateLogUser dto = LogUserReqDto.CreateLogUser.builder()
                 .logDt(LocalDateTime.now())
@@ -119,17 +130,28 @@ public class LoggerAspect {
                 .rqstUri(request.getRequestURI())
                 .rqstMethod(request.getMethod())
                 .rqstQuery(commonUtil.getDecodedQueryStr(request.getQueryString()))
-                .rqstBody(this.getRequestBodyStr(request))
+                .rqstBody(!this.isMultipartFormDataContentType(request) ? this.getRequestBodyStr(request) : null)
                 .rsptBody(this.getResponseBodyStr(result))
                 .build();
         
         logUserService.createLogUser(dto);
     }
     
+    /**
+     * 사용자 아이디 정보 조회
+     * @return
+     */
     private String getUserId() {
-        return !Objects.isNull(SessionScopeUtil.getContextSession()) ? SessionScopeUtil.getContextSession().getUserId() : null;
+        if (Objects.isNull(SessionScopeUtil.getContextSession())) return null;
+        
+        return SessionScopeUtil.getContextSession().getUserId();
     }
     
+    /**
+     * 요청 헤더 정보를 반환
+     * @param request
+     * @return
+     */
     private Map<String, Object> getRequestHeader(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
         
@@ -140,6 +162,11 @@ public class LoggerAspect {
         return result;
     }
     
+    /**
+     * 요청 바디 추출
+     * @param request
+     * @return
+     */
     private String getRequestBodyStr(HttpServletRequest request) {
         String result = null;
         String line = null;
@@ -172,8 +199,14 @@ public class LoggerAspect {
         return result;
     }
 
-    
+    /**
+     * 응답 바디 추출
+     * @param data
+     * @return
+     */
     private String getResponseBodyStr(Object data) {
+        if (Objects.isNull(data)) return null;
+        
         String result = null;
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         
@@ -186,8 +219,13 @@ public class LoggerAspect {
         return result;
     }
     
+    /**
+     * 애플리케이션 프로필 정보 조회
+     * @param environment
+     * @return
+     */
     private String getProfile(Environment environment) {
-        if (environment == null) return StringUtils.EMPTY;
+        if (Objects.isNull(environment)) return StringUtils.EMPTY;
 
         String[] activeProfiles = environment.getActiveProfiles();
 
@@ -198,6 +236,17 @@ public class LoggerAspect {
         }
 
         return profile;
+    }
+    
+    /**
+     * 컨텐트 타입이 multipart/form-data 여부 체크 
+     * @param request
+     * @return
+     */
+    private Boolean isMultipartFormDataContentType(HttpServletRequest request) {
+        if (Objects.isNull(request.getContentType())) return false;
+        
+        return request.getContentType().contains(ContentType.MULTIPART_FORM_DATA.getMimeType());
     }
     
 }

@@ -13,7 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.cdp.portal.common.wrapper.CachingRequestWrapper;
 import com.cdp.portal.common.wrapper.CachingResponseWrapper;
 
-//@Component
+@Component
 public class RequestResponseWrapperFilter extends OncePerRequestFilter {
 
     @Override

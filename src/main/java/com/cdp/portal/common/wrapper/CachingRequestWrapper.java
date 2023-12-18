@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.entity.ContentType;
 import org.springframework.util.StringUtils;
 
 public class CachingRequestWrapper extends HttpServletRequestWrapper {
@@ -29,6 +31,10 @@ public class CachingRequestWrapper extends HttpServletRequestWrapper {
             characterEncoding = StandardCharsets.UTF_8.name();
         }
         this.encoding = Charset.forName(characterEncoding);
+        
+        if (!Objects.isNull(request.getContentType()) && request.getContentType().contains(ContentType.MULTIPART_FORM_DATA.getMimeType())) {
+            return;
+        }
 
         try (InputStream inputStream = request.getInputStream()) {
             this.rawData = IOUtils.toByteArray(inputStream);
