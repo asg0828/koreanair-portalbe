@@ -27,6 +27,27 @@ import javax.validation.Valid;
 public class FoQnaRestController {
     private final QnaService qnaService;
 
+    @Operation(summary = "Q&A 등록 API", description = "Q&A를 등록한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+    }
+    )
+    @PostMapping(value = "/v1/qna", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createQna(@Valid @RequestBody QnaReqDto.CreateQnaReq dto) {
+        if (dto.getAnsw() != null && !dto.getAnsw().isEmpty()) {
+            dto.setRgstId("admin");
+            dto.setAnswRgstId("admin");
+            dto.setModiId("admin");
+        } else {
+            dto.setRgstId("admin");
+            dto.setModiId("admin");
+        }
+        qnaService.createQna(dto);
+
+        return ResponseEntity.ok(ApiResDto.success());
+    }
+
     @Operation(summary = "Q&A 목록 조회", description = "Q&A 목록을 조회한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class))),
@@ -74,4 +95,42 @@ public class FoQnaRestController {
         return ResponseEntity.ok(ApiResDto.success(qnaResDto));
     }
 
+    @Operation(summary = "Q&A 수정", description = "Q&A를 수정한다.", tags = { "qna" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResDto.class)))
+    }
+    )
+    @Parameter(name ="qnaId", required = true, description = "Q&A ID", example = "1")
+    @PutMapping(value = "/v1/qna/{qnaId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateQna(@PathVariable String qnaId, @Valid @RequestBody QnaReqDto.UpdateQnaReq dto) {
+        qnaService.updateQna(qnaId, dto);
+
+        return ResponseEntity.ok(ApiResDto.success());
+    }
+
+    @Operation(summary = "Q&A 삭제", description = "Q&A을 완전 삭제한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = QnaResDto.QnaResDtoResult.class)))
+    }
+    )
+    @Parameter(name ="qnaId", required = true, description = "QNA ID", example = "qn23000000005")
+    @DeleteMapping(value = "/v1/qna/{qnaId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteQna(@PathVariable String qnaId) {
+        qnaService.deleteQna(qnaId);
+
+        return ResponseEntity.ok(ApiResDto.success());
+    }
+
+    @Operation(summary = "Q&A SOFT 삭제", description = "Q&A을 SOFT 삭제한다.(del_yn)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = QnaResDto.QnaResDtoResult.class)))
+    }
+    )
+    @PostMapping(value = "/v1/qna/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteQna2(@Valid @RequestBody QnaReqDto.DeleteQnaReq dto) {
+        dto.setModiId("admin"); // 사용자 정보 받아오기 전까지 일단 하드코딩
+        qnaService.deleteQna2(dto);
+
+        return ResponseEntity.ok(ApiResDto.success());
+    }
 }
