@@ -34,6 +34,7 @@ public class DataSourceConfig {
 
 	private final AWSSecretsManager secretsManagerClient;
 	private String dbPassword;
+	private String dbPasswordOneid;
 
 	@Value("${spring.config.activate.on-profile}")
     private String profile;
@@ -50,14 +51,16 @@ public class DataSourceConfig {
     @Value("${cloud.aws.secrets-manager.db-password-arn}")
     String dbPasswordSecretManagerArn;
 
+    @Value("${cloud.aws.secrets-manager.db-password-arn-oneid}")
+    String dbPasswordSecretManagerArnOneid;
+
     private static final String MASTER_DATASOURCE = "masterDataSource";
     private static final String SLAVE_DATASOURCE = "slaveDataSource";
     private static final String ROUTING_DATASOURCE = "routingDataSource";
-    private static final String ONEID_DATASOURCE = "oneidDataSource";
 
     @Bean(MASTER_DATASOURCE)
     @ConfigurationProperties(prefix = "spring.datasource.master")
-    public DataSource masterDataSource() {
+    DataSource masterDataSource() {
     	var cdpMasterDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
     	if ("local".equals(profile)) {
             cdpMasterDataSource.setPassword(localDbMasterPassword);
@@ -73,7 +76,7 @@ public class DataSourceConfig {
 
     @Bean(SLAVE_DATASOURCE)
     @ConfigurationProperties(prefix = "spring.datasource.slave")
-    public DataSource slaveDataSource() {
+    DataSource slaveDataSource() {
     	var cdpSlaveDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
     	if ("local".equals(profile)) {
     		cdpSlaveDataSource.setPassword(localDbSlavePassword);
@@ -89,7 +92,7 @@ public class DataSourceConfig {
 
     @Bean
     @DependsOn({MASTER_DATASOURCE, SLAVE_DATASOURCE})
-    public DataSource routingDataSource(@Qualifier(MASTER_DATASOURCE) DataSource masterDataSource, @Qualifier(SLAVE_DATASOURCE) DataSource slaveDataSource) {
+    DataSource routingDataSource(@Qualifier(MASTER_DATASOURCE) DataSource masterDataSource, @Qualifier(SLAVE_DATASOURCE) DataSource slaveDataSource) {
         RoutingDataSource routingDataSource = new RoutingDataSource();
 
         Map<Object, Object> datasourceMap = new HashMap<>();
@@ -106,8 +109,24 @@ public class DataSourceConfig {
     @Primary
     @DependsOn("routingDataSource")
     @Qualifier(ROUTING_DATASOURCE)
-    public DataSource dataSource(DataSource routingDataSource) {
+    DataSource dataSource(DataSource routingDataSource) {
         return new LazyConnectionDataSourceProxy(routingDataSource);
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.oneid")
+    DataSource oneidDataSource() {
+    	var oneidDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
+    	if ("local".equals(profile)) {
+    		oneidDataSource.setPassword(localDbOneidPassword);
+        } else {
+            if (dbPasswordOneid == null) {
+            	getSecretsManagerDbPasswordOneid();
+            }
+            oneidDataSource.setPassword(dbPasswordOneid);
+        }
+
+        return oneidDataSource;
     }
 
     public void getSecretsManagerDbPassword() {
@@ -129,21 +148,23 @@ public class DataSourceConfig {
         }
     }
 
-    @Bean(ONEID_DATASOURCE)
-    @ConfigurationProperties(prefix = "spring.datasource.oneid")
-    public DataSource oneidDataSource() {
-    	var oneidDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
-    	if ("local".equals(profile)) {
-    		oneidDataSource.setPassword(localDbOneidPassword);
-        } else {
-            if (dbPassword == null) {
-//                getSecretsManagerDbPassword();
-            	// TODO: 개발, 운영시 arn 필요
-            }
-            oneidDataSource.setPassword(dbPassword);
-        }
+    public void getSecretsManagerDbPasswordOneid() {
+    	try {
+    		var getSecretValueRequest = new GetSecretValueRequest()
+    				.withSecretId(dbPasswordSecretManagerArnOneid);
+    		GetSecretValueResult getSecretValueResult = null;
+    		getSecretValueResult = secretsManagerClient.getSecretValue(getSecretValueRequest);
 
-        return oneidDataSource;
+    		if (getSecretValueResult.getSecretString() != null) {
+    			var secret = getSecretValueResult.getSecretString();
+
+    			var jObject = new JSONObject(secret);
+    			this.dbPasswordOneid = jObject.getString("Password");
+    		}
+    	} catch (Exception e) {
+    		log.error(e.getMessage());
+    		throw new AWSSecretsManagerException("SecretManager Exception Occured : " + e.getMessage());
+    	}
     }
 
 }

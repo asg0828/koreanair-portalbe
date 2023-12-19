@@ -6,7 +6,6 @@ spring:
     master:
       jdbc-url: jdbc:log4jdbc:postgresql://rds-cdp-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
       username: cdpdevdb_mgr
-      password: h@#Ru0Ro
       driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
       hikari:
         minimum-idle: 5
@@ -14,20 +13,18 @@ spring:
         connection-timeout: 10000
         pool-name: cdp-master
     slave:
-      jdbc-url: jdbc:postgresql://rds-cdp-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
+      jdbc-url: jdbc:log4jdbc:postgresql://rds-cdp-dev.koreanair.com:5957/cdpdevdb?currentSchema=cdp
       username: cdpdevdb_user
-      password: G$BRl5$B
-      #driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-      driver-class-name: org.postgresql.Driver
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
       hikari:
         minimum-idle: 5
         maximum-pool-size: 20
         connection-timeout: 10000
         pool-name: cdp-slave
     oneid:
-      jdbc-url: jdbc:postgresql://oneiddb-dev.koreanair.com:5957/oneiddevdb?charSet=UTF-8
+      jdbc-url: jdbc:log4jdbc:postgresql://oneiddb-dev.koreanair.com:5957/oneiddevdb?charSet=UTF-8
       username: oneiddevdb_app
-      driver-class-name: org.postgresql.Driver
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
       hikari:
         minimum-idle: 5
         maximum-pool-size: 20
@@ -74,6 +71,7 @@ cloud:
       arn: arn:aws:iam::658379516860:role/CDP-PORTALDEVELOPER
     secrets-manager:
       db-password-arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/cdp/app-Yufwll
+      db-password-arn-oneid: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/oneid/oneiddevdb-X6cSCC
       s3:
         bucket: "awsdc-s3-dlk-dev-cdp-portalobject"
       credentials:

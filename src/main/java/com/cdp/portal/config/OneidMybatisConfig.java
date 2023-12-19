@@ -21,17 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-//@MapperScan(basePackages="com.cdp.portal.app.facade.oneid.mapper", sqlSessionFactoryRef = "oneidSqlSessionFactory")
-@MapperScan(basePackages="com.**.mapper", annotationClass = OneidMapper.class, sqlSessionFactoryRef = "oneidSqlSessionFactory")
+@MapperScan(basePackages="com.cdp.**.mapper", annotationClass = OneidMapper.class, sqlSessionFactoryRef = "oneidSqlSessionFactory")
 public class OneidMybatisConfig {
 
 	private final ApplicationContext applicationContext;
 
-	@Bean("oneidSqlSessionFactory")
-	public SqlSessionFactory oneidSqlSessionFactory(@Qualifier("oneidDataSource") DataSource dataSource) throws Exception {
-		Resource[] resources=null;
+    @Bean
+    SqlSessionFactory oneidSqlSessionFactory(@Qualifier("oneidDataSource") DataSource dataSource) throws Exception {
+		Resource[] resources = null;
+
 		try {
-			resources=new PathMatchingResourcePatternResolver().getResources("classpath:mapper/**/*.xml");
+			resources = new PathMatchingResourcePatternResolver().getResources("classpath:mapper/**/*.xml");
 		} catch(FileNotFoundException e) {
 			log.debug(">> resources(*Maper.xml) does not exist.");
 			return null;
@@ -45,8 +45,8 @@ public class OneidMybatisConfig {
 		return sessionFactory.getObject();
 	}
 
-	@Bean("oneidSqlSessionTemplate")
-	public SqlSessionTemplate oneidSqlSessionTemplate(@Qualifier("oneidSqlSessionFactory") SqlSessionFactory oneidSqlSessionFactory) {
+    @Bean
+    SqlSessionTemplate oneidSqlSessionTemplate(@Qualifier("oneidSqlSessionFactory") SqlSessionFactory oneidSqlSessionFactory) {
 		if(oneidSqlSessionFactory == null) {
 			log.debug(">> oneidSqlSessionFactory is null");
 			return null;
@@ -54,6 +54,5 @@ public class OneidMybatisConfig {
 
 		return new SqlSessionTemplate(oneidSqlSessionFactory);
 	}
-
 
 }

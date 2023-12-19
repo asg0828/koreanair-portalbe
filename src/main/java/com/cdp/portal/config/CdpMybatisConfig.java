@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -21,16 +22,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-@MapperScan(basePackages="com.**.mapper", annotationClass = org.apache.ibatis.annotations.Mapper.class, sqlSessionFactoryRef = "cdpSqlSessionFactory")
+@MapperScan(basePackages="com.cdp.**.mapper", annotationClass = Mapper.class, sqlSessionFactoryRef = "cdpSqlSessionFactory")
 public class CdpMybatisConfig {
 
 	private final ApplicationContext applicationContext;
 
-	@Bean("cdpSqlSessionFactory")
-	public SqlSessionFactory cdpSqlSessionFactory(@Qualifier("routingDataSource") DataSource dataSource) throws Exception {
-		Resource[] resources=null;
+	@Bean
+	SqlSessionFactory cdpSqlSessionFactory(@Qualifier("routingDataSource") DataSource dataSource) throws Exception {
+		Resource[] resources = null;
+
 		try {
-			resources=new PathMatchingResourcePatternResolver().getResources("classpath:mapper/**/*.xml");
+			resources = new PathMatchingResourcePatternResolver().getResources("classpath:mapper/**/*.xml");
 		} catch(FileNotFoundException e) {
 			log.debug(">> resources(*Maper.xml) does not exist.");
 			return null;
@@ -44,8 +46,8 @@ public class CdpMybatisConfig {
 		return sessionFactory.getObject();
 	}
 
-	@Bean("cdpSqlSessionTemplate")
-	public SqlSessionTemplate cdpSqlSessionTemplate(@Qualifier("cdpSqlSessionFactory") SqlSessionFactory cdpSqlSessionFactory) {
+	@Bean
+	SqlSessionTemplate cdpSqlSessionTemplate(@Qualifier("cdpSqlSessionFactory") SqlSessionFactory cdpSqlSessionFactory) {
 		if(cdpSqlSessionFactory == null) {
 			log.debug(">> cdpSqlSessionFactory is null");
 			return null;

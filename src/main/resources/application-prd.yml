@@ -21,6 +21,15 @@ spring:
         maximum-pool-size: 20
         connection-timeout: 10000
         pool-name: cdp-slave
+    oneid:
+      jdbc-url: jdbc:postgresql://rds-oneid-prd.koreanair.com:5957/oneidprddb?charSet=UTF-8
+      username: oneidprddb_app
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        minimum-idle: 5
+        maximum-pool-size: 20
+        connection-timeout: 10000
+        pool-name: cdp-oneid
   mvc:
     pathmatch:
       matching-strategy: 'ant_path_matcher'
@@ -51,6 +60,7 @@ cloud:
     region: ap-northeast-2
     secrets-manager:
       db-password-arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/prd/cdp/app-ZdwILX
+      db-password-arn-oneid: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/prd/oneid/oneidprddb-44eNpd
 
 hr:
   arn: arn:aws:secretsmanager:us-east-1:993398491107:secret:secret/dlk/prd/cdp-Ye6TOa

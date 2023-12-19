@@ -118,8 +118,8 @@ public class SessionService {
 			*/
 
 			try {
-//				HrInfo hrInfo = getEmployeeHrInfo(email);
-				HrInfo hrInfo = null;
+				HrInfo hrInfo = getEmployeeHrInfo(email);
+//				HrInfo hrInfo = null;
 				// TODO: PRD 에서는 임시 우회 해야 할지도
 
 

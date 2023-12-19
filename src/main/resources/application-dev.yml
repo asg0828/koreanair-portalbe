@@ -61,6 +61,7 @@ cloud:
     region: ap-northeast-2
     secrets-manager:
       db-password-arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/cdp/app-Yufwll
+      db-password-arn-oneid: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/oneid/oneiddevdb-X6cSCC
 
 hr:
   arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/dev/cdp-UzdVxY
