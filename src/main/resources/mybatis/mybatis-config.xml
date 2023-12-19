@@ -9,7 +9,7 @@
 		<setting name="useGeneratedKeys" value="false" />
 	</settings>
 	<typeAliases>
-      <package name="com.cdp.portal"/>
+      <package name="com.cdp"/>
     </typeAliases>
     <typeHandlers>
         <package name="com.cdp.portal" />
