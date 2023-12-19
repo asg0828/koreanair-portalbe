@@ -31,7 +31,7 @@
         ORDER BY a.rownum ASC
     </sql>
 
-    <insert id="insertQna" parameterType="qnaModel">
+    <insert id="insertQna" parameterType="QnaModel">
         INSERT INTO T_BBS_QNA (
         QNA_ID
         , CL_CODE
@@ -73,7 +73,7 @@
         )
     </insert>
 
-    <select id="selectAll" resultType="qnaResDto">
+    <select id="selectAll" resultType="QnaResDto">
         select
         *
         from (
@@ -167,7 +167,7 @@
         WHERE QNA_ID = #{qnaId}
     </select>
 
-    <update id="updateQna" parameterType="qnaModel">
+    <update id="updateQna" parameterType="QnaModel">
         UPDATE
         t_bbs_qna
         SET
@@ -197,7 +197,7 @@
             QNA_ID = #{qnaId}
     </delete>
 
-    <update id="deleteQna2" parameterType="qnaModel">
+    <update id="deleteQna2" parameterType="QnaModel">
         UPDATE
             t_bbs_qna
         SET
@@ -208,21 +208,21 @@
             qna_id = #{qnaId}
     </update>
 
-    <update id="addViewCntQna" parameterType="qnaModel">
+    <update id="addViewCntQna" parameterType="QnaModel">
         UPDATE
             T_BBS_QNA
         SET VIEW_CNT = (COALESCE(VIEW_CNT, 0) + 1)
         WHERE QNA_ID = #{qnaId}
     </update>
 
-    <update id="updateQnaStat" parameterType="qnaModel">
+    <update id="updateQnaStat" parameterType="QnaModel">
         UPDATE
             T_BBS_QNA
         SET QNA_STAT = 'READED'
         WHERE QNA_ID = #{qnaId}
     </update>
 
-    <select id="selectQnaReplyList" resultType="qnaModel" parameterType="qnaModel">
+    <select id="selectQnaReplyList" resultType="QnaModel" parameterType="QnaModel">
         WITH RECURSIVE R AS (
             select a.qna_id
                  ,a.bf_qna_id
