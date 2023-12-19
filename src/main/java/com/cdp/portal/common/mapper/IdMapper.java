@@ -2,9 +2,9 @@ package com.cdp.portal.common.mapper;
 
 import java.util.Map;
 
-import com.cdp.portal.config.OneidMapper;
+import org.apache.ibatis.annotations.Mapper;
 
-@OneidMapper
+@Mapper
 public interface IdMapper {
 	String selectId(Map<String,String> param);
 	String selectTimeSeq(Map<String,String> param);
