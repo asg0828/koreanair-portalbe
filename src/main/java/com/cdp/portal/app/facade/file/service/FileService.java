@@ -99,7 +99,6 @@ public class FileService {
 
         for (MultipartFile file : files) {
             String fileNm = file.getOriginalFilename();
-            String fileUUID = idUtil.getUUID();
             String fileExtsn = "";
 
             if (fileNm != null) {
@@ -108,6 +107,8 @@ public class FileService {
                     fileExtsn = fileNm.substring(lastIndex + 1);
                 }
             }
+
+            String fileUUID = idUtil.getUUID() + fileExtsn;
 
             final String fileId = idUtil.getFileId();
             log.debug("##### insertFile fileId: {}", fileId);

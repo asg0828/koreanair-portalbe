@@ -40,12 +40,12 @@ public class FoReportRestController {
     )
     @Parameter(name ="page", required = false, description = "페이지", example = "1")
     @Parameter(name ="pageSize", required = false, description = "페이지 사이즈", example = "10")
-    @Parameter(name ="sortedColumn", required = false, description = "정렬 페이지", example = "rank")
+    @Parameter(name ="sortedColumn", required = false, description = "정렬 페이지", example = "scheduledIntlFlightDate")
     @Parameter(name ="sortedDirection", required = false, description = "정렬 방향", example = "asc")
     @GetMapping(value = "/v1/vip", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getVipReservationStatus( @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                                                      @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
-                                                      @RequestParam(value = "sortedColumn", required = false, defaultValue = "rank") String sortedColumn,
+                                                      @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+                                                      @RequestParam(value = "sortedColumn", required = false, defaultValue = "scheduledIntlFlightDate") String sortedColumn,
                                                       @RequestParam(value = "sortedDirection", required = false, defaultValue = "asc") String sortedDirection) {
         PagingDto pagingDto = PagingDto.builder()
                 .page(page)
