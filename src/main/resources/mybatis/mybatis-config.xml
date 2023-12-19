@@ -14,4 +14,7 @@
 	<typeAliases>
       <package name="com.cdp.portal"/>
     </typeAliases>
+    <typeHandlers>
+        <package name="com.cdp.portal" />
+    </typeHandlers>
 </configuration>
