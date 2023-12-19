@@ -108,7 +108,7 @@ public class FileService {
                 }
             }
 
-            String fileUUID = idUtil.getUUID() + fileExtsn;
+            String fileUUID = idUtil.getUUID() + '.' + fileExtsn;
 
             final String fileId = idUtil.getFileId();
             log.debug("##### insertFile fileId: {}", fileId);
