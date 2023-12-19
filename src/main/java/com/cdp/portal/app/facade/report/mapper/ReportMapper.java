@@ -1,8 +1,5 @@
 package com.cdp.portal.app.facade.report.mapper;
 
-
-import com.cdp.portal.app.facade.feature.dto.request.FeatureReqDto;
-import com.cdp.portal.app.facade.report.dto.request.ReportReqDto;
 import com.cdp.portal.app.facade.report.dto.response.ReportResDto;
 import com.cdp.portal.common.dto.PagingDto;
 import org.apache.ibatis.annotations.Mapper;
