@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class InterceptorConfig implements WebMvcConfigurer {
 
 	private final AuthenticationInterceptor authInterceptor;
-//	private final LoggingInterceptor loggingInterceptor;
-//	private final AccessApiInterceptor accessApiInterceptor;
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -28,9 +26,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
 		List<String> common = Arrays.asList("/webjars/**", "/swagger-ui.html", "/api-docs", "/api-docs/**", "/swagger-ui/", "/swagger-ui/**",
 				"/swagger-resources/**", "/health", "/error", "/bo/file/download/**", "/fo/file/download/**");
-
-//		registry.addInterceptor(loggingInterceptor).addPathPatterns(urlPatterns).excludePathPatterns("/swagger-ui/**")
-//				.excludePathPatterns("/v3/api-docs*").excludePathPatterns("/swagger-resources/**");
 
 		registry.addInterceptor(authInterceptor).addPathPatterns(urlPatterns).excludePathPatterns(common);
 	}

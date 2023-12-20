@@ -104,24 +104,9 @@ public class SessionService {
 			String subject = payload.getSubject();
 			String name = (String) payload.get("name");
 			String email = payload.getEmail();
-//			String email = "pj.wjjung@kalmate.net";
-//			String email = "pj.yjshim@kalmate.net";
-//			String email = "pj.thoonkim@kalmate.net";
-//			String email = "pj.skahn@kalmate.net";
-
-			/*
-			boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-			String pictureUrl = (String) payload.get("picture");
-			String locale = (String) payload.get("locale");
-			String familyName = (String) payload.get("family_name");
-			String givenName = (String) payload.get("given_name");
-			*/
 
 			try {
 				HrInfo hrInfo = getEmployeeHrInfo(email);
-//				HrInfo hrInfo = null;
-				// TODO: PRD 에서는 임시 우회 해야 할지도
-
 
 				if (ObjectUtils.isEmpty(hrInfo)) {
 					hrInfo = HrInfo.builder()
@@ -211,15 +196,11 @@ public class SessionService {
 
 			} catch (CdpPortalException e) {
 				log.error(e.getMessage());
-				// TODO: 로그인 실패 로그 저장 필요?
-				// actionHistoryService.createActionHistory(null, null, null, ActionCode.LOGIN_FAIL.name(), employeeNumber, null);
 
 				throw new CdpPortalException(e.getError(), e.getMessage());
 
 			} catch (Exception e) {
 				log.error(e.getMessage());
-				// TODO: 로그인 실패 로그 저장 필요?
-				// actionHistoryService.createActionHistory(null, null, null, ActionCode.LOGIN_FAIL.name(), employeeNumber, null);
 
 				throw new CdpPortalException(CdpPortalError.INTERNAL_SERVER_ERROR);
 			}

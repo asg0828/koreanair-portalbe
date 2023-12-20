@@ -54,6 +54,7 @@ public class DataSourceConfig {
     @Value("${cloud.aws.secrets-manager.db-password-arn-oneid}")
     String dbPasswordSecretManagerArnOneid;
 
+    private static final String LOCAL_PROFILE = "local";
     private static final String MASTER_DATASOURCE = "masterDataSource";
     private static final String SLAVE_DATASOURCE = "slaveDataSource";
     private static final String ROUTING_DATASOURCE = "routingDataSource";
@@ -62,7 +63,7 @@ public class DataSourceConfig {
     @ConfigurationProperties(prefix = "spring.datasource.master")
     DataSource masterDataSource() {
     	var cdpMasterDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
-    	if ("local".equals(profile)) {
+    	if (LOCAL_PROFILE.equals(profile)) {
             cdpMasterDataSource.setPassword(localDbMasterPassword);
         } else {
             if (dbPassword == null) {
@@ -78,7 +79,7 @@ public class DataSourceConfig {
     @ConfigurationProperties(prefix = "spring.datasource.slave")
     DataSource slaveDataSource() {
     	var cdpSlaveDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
-    	if ("local".equals(profile)) {
+    	if (LOCAL_PROFILE.equals(profile)) {
     		cdpSlaveDataSource.setPassword(localDbSlavePassword);
         } else {
             if (dbPassword == null) {
@@ -117,7 +118,7 @@ public class DataSourceConfig {
     @ConfigurationProperties(prefix = "spring.datasource.oneid")
     DataSource oneidDataSource() {
     	var oneidDataSource = DataSourceBuilder.create().type(HikariDataSource.class).build();
-    	if ("local".equals(profile)) {
+    	if (LOCAL_PROFILE.equals(profile)) {
     		oneidDataSource.setPassword(localDbOneidPassword);
         } else {
             if (dbPasswordOneid == null) {
