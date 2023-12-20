@@ -24,4 +24,59 @@
             LIMIT 1
     </select>
 
+    <select id="getErrorLog" resultType="ErrorLogDTO">
+        SELECT /*+ OneIdLogMapper.getErrorLog */
+            ROW_NUMBER() OVER() AS NO, TB.*
+        FROM (
+            SELECT ERROR_NM
+                 , DETAIL_ERROR_NM
+                 , ONEID_REGIS_CHNL_CD
+                 , ONEID_FINAL_CHG_RELATE_NO
+                 , RQ_ACTION_NM
+                 , ODS_HEADER
+                 , ODS_M_GID
+                 , UCI_ID
+                 , ERROR_CONTENTS
+                 , ERROR_ACTION_YN
+                 , TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS')        AS CREATION_DATE
+                 , TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS')     AS LAST_UPDATE_DATE
+            FROM XXOID_ERROR_HISTORY_II
+            <include refid="getErrorLogCondition"/>
+            ORDER BY ERROR_NM, DETAIL_ERROR_NM
+        ) TB
+        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+    </select>
+
+    <select id="getCountErrorLog" resultType="int">
+        SELECT /*+ OneIdLogMapper.getCountErrLog */
+            COUNT(*) CNT
+        FROM XXOID_ERROR_HISTORY_II
+        <include refid="getErrorLogCondition"/>
+    </select>
+
+    <sql id="getErrorLogCondition">
+        WHERE 1=1
+        <if test="search.errorNm != null and search.errorNm != ''">
+            AND ERROR_NM = '${search.errorNm}'
+        </if>
+        <if test="search.detailErrorNm != null and search.detailErrorNm != ''">
+            AND DETAIL_ERROR_NM = '${search.detailErrorNm}'
+        </if>
+        <if test="search.oneidRegisChnlCd != null and search.oneidRegisChnlCd != ''">
+            AND ONEID_REGIS_CHNL_CD = '${search.oneidRegisChnlCd}'
+        </if>
+        <if test="search.oneidFinalChgRelateNo != null and search.oneidFinalChgRelateNo != ''">
+            AND ONEID_FINAL_CHG_RELATE_NO = '${search.oneidFinalChgRelateNo}'
+        </if>
+        <if test="search.uciId != null and search.uciId != ''">
+            AND UCI_ID = '${search.uciId}'
+        </if>
+        <if test="search.creationStartDate != null and search.creationStartDate != ''">
+            AND CREATION_DATE <![CDATA[>=]]> '${search.creationStartDate}'::TIMESTAMP
+        </if>
+        <if test="search.creationEndDate != null and search.creationEndDate != ''">
+            AND CREATION_DATE <![CDATA[<]]> '${search.creationEndDate}'::TIMESTAMP + INTERVAL '1 day'
+        </if>
+    </sql>
+
 </mapper>
