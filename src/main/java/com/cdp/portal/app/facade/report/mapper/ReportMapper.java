@@ -16,4 +16,6 @@ public interface ReportMapper {
     List<ReportResDto> selectIntlBoardingTop100(String criteria);
     List<ReportResDto> selectDomesticBoardingTop100(String criteria);
     List<ReportResDto> selectTotalMileageTop100(String criteria);
+    List<ReportResDto> selectAwardTicketBoardingTop100(String criteria);
+    List<ReportResDto> selectIntlMileageUpgradeBoardingTop100(String criteria);
 }
