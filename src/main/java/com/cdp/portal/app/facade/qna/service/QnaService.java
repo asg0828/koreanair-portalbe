@@ -57,14 +57,13 @@ public class QnaService {
                 .modiId(dto.getModiId())
                 .build();
 
-        // 파일 서비스를 통해 파일의 refId를 설정
         if (dto.getFileIds() != null) {
             for (String fileId : dto.getFileIds()) {
                 FileModel file = new FileModel();
                 file.setFileId(fileId);
-                file.setRefId(qnaId); // 파일의 refId를 공지사항의 ID로 설정
+                file.setRefId(qnaId);
                 file.setModiId(SessionScopeUtil.getContextSession().getUserId());
-                fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
+                fileService.updateFile(file);
             }
         }
 
@@ -125,11 +124,10 @@ public class QnaService {
                 .sj(dto.getSj())
                 .cn(dto.getCn())
                 .answ(dto.getAnsw())
-                .answRgstId(SessionScopeUtil.getContextSession().getUserId())// TODO: 로그인한 사용자 세팅
                 .useYn(dto.getUseYn())
                 .openYn(dto.getOpenYn())
                 .qnaStat(dto.getQnaStat())
-                .modiId(SessionScopeUtil.getContextSession().getUserId())    // TODO: 로그인한 사용자 세팅
+                .modiId(SessionScopeUtil.getContextSession().getUserId())
                 .build();
 
         // 파일 서비스를 통해 파일의 refId를 설정

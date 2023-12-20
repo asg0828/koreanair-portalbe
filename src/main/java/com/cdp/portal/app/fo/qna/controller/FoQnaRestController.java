@@ -38,9 +38,7 @@ public class FoQnaRestController {
     @PostMapping(value = "/v1/qna", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createQna(@Valid @RequestBody QnaReqDto.CreateQnaReq dto) {
         if (dto.getAnsw() != null && !dto.getAnsw().isEmpty()) {
-            dto.setRgstId(SessionScopeUtil.getContextSession().getUserId());
             dto.setAnswRgstId(SessionScopeUtil.getContextSession().getUserId());
-            dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         } else {
             dto.setRgstId(SessionScopeUtil.getContextSession().getUserId());
             dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
