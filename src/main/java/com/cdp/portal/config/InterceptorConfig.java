@@ -27,7 +27,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 		List<String> urlPatterns = Arrays.asList("/**");
 
 		List<String> common = Arrays.asList("/webjars/**", "/swagger-ui.html", "/api-docs", "/api-docs/**", "/swagger-ui/", "/swagger-ui/**",
-				"/swagger-resources/**", "/health", "/error");
+				"/swagger-resources/**", "/health", "/error", "/bo/file/download/**", "/fo/file/download/**");
 
 //		registry.addInterceptor(loggingInterceptor).addPathPatterns(urlPatterns).excludePathPatterns("/swagger-ui/**")
 //				.excludePathPatterns("/v3/api-docs*").excludePathPatterns("/swagger-resources/**");
