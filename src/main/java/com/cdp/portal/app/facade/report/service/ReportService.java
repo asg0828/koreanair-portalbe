@@ -88,4 +88,30 @@ public class ReportService {
                 .contents(reportMapper.selectTotalMileageTop100(criteria))
                 .build();
     }
+
+    /**
+     * 보너스 항공권 탑승 TOP 100 목록 조회
+     * @param
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ReportResDto.ReportsResult getAwardTicketBoardingTop100 (String criteria) {
+
+        return ReportResDto.ReportsResult.builder()
+                .contents(reportMapper.selectAwardTicketBoardingTop100(criteria))
+                .build();
+    }
+
+    /**
+     * 국제선 마일리지 Upgrade 탑승 TOP 100 목록 조회
+     * @param
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ReportResDto.ReportsResult getIntlMileageUpgradeBoardingTop100 (String criteria) {
+
+        return ReportResDto.ReportsResult.builder()
+                .contents(reportMapper.selectIntlMileageUpgradeBoardingTop100(criteria))
+                .build();
+    }
 }
