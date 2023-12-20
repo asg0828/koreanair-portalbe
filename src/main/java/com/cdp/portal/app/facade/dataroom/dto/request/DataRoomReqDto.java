@@ -21,11 +21,11 @@ public class DataRoomReqDto {
         private String cn;
         @Schema(description = "사용여부", example = "Y|N", nullable = false)
         private String useYn;
-        @Schema(description = "등록자 ID", example = "admin", nullable = false)
+        @Schema(description = "등록자 ID", example = "pj.shkwak", nullable = false)
         private String rgstId;
-        @Schema(description = "수정자 ID", example = "admin", nullable = false)
+        @Schema(description = "수정자 ID", example = "pj.shkwak", nullable = false)
         private String modiId;
-        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        @Schema(description = "파일 ID 목록", example = "pj.shkwak", nullable = false)
         private String[] fileIds;
 
 
@@ -47,9 +47,9 @@ public class DataRoomReqDto {
         @NotBlank(message = "사용여부는 필수 항목입니다.")
         private String useYn;
 
-        @Schema(description = "수정자 ID", example = "admin", nullable = false)
+        @Schema(description = "수정자 ID", example = "pj.shkwak", nullable = false)
         private String modiId;
-        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        @Schema(description = "파일 ID 목록", example = "[fl23000000360]", nullable = false)
         private String[] fileIds;
 
 

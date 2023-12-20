@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.PagingDto;
+import com.cdp.portal.common.util.SessionScopeUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +38,8 @@ public class BoNoticeRestController {
     )
     @PostMapping(value = "/v1/notice", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createNotice(@Valid @RequestBody NoticeReqDto.CreateNoticeReq dto) {
-        dto.setRgstId("admin");
-        dto.setModiId("admin");
+        dto.setRgstId(SessionScopeUtil.getContextSession().getUserId());
+        dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         noticeService.createNotice(dto);
 
         return ResponseEntity.ok(ApiResDto.success());
@@ -97,7 +98,7 @@ public class BoNoticeRestController {
     @Parameter(name ="noticeId", required = true, description = "공지사항 ID", example = "nt23000000005")
     @PutMapping(value = "/v1/notice/{noticeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateNotice(@PathVariable String noticeId, @Valid @RequestBody NoticeReqDto.UpdateNoticeReq dto) {
-        dto.setModiId("admin");
+        dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         noticeService.updateNotice(noticeId, dto);
 
         return ResponseEntity.ok(ApiResDto.success());
@@ -124,7 +125,7 @@ public class BoNoticeRestController {
     )
     @PostMapping(value = "/v1/notice/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteNotice2(@Valid @RequestBody NoticeReqDto.DeleteNoticeReq dto) {
-        dto.setModiId("admin"); // 사용자 정보 받아오기 전까지 일단 하드코딩
+        dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         noticeService.deleteNotice2(dto);
 
         return ResponseEntity.ok(ApiResDto.success());

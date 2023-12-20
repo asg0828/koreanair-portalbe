@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.cdp.portal.common.util.SessionScopeUtil;
+
 import javax.validation.Valid;
 
 @RestController
@@ -36,12 +38,12 @@ public class FoQnaRestController {
     @PostMapping(value = "/v1/qna", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createQna(@Valid @RequestBody QnaReqDto.CreateQnaReq dto) {
         if (dto.getAnsw() != null && !dto.getAnsw().isEmpty()) {
-            dto.setRgstId("admin");
-            dto.setAnswRgstId("admin");
-            dto.setModiId("admin");
+            dto.setRgstId(SessionScopeUtil.getContextSession().getUserId());
+            dto.setAnswRgstId(SessionScopeUtil.getContextSession().getUserId());
+            dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         } else {
-            dto.setRgstId("admin");
-            dto.setModiId("admin");
+            dto.setRgstId(SessionScopeUtil.getContextSession().getUserId());
+            dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         }
         qnaService.createQna(dto);
 
@@ -128,7 +130,7 @@ public class FoQnaRestController {
     )
     @PostMapping(value = "/v1/qna/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteQna2(@Valid @RequestBody QnaReqDto.DeleteQnaReq dto) {
-        dto.setModiId("admin"); // 사용자 정보 받아오기 전까지 일단 하드코딩
+        dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         qnaService.deleteQna2(dto);
 
         return ResponseEntity.ok(ApiResDto.success());

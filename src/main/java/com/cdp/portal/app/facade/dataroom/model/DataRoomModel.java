@@ -24,13 +24,13 @@ public class DataRoomModel {
     private String viewCnt;
     @Schema(description = "사용여부", example = "Y|N")
     private String useYn;
-    @Schema(description = "등록자 ID", example = "admin")
+    @Schema(description = "등록자 ID", example = "pj.shkwak")
     private String rgstId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")
     @Schema(description = "등록일시",example = "2021-04-13 09:04:40")
     private Timestamp rgstDt;
-    @Schema(description = "수정자 ID", example = "admin")
+    @Schema(description = "수정자 ID", example = "pj.shkwak")
     private String modiId;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+9")

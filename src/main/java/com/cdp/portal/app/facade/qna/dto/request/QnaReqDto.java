@@ -41,15 +41,15 @@ public class QnaReqDto {
         @Schema(description = "부모글 ID", example = "qn23000000027", nullable = false)
         private String bfQnaId;
 
-        @Schema(description = "등록 ID", example = "admin", nullable = false)
+        @Schema(description = "등록 ID", example = "pj.shkwak", nullable = false)
         private String rgstId;
 
-        @Schema(description = "답변등록 ID", example = "admin", nullable = false)
+        @Schema(description = "답변등록 ID", example = "pj.shkwak", nullable = false)
         private String answRgstId;
 
-        @Schema(description = "수정자 ID", example = "admin", nullable = false)
+        @Schema(description = "수정자 ID", example = "pj.shkwak", nullable = false)
         private String modiId;
-        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        @Schema(description = "파일 ID 목록", example = "[fl23000000360]", nullable = false)
         private String[] fileIds;
 
     }
@@ -80,7 +80,7 @@ public class QnaReqDto {
 
         @Schema(description = "답변상태", example = "READED", nullable = false)
         private String qnaStat;
-        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        @Schema(description = "파일 ID 목록", example = "[fl23000000360]", nullable = false)
         private String[] fileIds;
 
     }

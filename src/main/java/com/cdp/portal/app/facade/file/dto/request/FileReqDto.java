@@ -24,9 +24,9 @@ public class FileReqDto {
         private String saveFileNm;
         @Schema(description = "사용 여부", example = "Y|N", nullable = false)
         private String useYn;
-        @Schema(description = "등록 ID", example = "admin", nullable = false)
+        @Schema(description = "등록 ID", example = "pj.shkwak", nullable = false)
         private String rgstId;
-        @Schema(description = "수정 ID", example = "admin", nullable = false)
+        @Schema(description = "수정 ID", example = "pj.shkwak", nullable = false)
         private String modiId;
         @Schema(description = "수정 일시", example = "2023-10-26 10:04:45.868000", nullable = false)
         private Timestamp modiDt;

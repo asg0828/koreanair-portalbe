@@ -9,6 +9,7 @@ import com.cdp.portal.app.facade.file.service.FileService;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
+import com.cdp.portal.common.util.SessionScopeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
@@ -56,7 +57,7 @@ public class NoticeService {
                 FileModel file = new FileModel();
                 file.setFileId(fileId);
                 file.setRefId(noticeId); // 파일의 refId를 공지사항의 ID로 설정
-                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                file.setModiId(SessionScopeUtil.getContextSession().getUserId());
                 fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
             }
         }
@@ -127,7 +128,7 @@ public class NoticeService {
                 FileModel file = new FileModel();
                 file.setFileId(fileId);
                 file.setRefId(noticeId); // 파일의 refId를 공지사항의 ID로 설정
-                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                file.setModiId(SessionScopeUtil.getContextSession().getUserId());
                 fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
             }
         }

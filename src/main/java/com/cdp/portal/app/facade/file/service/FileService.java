@@ -6,6 +6,7 @@ import com.cdp.portal.app.facade.file.mapper.FileMapper;
 import com.cdp.portal.app.facade.file.model.FileModel;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.aws.AwsS3Util;
+import com.cdp.portal.common.util.SessionScopeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -124,8 +125,8 @@ public class FileService {
                     .storageSe("S3")
                     .bucketNm("awsdc-s3-dlk-dev-cdp-portalobject")
                     .useYn("Y")
-                    .rgstId("admin")
-                    .modiId("admin") // TODO: 로그인한 사용자 세팅
+                    .rgstId(SessionScopeUtil.getContextSession().getUserId())
+                    .modiId(SessionScopeUtil.getContextSession().getUserId())
                     .fileCl(fileCl)
                     .build();
 

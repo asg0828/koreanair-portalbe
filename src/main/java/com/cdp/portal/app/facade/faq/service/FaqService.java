@@ -3,6 +3,7 @@ package com.cdp.portal.app.facade.faq.service;
 import java.util.List;
 import java.util.Objects;
 
+import com.cdp.portal.common.util.SessionScopeUtil;
 import com.cdp.portal.app.facade.faq.dto.request.FaqReqDto;
 import com.cdp.portal.app.facade.faq.model.FaqModel;
 import com.cdp.portal.app.facade.faq.dto.response.FaqResDto;
@@ -82,7 +83,7 @@ public class FaqService {
                 .answ(dto.getAnsw())
                 .useYn(dto.getUseYn())
                 .rgstId(dto.getRgstId())
-                .modiId(dto.getModiId()) // TODO: 로그인한 사용자 세팅
+                .modiId(dto.getModiId())
                 .build();
 
         // 파일 서비스를 통해 파일의 refId를 설정
@@ -91,7 +92,7 @@ public class FaqService {
                 FileModel file = new FileModel();
                 file.setFileId(fileId);
                 file.setRefId(faqId); // 파일의 refId를 공지사항의 ID로 설정
-                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                file.setModiId(SessionScopeUtil.getContextSession().getUserId());
                 fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
             }
         }
@@ -117,7 +118,7 @@ public class FaqService {
                 .qstn(dto.getQstn())
                 .answ(dto.getAnsw())
                 .useYn(dto.getUseYn())
-                .modiId("admin")    // TODO: 로그인한 사용자 세팅
+                .modiId(SessionScopeUtil.getContextSession().getUserId())
                 .build();
 
         // 파일 서비스를 통해 파일의 refId를 설정
@@ -126,7 +127,7 @@ public class FaqService {
                 FileModel file = new FileModel();
                 file.setFileId(fileId);
                 file.setRefId(faqId); // 파일의 refId를 공지사항의 ID로 설정
-                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                file.setModiId(SessionScopeUtil.getContextSession().getUserId());
                 fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
             }
         }

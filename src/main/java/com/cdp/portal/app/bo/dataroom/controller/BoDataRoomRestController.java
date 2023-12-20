@@ -7,6 +7,7 @@ import com.cdp.portal.app.facade.dataroom.dto.request.DataRoomReqDto;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.ApiResDto;
 import com.cdp.portal.common.dto.PagingDto;
+import com.cdp.portal.common.util.SessionScopeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,8 +36,8 @@ public class BoDataRoomRestController {
     )
     @PostMapping(value = "/v1/dataroom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createData(@Valid @RequestBody DataRoomReqDto.CreateDataRoomReq dto) {
-        dto.setRgstId("admin");
-        dto.setModiId("admin");
+        dto.setRgstId(SessionScopeUtil.getContextSession().getUserId());
+        dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         dataRoomService.createData(dto);
 
         return ResponseEntity.ok(ApiResDto.success());
@@ -92,7 +93,7 @@ public class BoDataRoomRestController {
     @Parameter(name ="dataId", required = true, description = "자료실 ID", example = "1")
     @PutMapping(value = "/v1/dataroom/{dataId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateDataRoom(@PathVariable String dataId, @Valid @RequestBody DataRoomReqDto.UpdateDataRoomReq dto) {
-        dto.setModiId("admin");
+        dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         dataRoomService.updateDataRoom(dataId, dto);
 
         return ResponseEntity.ok(ApiResDto.success());
@@ -117,7 +118,7 @@ public class BoDataRoomRestController {
     )
     @PostMapping(value = "/v1/dataroom/delete/{dataId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteData(@Valid @RequestBody DataRoomReqDto.DeleteDataRoomReq dto) {
-        dto.setModiId("admin");
+        dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         dataRoomService.deleteDataRoom2(dto);
 
         return ResponseEntity.ok(ApiResDto.success());

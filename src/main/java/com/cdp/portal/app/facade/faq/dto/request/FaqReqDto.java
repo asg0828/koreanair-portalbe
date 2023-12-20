@@ -31,12 +31,12 @@ public class FaqReqDto {
         @NotBlank(message = "사용 여부는 필수 항목입니다.")
         @Schema(description = "사용 여부", example = "Y|N", nullable = false)
         private String useYn;
-        @Schema(description = "등록 ID", example = "admin", nullable = false)
+        @Schema(description = "등록 ID", example = "pj.shkwak", nullable = false)
         private String rgstId;
 
-        @Schema(description = "수정자 ID", example = "admin", nullable = false)
+        @Schema(description = "수정자 ID", example = "pj.shkwak", nullable = false)
         private String modiId;
-        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        @Schema(description = "파일 ID 목록", example = "[fl23000000360]", nullable = false)
         private String[] fileIds;
     }
 
@@ -60,9 +60,9 @@ public class FaqReqDto {
         @Schema(description = "사용여부", example = "Y|N", nullable = false)
         private String useYn;
 
-        @Schema(description = "수정 ID", example = "admin", nullable = false)
+        @Schema(description = "수정 ID", example = "pj.shkwak", nullable = false)
         private String modiId;
-        @Schema(description = "파일 ID 목록", example = "admin", nullable = false)
+        @Schema(description = "파일 ID 목록", example = "[fl23000000360]", nullable = false)
         private String[] fileIds;
     }
 
@@ -73,7 +73,7 @@ public class FaqReqDto {
         @NotBlank(message = "Faq ID는 필수 항목입니다.")
         private String faqId;
 
-        @Schema(description = "수정자 ID", example = "admin", nullable = false)
+        @Schema(description = "수정자 ID", example = "pj.shkwak", nullable = false)
         @NotBlank(message = "수정자 ID는 필수 항목입니다.")
         private String modiId;
     }

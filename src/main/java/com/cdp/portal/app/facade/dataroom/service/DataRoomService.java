@@ -12,6 +12,7 @@ import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
+import com.cdp.portal.common.util.SessionScopeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,7 @@ public class DataRoomService {
                 FileModel file = new FileModel();
                 file.setFileId(fileId);
                 file.setRefId(dataId); // 파일의 refId를 공지사항의 ID로 설정
-                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                file.setModiId(SessionScopeUtil.getContextSession().getUserId()); // TODO: 로그인한 사용자 세팅
                 fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
             }
         }
@@ -122,7 +123,7 @@ public class DataRoomService {
                 FileModel file = new FileModel();
                 file.setFileId(fileId);
                 file.setRefId(dataId); // 파일의 refId를 공지사항의 ID로 설정
-                file.setModiId("admin"); // TODO: 로그인한 사용자 세팅
+                file.setModiId(SessionScopeUtil.getContextSession().getUserId());
                 fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
             }
         }

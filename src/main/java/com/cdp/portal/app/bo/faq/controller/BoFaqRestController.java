@@ -8,6 +8,7 @@ import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.dto.ApiResDto;
 
 import com.cdp.portal.common.dto.PagingDto;
+import com.cdp.portal.common.util.SessionScopeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -37,8 +38,8 @@ public class BoFaqRestController {
     )
     @PostMapping(value = "/v1/faq", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createFaq(@Valid @RequestBody FaqReqDto.CreateFaqReq dto) {
-        dto.setRgstId("admin");
-        dto.setModiId("admin");
+        dto.setRgstId(SessionScopeUtil.getContextSession().getUserId());
+        dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         faqService.createFaq(dto);
 
         return ResponseEntity.ok(ApiResDto.success());
@@ -96,7 +97,7 @@ public class BoFaqRestController {
     @Parameter(name ="faqId", required = true, description = "공지사항 ID", example = "1")
     @PutMapping(value = "/v1/faq/{faqId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateFaq(@PathVariable String faqId, @Valid @RequestBody FaqReqDto.UpdateFaqReq dto) {
-        dto.setModiId("admin");
+        dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         faqService.updateFaq(faqId, dto);
 
         return ResponseEntity.ok(ApiResDto.success());
@@ -123,7 +124,7 @@ public class BoFaqRestController {
     )
     @PostMapping(value = "/v1/faq/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteFaq2(@Valid @RequestBody FaqReqDto.DeleteFaqReq dto) {
-        dto.setModiId("admin"); // 사용자 정보 받아오기 전까지 일단 하드코딩
+        dto.setModiId(SessionScopeUtil.getContextSession().getUserId()); // 사용자 정보 받아오기 전까지 일단 하드코딩
         faqService.deleteFaq2(dto);
 
         return ResponseEntity.ok(ApiResDto.success());
