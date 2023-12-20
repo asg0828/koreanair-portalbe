@@ -88,7 +88,7 @@
             frequented_intl_route_top1,
             frequented_intl_route_top2
         FROM
-            T_REPORT
+            T_REPORT_INTL_BOARDING
         WHERE category = 'intlBoarding'
           and criteria = #{criteria}
     </select>
@@ -107,7 +107,7 @@
             domestic_pr_boarding_count,
             domestic_avg_boarding_cycle
         FROM
-            T_REPORT
+            T_REPORT_DOMESTIC_BOARDING
         WHERE category = 'domesticBoarding'
           and criteria = #{criteria}
     </select>
@@ -128,8 +128,51 @@
             family_available_mileage,
             mileage_partner_card_yn
         FROM
-            T_REPORT
+            T_REPORT_MILEAGE
         WHERE category = 'totalMileage'
+          and criteria = #{criteria}
+    </select>
+
+    <select id="selectAwardTicketBoardingTop100" resultType="ReportResDto">
+        SELECT
+            one_id,
+            criteria,
+            category,
+            rank,
+            user_nm,
+            skypass_nm,
+            vip_type,
+            total_mileage_spent_for_award_ticket,
+            mileage_spent_for_intl,
+            mileage_spent_for_domestic,
+            intl_boarding_count,
+            domestic_boarding_count,
+            intl_boaridng_count_by_award_ticket,
+            domestic_boarding_count_by_award_ticket
+        FROM
+            T_REPORT_AWARD_TICKET_BOARDING
+        WHERE category = 'awardTicketBoarding'
+          and criteria = #{criteria}
+    </select>
+
+    <select id="selectIntlMileageUpgradeBoardingTop100" resultType="ReportResDto">
+        SELECT
+            one_id,
+            criteria,
+            category,
+            rank,
+            user_nm,
+            skypass_nm,
+            vip_type,
+            mileage_spent_for_upgrade,
+            fr_upgrade_count_by_mileage,
+            pr_upgrade_count_by_mileage,
+            intl_boarding_count,
+            intl_fr_count,
+            intl_pr_count
+        FROM
+            T_REPORT_INTL_MILEAGE_UPGRADE_BOARDING
+        WHERE category = 'intlMileageUpgradeBoarding'
           and criteria = #{criteria}
     </select>
 

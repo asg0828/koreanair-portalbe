@@ -115,5 +115,35 @@ public class FoReportRestController {
         return ResponseEntity.ok(ApiResDto.success(reportService.getTotalMileageTop100(criteria)));
     }
 
+    /**
+     * 보너스 항공권 탑승 TOP 100
+     * @return
+     */
+    @Operation(summary = "보너스 항공권 TOP 100 조회", description = "보너스 항공권 TOP100을 조회한다.", tags = { "report" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResCodeResDtos.class)))
+    }
+    )
+    @Parameter(name ="criteria" , required = true, description = "조회기준", example = "1 year")
+    @GetMapping(value = "/v1/award-ticket-boarding/{criteria}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAwardTicketBoardingTop100 (@PathVariable String criteria) {
+        return ResponseEntity.ok(ApiResDto.success(reportService.getAwardTicketBoardingTop100(criteria)));
+    }
+
+    /**
+     * 국제선 마일리지 Upgrade 탑승 TOP 100
+     * @return
+     */
+    @Operation(summary = "국제선 마일리지 Upgrade 탑승 TOP 100 조회", description = "국제선 마일리지 Upgrade 탑승 TOP 100을 조회한다.", tags = { "report" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResCodeResDtos.class)))
+    }
+    )
+    @Parameter(name ="criteria" , required = true, description = "조회기준", example = "1 year")
+    @GetMapping(value = "/v1/intl-mileage-upgrade-boarding/{criteria}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getIntlMileageUpgradeBoardingTop100 (@PathVariable String criteria) {
+        return ResponseEntity.ok(ApiResDto.success(reportService.getIntlMileageUpgradeBoardingTop100(criteria)));
+    }
+
 
 }
