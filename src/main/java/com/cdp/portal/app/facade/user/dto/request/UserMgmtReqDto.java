@@ -30,6 +30,9 @@ public class UserMgmtReqDto {
 
         @Schema(description = "재직구분", example = "Y")
         private String useYn;
+
+        @Schema(description = "페이징 여부 [Y:페이징 하지 않음, N:페이징]", example = "Y")
+        private String withNoPaging;
     }
 
 //    @Getter

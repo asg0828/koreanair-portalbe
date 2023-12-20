@@ -37,6 +37,7 @@ public class FoUserMgmtController {
     @Parameter(name ="userAuthId", required = false, description = "사용자권한 ID", example = "")
     @Parameter(name ="mgrAuthId", required = false, description = "관리자권한 ID", example = "")
     @Parameter(name ="useYn", required = false, description = "재직구분", example = "")
+    @Parameter(name ="withNoPaging", required = false, description = "페이징여부", example = "")
     @GetMapping(value = "/v1/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUsers(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
@@ -45,7 +46,8 @@ public class FoUserMgmtController {
             @RequestParam(value ="deptNm", required = false, defaultValue = "" ) String deptNm,
             @RequestParam(value ="userAuthId", required = false, defaultValue = "") String userAuthId,
             @RequestParam(value ="mgrAuthId", required = false, defaultValue = "") String mgrAuthId,
-            @RequestParam(value ="useYn", required = false, defaultValue = "") String useYn) {
+            @RequestParam(value ="useYn", required = false, defaultValue = "") String useYn,
+            @RequestParam(value ="withNoPaging", required = false, defaultValue = "") String withNoPaging) {
 
         PagingDto pagingDto = PagingDto.builder()
                 .page(page)
@@ -58,6 +60,7 @@ public class FoUserMgmtController {
                 .userAuthId(userAuthId)
                 .mgrAuthId(mgrAuthId)
                 .useYn(useYn)
+                .withNoPaging(withNoPaging)
                 .build();
 
         return ResponseEntity.ok(ApiResDto.success(userMgmtService.getUsers(pagingDto, searchDto)));

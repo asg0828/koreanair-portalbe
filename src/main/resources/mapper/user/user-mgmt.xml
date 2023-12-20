@@ -57,7 +57,9 @@
 		                   ON MEA.AUTH_ID = MSA2.AUTH_ID
 		         <include refid="selectWhere"/>
 		        ) Z
-        <include refid="paging.pagingOffsetSQL" />
+		<if test='search.withNoPaging == null or search.withNoPaging == "" or (search.withNoPaging != null and search.withNoPaging.equals("N"))'>
+            <include refid="paging.pagingOffsetSQL" />
+        </if>
     </select>
 
     <sql id="selectWhere">
