@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cdp.portal.app.facade.oneid.mapper.OneIdReportMapper">
+    <select id="getDailyReport" resultType="DailyReportDTO">
+        SELECT /*+ OneIdReportMapper.getDailyReport */
+        ROW_NUMBER() OVER() AS
+        NO, TB.*
+        FROM (
+        <choose>
+            <when test="search.criteria == 'daily'">
+                SELECT AGGR_DATE
+                , PNR_TOTAL
+                , PNR_UCI
+                , PNR_NEW_ONEID
+                ,
+                PNR_REUSE_SKYPASS
+                , PNR_REUSE_NON_SKYPASS
+                , PNR_NEW_POTENTIALID
+                ,
+                PNR_SKIPPED
+                , NEW_ONEID_TODAY_PNR
+                , NEW_ONEID_PAST_PNR
+                ,
+                NEW_ONEID_POTENTIAL_CONV
+                , NEW_ONEID_SKYPASS
+                , NEW_ONEID_TOTAL
+                ,
+                NEW_ONEID_AGENT_MOBILE
+                , ONEID_TOTAL
+                , ONEID_ALONE
+                , ONEID_TARGET
+                ,
+                ONEID_SOURCE
+                , MERGED_SKYPASS_TO_SKYPASS
+                ,
+                MERGED_NON_SKYPASS_TO_SKYPASS
+                , MERGED_NON_SKYPASS_TO_NON_SKYPASS
+                ,
+                MERGED_SKYPASS_REQUEST
+            </when>
+            <otherwise>
+                SELECT
+                <include refid="getSumDailyReport"/>
+            </otherwise>
+        </choose>
+        FROM XXOID_ONEID_AGGREGATE_II
+        <include refid="getDailyReportCondition"/>
+        ORDER BY AGGR_DATE
+        ) TB
+        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+    </select>
+
+    <select id="getCountDailyReport" resultType="int">
+        SELECT /*+ OneIdReportMapper.getCountDailyReport */
+        <choose>
+            <when test="search.criteria == 'daily'">COUNT(*) CNT</when>
+            <otherwise>(CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END) AS CNT
+            </otherwise>
+        </choose>
+        FROM XXOID_ONEID_AGGREGATE_II
+        <include refid="getDailyReportCondition"/>
+    </select>
+
+    <select id="getCtiVocReport" resultType="CtiVocReportDTO">
+        SELECT /*+ OneIdReportMapper.getCtiVocReport */
+        ROW_NUMBER() OVER() AS
+        NO, TB.*
+        FROM (
+        <choose>
+            <when test="search.criteria == 'Total'">
+                SELECT
+                <include refid="getSumCtiVocReport"/>
+            </when>
+            <otherwise>
+                SELECT REQ_DATEV
+                , TOTAL_CNT_LAST_UPD
+                , TOTAL_CNT_CASE_CLOSE
+                , ONEID_CONNECT_SKYPASS_CNT
+                , ONEID_CONNECT_NON_SKYPASS_CNT
+                ,
+                ONEID_CONNECT_TOTAL_CNT
+                , ONEID_CONNECT_RATE
+                ,
+                ONEID_CTI_SEARCH_TOTAL_RATE
+                , ONEID_CTI_CONNECT_RETURN_RATE
+                ,
+                ONEID_SEARCH_SKYPASS_CNT
+                , ONEID_SEARCH_NON_SKYPASS_CNT
+                ,
+                ONEID_SEARCH_TOTAL_CNT
+                , ONEID_HIT_TOTAL_RATE
+                ,
+                ONEID_HIT_NON_SKYPASS_RATE
+                , ONEID_NON_HIT_CNT
+                , ONEID_MULTI_HIT_CNT
+                ,
+                ONEID_OVER_HIT_CNT
+                , CREATION_DATE
+                , LAST_UPDATE_DATE
+            </otherwise>
+        </choose>
+        FROM XXOID_CTI_VOC_INTERFACE_AGGREGATE_II
+        <include refid="getCtiVocReportCondition"/>
+        ORDER BY REQ_DATEV
+        ) TB
+        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+    </select>
+    <select id="getCountCtiVocReport" resultType="int">
+        SELECT /*+ OneIdReportMapper.getCountCtiVocReport */
+        <choose>
+            <when test="search.criteria == 'daily'">COUNT(*) CNT</when>
+            <otherwise>(CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END) AS CNT
+            </otherwise>
+        </choose>
+        FROM XXOID_CTI_VOC_INTERFACE_AGGREGATE_II
+        <include refid="getCtiVocReportCondition"/>
+    </select>
+
+    <select id="getSamePnrReport" resultType="SamePnrReportDTO">
+        SELECT /*+ ONEIDREPORTMAPPER.GETSAMEPNRREPORT */
+            ROW_NUMBER() OVER ()         AS NO,
+            one_id_target_one_id         as oneIdTargetOneId,
+            one_id_target_skypass_no     as oneIdTargetSkypassNo,
+            one_id_target_eng_fname      as oneIdTargetEngFname,
+            one_id_target_eng_lname      as oneIdTargetEngLname,
+            one_id_source_skypass_no     as oneIdSourceSkypassNo,
+            one_id_source_eng_fname      as oneIdSourceEngFname,
+            one_id_source_eng_lname      as oneIdSourceEngLname,
+            source_pax_mapping_one_id_no as sourcePaxMappingOneIdNo,
+            source_pax_mapping_pnr_no    as sourcePaxMappingPnrNo,
+            source_pax_mapping_uci_id_no as sourcePaxMappingUciIdNo,
+            pax_eng_last_name            as paxEngLastName,
+            pax_eng_first_name           as paxEngFirstName,
+            birth_datev                  as birthDatev,
+            mobile                       as mobile,
+            email                        as email,
+            board_yn                     as boardYn,
+            PNR_FQTV                     as pnrFqtv
+        FROM XXOID_CDP_GLUE_SAME_PNR_ONEID_II
+        WHERE 1 = 1
+        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+    </select>
+
+    <select id="getCountSamePnrReport" resultType="int">
+        select count(*)
+        from XXOID_CDP_GLUE_SAME_PNR_ONEID_II
+    </select>
+
+    <sql id="getSumDailyReport">
+        'Total' AS AGGR_DATE
+		, SUM(PNR_TOTAL) AS PNR_TOTAL
+		,
+		SUM(PNR_UCI) AS PNR_UCI
+		, SUM(PNR_NEW_ONEID) AS PNR_NEW_ONEID
+		,
+		SUM(PNR_REUSE_SKYPASS) AS PNR_REUSE_SKYPASS
+		,
+		SUM(PNR_REUSE_NON_SKYPASS) AS PNR_REUSE_NON_SKYPASS
+		,
+		SUM(PNR_NEW_POTENTIALID) AS PNR_NEW_POTENTIALID
+		, SUM(PNR_SKIPPED) AS
+		PNR_SKIPPED
+		, SUM(NEW_ONEID_TODAY_PNR) AS NEW_ONEID_TODAY_PNR
+		,
+		SUM(NEW_ONEID_PAST_PNR) AS NEW_ONEID_PAST_PNR
+		,
+		SUM(NEW_ONEID_POTENTIAL_CONV) AS NEW_ONEID_POTENTIAL_CONV
+		,
+		SUM(NEW_ONEID_SKYPASS) AS NEW_ONEID_SKYPASS
+		, SUM(NEW_ONEID_TOTAL) AS
+		NEW_ONEID_TOTAL
+		, SUM(NEW_ONEID_AGENT_MOBILE) AS NEW_ONEID_AGENT_MOBILE
+		, SUM(ONEID_TOTAL) AS ONEID_TOTAL
+		, SUM(ONEID_ALONE) AS ONEID_ALONE
+		,
+		SUM(ONEID_TARGET) AS ONEID_TARGET
+		, SUM(ONEID_SOURCE) AS ONEID_SOURCE
+		,
+		SUM(MERGED_SKYPASS_TO_SKYPASS) AS MERGED_SKYPASS_TO_SKYPASS
+		,
+		SUM(MERGED_NON_SKYPASS_TO_SKYPASS) AS MERGED_NON_SKYPASS_TO_SKYPASS
+		,
+		SUM(MERGED_NON_SKYPASS_TO_NON_SKYPASS) AS
+		MERGED_NON_SKYPASS_TO_NON_SKYPASS
+		, SUM(MERGED_SKYPASS_REQUEST) AS
+		MERGED_SKYPASS_REQUEST
+    </sql>
+
+    <sql id="getDailyReportCondition">
+        WHERE 1=1
+        <if
+                test="search.aggrStartDate != null and search.aggrStartDate != ''">
+            AND AGGR_DATE <![CDATA[>=]]>
+            '${search.aggrStartDate}'
+        </if>
+        <if test="search.aggrEndDate != null and search.aggrEndDate != ''">
+            AND AGGR_DATE <![CDATA[<=]]>
+            '${search.aggrEndDate}'
+        </if>
+    </sql>
+
+    <sql id="getSumCtiVocReport">
+        'Total' AS REQ_DATEV
+		, SUM(TOTAL_CNT_LAST_UPD) AS
+		TOTAL_CNT_LAST_UPD
+		, SUM(TOTAL_CNT_CASE_CLOSE) AS TOTAL_CNT_CASE_CLOSE
+		, SUM(ONEID_CONNECT_SKYPASS_CNT) AS ONEID_CONNECT_SKYPASS_CNT
+		,
+		SUM(ONEID_CONNECT_NON_SKYPASS_CNT) AS ONEID_CONNECT_NON_SKYPASS_CNT
+		,
+		SUM(ONEID_CONNECT_TOTAL_CNT) AS ONEID_CONNECT_TOTAL_CNT
+		,
+		AVG(ONEID_CONNECT_RATE) AS ONEID_CONNECT_RATE
+		,
+		AVG(ONEID_CTI_SEARCH_TOTAL_RATE) AS ONEID_CTI_SEARCH_TOTAL_RATE
+		,
+		AVG(ONEID_CTI_CONNECT_RETURN_RATE) AS ONEID_CTI_CONNECT_RETURN_RATE
+		,
+		SUM(ONEID_SEARCH_SKYPASS_CNT) AS ONEID_SEARCH_SKYPASS_CNT
+		,
+		SUM(ONEID_SEARCH_NON_SKYPASS_CNT) AS ONEID_SEARCH_NON_SKYPASS_CNT
+		,
+		SUM(ONEID_SEARCH_TOTAL_CNT) AS ONEID_SEARCH_TOTAL_CNT
+		,
+		AVG(ONEID_HIT_TOTAL_RATE) AS ONEID_HIT_TOTAL_RATE
+		,
+		AVG(ONEID_HIT_NON_SKYPASS_RATE) AS ONEID_HIT_NON_SKYPASS_RATE
+		,
+		SUM(ONEID_NON_HIT_CNT) AS ONEID_NON_HIT_CNT
+		, SUM(ONEID_MULTI_HIT_CNT)
+		AS ONEID_MULTI_HIT_CNT
+		, SUM(ONEID_OVER_HIT_CNT) AS ONEID_OVER_HIT_CNT
+    </sql>
+
+    <sql id="getCtiVocReportCondition">
+        WHERE 1=1
+        <if
+                test="search.aggrStartDate != null and search.aggrStartDate != ''">
+            AND REQ_DATEV <![CDATA[>=]]>
+            '${search.aggrStartDate}'
+        </if>
+        <if test="search.aggrEndDate != null and search.aggrEndDate != ''">
+            AND REQ_DATEV <![CDATA[<=]]>
+            '${search.aggrEndDate}'
+        </if>
+        <if test="search.channel != null and search.channel != ''">
+            AND CHANNEL = '${search.channel}'
+        </if>
+    </sql>
+
+
+
+</mapper>

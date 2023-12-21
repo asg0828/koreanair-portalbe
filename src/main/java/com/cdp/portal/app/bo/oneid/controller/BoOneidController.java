@@ -1,11 +1,11 @@
 package com.cdp.portal.app.bo.oneid.controller;
 
+import com.cdp.portal.app.facade.oneid.dto.common.BaseSearchDTO;
+import com.cdp.portal.app.facade.oneid.dto.common.Pagination;
+import com.cdp.portal.app.facade.oneid.dto.response.DailyReportSearchDTO;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cdp.portal.app.facade.menu.dto.response.MenuMgmtResDto.ApiResMenus;
 import com.cdp.portal.app.facade.oneid.service.OneidService;
@@ -20,6 +20,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,5 +41,28 @@ public class BoOneidController {
             @RequestParam(value ="menuNm", required = false, defaultValue = "" ) String menuNm) {
 
         return ResponseEntity.ok(ApiResDto.success(oneidService.getErrorLog()));
+    }
+
+    @Operation(summary = "One-ID Daily Report", description = "One-ID Daily Report 조회한다", tags = { "oneid" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResMenus.class)))
+    }
+    )
+    @GetMapping(value = "/v1/oneid/daily-report", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getDailyReport(
+            @Valid @RequestBody DailyReportSearchDTO inDTO,
+            @RequestParam int perPage,
+            @RequestParam(defaultValue = "1", name = "page") int page) {
+
+        Pagination paging = Pagination.builder()
+                .page(page)
+                .perPage(perPage)
+                .offset((page - 1) * perPage)
+                .build();
+
+        BaseSearchDTO<DailyReportSearchDTO> baseSearchDTO = BaseSearchDTO.<DailyReportSearchDTO>builder().paging(paging).search(inDTO).build();
+        paging.setTotalCount(oneidService.getCountDailyReport(baseSearchDTO));
+
+        return ResponseEntity.ok(ApiResDto.success(oneidService.getDailyReport(baseSearchDTO)));
     }
 }
