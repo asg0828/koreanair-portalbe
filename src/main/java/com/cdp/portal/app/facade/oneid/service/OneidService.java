@@ -1,6 +1,8 @@
 package com.cdp.portal.app.facade.oneid.service;
 
 import com.cdp.portal.app.facade.oneid.dto.common.BaseSearchDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.CtiVocReportDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.CtiVocReportSearchDTO;
 import com.cdp.portal.app.facade.oneid.dto.response.DailyReportDTO;
 import com.cdp.portal.app.facade.oneid.dto.response.DailyReportSearchDTO;
 import com.cdp.portal.app.facade.oneid.mapper.OneIdReportMapper;
@@ -35,6 +37,18 @@ public class OneidService {
     public List<DailyReportDTO> getDailyReport(BaseSearchDTO<DailyReportSearchDTO> baseSearchDTO) {
 
         return oneIdReportMapper.getDailyReport(baseSearchDTO);
+    }
+
+    @Transactional
+    public int getCountCtiVocReport(BaseSearchDTO<CtiVocReportSearchDTO> baseSearchDTO) {
+
+        return oneIdReportMapper.getCountCtiVocReport(baseSearchDTO);
+    }
+
+    @Transactional
+    public List<CtiVocReportDTO> getCtiVocReport(BaseSearchDTO<CtiVocReportSearchDTO> baseSearchDTO) {
+
+        return oneIdReportMapper.getCtiVocReport(baseSearchDTO);
     }
 
 }
