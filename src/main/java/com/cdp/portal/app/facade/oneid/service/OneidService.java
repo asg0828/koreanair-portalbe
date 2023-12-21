@@ -1,10 +1,7 @@
 package com.cdp.portal.app.facade.oneid.service;
 
 import com.cdp.portal.app.facade.oneid.dto.common.BaseSearchDTO;
-import com.cdp.portal.app.facade.oneid.dto.response.CtiVocReportDTO;
-import com.cdp.portal.app.facade.oneid.dto.response.CtiVocReportSearchDTO;
-import com.cdp.portal.app.facade.oneid.dto.response.DailyReportDTO;
-import com.cdp.portal.app.facade.oneid.dto.response.DailyReportSearchDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.*;
 import com.cdp.portal.app.facade.oneid.mapper.OneIdReportMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +46,18 @@ public class OneidService {
     public List<CtiVocReportDTO> getCtiVocReport(BaseSearchDTO<CtiVocReportSearchDTO> baseSearchDTO) {
 
         return oneIdReportMapper.getCtiVocReport(baseSearchDTO);
+    }
+
+    @Transactional
+    public int getCountSamePnrReport(BaseSearchDTO<SamePnrReportDTO> baseSearchDTO) {
+
+        return oneIdReportMapper.getCountSamePnrReport(baseSearchDTO);
+    }
+
+    @Transactional
+    public List<SamePnrReportDTO> getSamePnrReport(BaseSearchDTO<SamePnrReportDTO> baseSearchDTO) {
+
+        return oneIdReportMapper.getSamePnrReport(baseSearchDTO);
     }
 
 }
