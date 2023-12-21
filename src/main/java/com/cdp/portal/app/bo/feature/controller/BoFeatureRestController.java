@@ -77,7 +77,7 @@ public class BoFeatureRestController {
         return ResponseEntity.ok(ApiResDto.success());
     }
     
-    @Operation(summary = "Feature 전체 목록 조회", description = "Feature 전체 목록을 조회한다.", tags = { "feature" })
+    @Operation(summary = "Feature 전체 목록 조회(검색)", description = "Feature 전체 목록을 조회한다.", tags = { "feature" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResFeatures.class)))
         }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cdp.portal.app.facade.feature.dto.request.FeatureReqDto;
 import com.cdp.portal.app.facade.feature.dto.response.FeatureResDto.ApiResFeature;
+import com.cdp.portal.app.facade.feature.dto.response.FeatureResDto.ApiResFeatures;
 import com.cdp.portal.app.facade.feature.dto.response.FeatureResDto.ApiResFeaturesResult;
 import com.cdp.portal.app.facade.feature.dto.response.FeatureSeparateResDto.ApiResFeatureSeparateResDtos;
 import com.cdp.portal.app.facade.feature.service.FeatureSeparateService;
@@ -108,6 +109,26 @@ public class FoFeatureRestController {
     @GetMapping(value = "/v1/features/{featureId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getFeature(@PathVariable String featureId) {
         return ResponseEntity.ok(ApiResDto.success(featureService.getFeature(featureId)));
+    }
+    
+    @Operation(summary = "Feature 전체 목록 조회(검색)", description = "Feature 전체 목록을 조회한다.", tags = { "feature" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResFeatures.class)))
+        }
+    )
+    @Parameter(name ="featureKoNm", required = false, description = "피쳐한글명", example = "")
+    @Parameter(name ="featureEnNm", required = false, description = "피쳐영문명", example = "")
+    @GetMapping(value = "/v1/features/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getFeaturesAll(
+            @RequestParam(value = "featureKoNm", required = false, defaultValue = "") String featureKoNm,
+            @RequestParam(value = "featureEnNm", required = false, defaultValue = "") String featureEnNm) {
+        
+        FeatureReqDto.SearchFeature searchDto = FeatureReqDto.SearchFeature.builder()
+                .featureKoNm(featureKoNm)
+                .featureEnNm(featureEnNm)
+                .build();
+        
+        return ResponseEntity.ok(ApiResDto.success(featureService.getFeatures(searchDto)));
     }
 
 }
