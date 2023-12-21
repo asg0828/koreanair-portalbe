@@ -32,7 +32,7 @@ import javax.validation.Valid;
 public class BoOneidController {
 	private final OneidService oneidService;
 
-	@Operation(summary = "메뉴 목록 조회 - 사용자", description = "메뉴 관리 목록 [사용자] 메뉴를 조회 한다.", tags = { "menu-mgmt" })
+    @Operation(summary = "메뉴 목록 조회 - 사용자", description = "메뉴 관리 목록 [사용자] 메뉴를 조회 한다.", tags = { "menu-mgmt" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResMenus.class)))
         }
@@ -52,9 +52,18 @@ public class BoOneidController {
     )
     @GetMapping(value = "/v1/daily-report", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDailyReport(
-            @Valid @RequestBody DailyReportSearchDTO inDTO,
             @RequestParam int perPage,
-            @RequestParam(defaultValue = "1", name = "page") int page) {
+            @RequestParam(defaultValue = "1", name = "page") int page,
+            @RequestParam String criteria,
+            @RequestParam String aggrStartDate,
+            @RequestParam String aggrEndDate
+    ) {
+
+        DailyReportSearchDTO inDTO = DailyReportSearchDTO.builder()
+                .criteria(criteria)
+                .aggrStartDate(aggrStartDate)
+                .aggrEndDate(aggrEndDate)
+                .build();
 
         Pagination paging = Pagination.builder()
                 .page(page)
@@ -111,5 +120,17 @@ public class BoOneidController {
         paging.setTotalCount(oneidService.getCountSamePnrReport(baseSearchDTO));
 
         return ResponseEntity.ok(ApiResDto.success(oneidService.getSamePnrReport(baseSearchDTO)));
+    }
+    @Operation(summary = "CleansingRule / Hash 변환 결과 조회", description = "CleansingRule / Hash 변환 결과를 조회한다", tags = { "oneid" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResMenus.class)))
+    }
+    )
+    @GetMapping(value = "/v1/cleansing-hash-results", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getCleansingHashResults(
+            @RequestParam String inptPhone,
+            @RequestParam String inptEmail) {
+
+        return ResponseEntity.ok(ApiResDto.success());
     }
 }
