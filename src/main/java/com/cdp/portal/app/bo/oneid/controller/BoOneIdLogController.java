@@ -38,7 +38,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping(value = CommonConstants.API_BO_PREFIX + "/oneid")
 @Tag(name = "oneid-log")
-public class BoOneidLogController {
+public class BoOneIdLogController {
 
 	private final OneIdLogService oneIdLogService;
 
