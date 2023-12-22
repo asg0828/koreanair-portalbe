@@ -40,6 +40,7 @@ public class FoQnaRestController {
         if (dto.getAnsw() != null && !dto.getAnsw().isEmpty()) {
             dto.setRgstId(SessionScopeUtil.getContextSession().getUserId());
             dto.setAnswRgstId(SessionScopeUtil.getContextSession().getUserId());
+            dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
         } else {
             dto.setRgstId(SessionScopeUtil.getContextSession().getUserId());
             dto.setModiId(SessionScopeUtil.getContextSession().getUserId());
