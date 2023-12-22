@@ -2,6 +2,7 @@ package com.cdp.portal.app.bo.oneid.controller;
 
 import javax.validation.Valid;
 
+import com.cdp.portal.app.facade.oneid.dto.response.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +18,6 @@ import com.cdp.portal.app.facade.oneid.dto.common.GridData;
 import com.cdp.portal.app.facade.oneid.dto.common.GridResponseVO;
 import com.cdp.portal.app.facade.oneid.dto.common.Pagination;
 import com.cdp.portal.app.facade.oneid.dto.request.ErrorLogSearchDTO;
-import com.cdp.portal.app.facade.oneid.dto.response.CtiVocReportSearchDTO;
-import com.cdp.portal.app.facade.oneid.dto.response.DailyReportSearchDTO;
-import com.cdp.portal.app.facade.oneid.dto.response.ErrorLogDTO;
-import com.cdp.portal.app.facade.oneid.dto.response.SamePnrReportDTO;
 import com.cdp.portal.app.facade.oneid.service.OneIdLogService;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.constants.OneidConstants;
@@ -72,16 +69,7 @@ public class BoOneIdLogController {
     public ResponseEntity<?> getDailyReport(
             @RequestParam(defaultValue = "10", name = "perPage") int perPage,
             @RequestParam(defaultValue = "1", name = "page") int page,
-            @RequestParam String criteria,
-            @RequestParam String aggrStartDate,
-            @RequestParam String aggrEndDate
-    ) {
-
-        DailyReportSearchDTO inDTO = DailyReportSearchDTO.builder()
-                .criteria(criteria)
-                .aggrStartDate(aggrStartDate)
-                .aggrEndDate(aggrEndDate)
-                .build();
+            @ModelAttribute DailyReportSearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
@@ -92,7 +80,9 @@ public class BoOneIdLogController {
         BaseSearchDTO<DailyReportSearchDTO> baseSearchDTO = BaseSearchDTO.<DailyReportSearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdLogService.getCountDailyReport(baseSearchDTO));
 
-        return ResponseEntity.ok(ApiResDto.success(oneIdLogService.getDailyReport(baseSearchDTO)));
+        return new GridResponseVO().data(GridData.<DailyReportDTO>builder()
+                .contents(oneIdLogService.getDailyReport(baseSearchDTO))
+                .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 
     @Operation(summary = "OneID CTI/VOC Report 조회", description = "OneID CTI/VOC Report를 조회한다", tags = { "oneid" })
@@ -102,9 +92,9 @@ public class BoOneIdLogController {
     )
     @GetMapping(value = "/v1/cti-voc-report", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCtiVocReport(
-            @Valid @RequestBody CtiVocReportSearchDTO inDTO,
             @RequestParam int perPage,
-            @RequestParam(defaultValue = "1", name = "page") int page) {
+            @RequestParam(defaultValue = "1", name = "page") int page,
+            @ModelAttribute CtiVocReportSearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
@@ -115,7 +105,9 @@ public class BoOneIdLogController {
         BaseSearchDTO<CtiVocReportSearchDTO> baseSearchDTO = BaseSearchDTO.<CtiVocReportSearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdLogService.getCountCtiVocReport(baseSearchDTO));
 
-        return ResponseEntity.ok(ApiResDto.success(oneIdLogService.getCtiVocReport(baseSearchDTO)));
+        return new GridResponseVO().data(GridData.<CtiVocReportDTO>builder()
+                .contents(oneIdLogService.getCtiVocReport(baseSearchDTO))
+                .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 
     @Operation(summary = "Same Pnr Report 조회", description = "OneID Same Pnr Report를 조회한다", tags = { "oneid" })
@@ -137,7 +129,9 @@ public class BoOneIdLogController {
         BaseSearchDTO<SamePnrReportDTO> baseSearchDTO = BaseSearchDTO.<SamePnrReportDTO>builder().paging(paging).build();
         paging.setTotalCount(oneIdLogService.getCountSamePnrReport(baseSearchDTO));
 
-        return ResponseEntity.ok(ApiResDto.success(oneIdLogService.getSamePnrReport(baseSearchDTO)));
+        return new GridResponseVO().data(GridData.<SamePnrReportDTO>builder()
+                .contents(oneIdLogService.getSamePnrReport(baseSearchDTO))
+                .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 
     @Operation(summary = "CleansingRule / Hash 변환 결과 조회", description = "CleansingRule / Hash 변환 결과를 조회한다", tags = { "oneid" })
