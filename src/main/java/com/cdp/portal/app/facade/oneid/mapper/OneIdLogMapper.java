@@ -10,8 +10,6 @@ import com.cdp.portal.config.OneidMapper;
 @OneidMapper
 public interface OneIdLogMapper {
 
-	int selectAll();
-
     List<ErrorLogDTO> getErrorLog(BaseSearchDTO<ErrorLogSearchDTO> baseSearchDTO);
 
     int getCountErrorLog(BaseSearchDTO<ErrorLogSearchDTO> baseSearchDTO);

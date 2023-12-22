@@ -1,29 +1,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cdp.portal.app.facade.oneid.mapper.OneIdLogMapper">
 
-<!--     <select id="selectAll" resultType="int"> -->
-<!--         SELECT 1 -->
-<!--     </select> -->
-
-    <select id="selectAll" resultType="int">
-        SELECT COUNT(*)
-<!--                  ERROR_NM -->
-<!--                  , DETAIL_ERROR_NM -->
-<!--                  , ONEID_REGIS_CHNL_CD -->
-<!--                  , ONEID_FINAL_CHG_RELATE_NO -->
-<!--                  , RQ_ACTION_NM -->
-<!--                  , ODS_HEADER -->
-<!--                  , ODS_M_GID -->
-<!--                  , UCI_ID -->
-<!--                  , ERROR_CONTENTS -->
-<!--                  , ERROR_ACTION_YN -->
-<!--                  , TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS')        AS CREATION_DATE -->
-<!--                  , TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS')     AS LAST_UPDATE_DATE -->
-            FROM XXOID_ERROR_HISTORY_II
-<!--             FROM T_USER -->
-            LIMIT 1
-    </select>
-
     <select id="getErrorLog" resultType="ErrorLogDTO">
         SELECT /*+ OneIdLogMapper.getErrorLog */
             ROW_NUMBER() OVER() AS NO, TB.*
