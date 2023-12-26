@@ -1,15 +1,9 @@
 package com.cdp.portal.app.bo.oneid.controller;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.codec.language.DoubleMetaphone;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +12,8 @@ import com.cdp.portal.app.facade.oneid.dto.common.BaseSearchDTO;
 import com.cdp.portal.app.facade.oneid.dto.common.GridData;
 import com.cdp.portal.app.facade.oneid.dto.common.GridResponseVO;
 import com.cdp.portal.app.facade.oneid.dto.common.Pagination;
+import com.cdp.portal.app.facade.oneid.dto.response.AgtContactDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.AgtContactSearchDTO;
 import com.cdp.portal.app.facade.oneid.dto.response.MasterDTO;
 import com.cdp.portal.app.facade.oneid.dto.response.MasterHistoryDTO;
 import com.cdp.portal.app.facade.oneid.dto.response.MasterHistorySearchDTO;
@@ -200,6 +196,28 @@ public class BoOneIdMainController {
 
         return new GridResponseVO().data(GridData.<PaxMappingDTO>builder()
                 .contents(oneIdMainService.getPaxMapping(baseSearchDTO))
+                .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
+    }
+
+    @Operation(summary = "대리점 추정 모바일 번호 조회", description = "대리점 추정 모바일 번호 조회")
+    @GetMapping(value = "/v1/agt-contact")
+    public ResponseEntity<GridResponseVO<GridData>> getAgtContact(
+            @RequestParam int perPage,
+            @RequestParam(defaultValue = "1", name = "page") int page,
+            @ModelAttribute AgtContactSearchDTO inDTO) {
+
+        Pagination paging = Pagination.builder()
+                .page(page)
+                .perPage(perPage)
+                .offset((page - 1) * perPage)
+                .build();
+
+        inDTO.setConvertMblfonNoInfoToHshVlu(cryptoProvider.toHashEncryptedText(inDTO.getAgtEstimatedMblfonNoInfo()));
+        BaseSearchDTO<AgtContactSearchDTO> baseSearchDTO = BaseSearchDTO.<AgtContactSearchDTO>builder().paging(paging).search(inDTO).build();
+        paging.setTotalCount(oneIdMainService.getCountAgtContact(baseSearchDTO));
+
+        return new GridResponseVO().data(GridData.<AgtContactDTO>builder()
+                .contents(oneIdMainService.getAgtContact(baseSearchDTO))
                 .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cdp.portal.app.facade.oneid.dto.common.BaseSearchDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.AgtContactDTO;
 import com.cdp.portal.app.facade.oneid.dto.response.AgtContactSearchDTO;
 import com.cdp.portal.app.facade.oneid.dto.response.MasterDTO;
 import com.cdp.portal.app.facade.oneid.dto.response.MasterHistoryDTO;
@@ -126,14 +127,14 @@ public class OneIdMainService {
         return oneIdMainMapper.getCountPaxMapping(baseSearchDTO);
     }
 
-//    @Transactional(readOnly = true)
-//    public List<AgtContactDTO> getAgtContact(BaseSearchDTO<AgtContactSearchDTO> baseSearchDTO) {
-//        List<AgtContactDTO> result = oneIdMainMapper.getAgtContact(baseSearchDTO);
-//        for (AgtContactDTO dto : result) {
-//            dto.setAgtEstimatedMblfonNoInfo(cryptoProvider.toAesDecryptedText(dto.getAgtEstimatedMblfonNoInfo()));
-//        }
-//        return result;
-//    }
+    @Transactional(readOnly = true)
+    public List<AgtContactDTO> getAgtContact(BaseSearchDTO<AgtContactSearchDTO> baseSearchDTO) {
+        List<AgtContactDTO> result = oneIdMainMapper.getAgtContact(baseSearchDTO);
+        for (AgtContactDTO dto : result) {
+            dto.setAgtEstimatedMblfonNoInfo(cryptoProvider.toAesDecryptedText(dto.getAgtEstimatedMblfonNoInfo()));
+        }
+        return result;
+    }
 
     @Transactional(readOnly = true)
     public int getCountAgtContact(BaseSearchDTO<AgtContactSearchDTO> baseSearchDTO) {
