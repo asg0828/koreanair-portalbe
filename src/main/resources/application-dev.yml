@@ -74,4 +74,22 @@ aws-props:
   page-size: "10"
   time-zone: "Asia/Seoul"
       
-      
+core:
+  aws:
+    role-switching:
+      enable: false
+    kms:
+      encrypt:
+        aes:
+          keyId: "arn:aws:kms:ap-northeast-2:993398491107:key/mrk-e7bc670f9a6c46f884d0fee2cc12017c"
+        sha:
+          keyId: "arn:aws:kms:ap-northeast-2:993398491107:key/mrk-0b9e9afc2c6a4f7dab63a94a470bc986"
+    secretsmanager:
+      oneid:
+        arn: "arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/oneid/oneiddevdb-X6cSCC"
+        region: ap-northeast-2
+        enabled: true
+      cdp:
+        arn: "arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/cdp/cdpdevdb-VDgFOR"
+        region: ap-northeast-2
+        enabled: true

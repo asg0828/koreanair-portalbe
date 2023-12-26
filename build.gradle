@@ -1,3 +1,9 @@
+buildscript{
+    ext {
+        awssdkVersion = '2.17.193'
+    }
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.5'
@@ -15,6 +21,21 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+}
+
+/****************************************************************************************
+ * Repository 설정
+ ***************************************************************************************/
+ext.profile = project.findProperty("profile")
+profile = (profile == null || "") ? "dev" : profile
+logger.lifecycle("profile=>{}", profile)
+
+def dafaultNexusRepository = "https://itro.koreanair.com/library/repository/maven-public-${profile}/"
+repositories {
+    maven {
+        url dafaultNexusRepository
+    }
+    mavenCentral()
 }
 
 ext {
@@ -41,21 +62,30 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws-secrets-manager-config:2.2.6.RELEASE'
-	
+
 	// google
     implementation 'com.google.api-client:google-api-client:2.2.0'
     implementation 'com.google.api-client:google-api-client-jackson2:1.20.0'
-    
+
     // aws
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.154')
     implementation 'com.amazonaws:aws-java-sdk-s3'
     implementation 'com.amazonaws:aws-java-sdk-sts'
-    
+
+    //awssdk
+    implementation "software.amazon.awssdk:sdk-core:${awssdkVersion}"
+    implementation "software.amazon.awssdk:kms:${awssdkVersion}"
+    implementation "software.amazon.awssdk:s3:${awssdkVersion}"
+    implementation "software.amazon.awssdk:secretsmanager:${awssdkVersion}"
+    implementation "software.amazon.awssdk:sts:${awssdkVersion}"
+
     // json
     implementation 'org.json:json:20220924'
-    
+
     // commons-io
 	implementation 'commons-io:commons-io:2.6'
+
+	//implementation files('libs/cdp-comn-1.0.0-SNAPSHOT.jar')
 }
 
 dependencyManagement {

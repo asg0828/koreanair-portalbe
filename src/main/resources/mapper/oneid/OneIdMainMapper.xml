@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cdp.portal.app.facade.oneid.mapper.OneIdMainMapper">
+    <select id="getMaster" resultType="MasterDTO">
+        SELECT /*+ OneIdMainMapper.getMaster */
+            ROW_NUMBER() OVER() AS NO, TB.*
+        FROM (
+            SELECT ONEID_NO
+                 , ONEID_TYPE_CD
+                 , ONEID_STTS_CD
+                 , ONEID_REGIS_CHNL_CD
+                 , ONEID_FINAL_CHG_CHNL_CD
+                 , ONEID_FINAL_CHG_RELATE_NO
+                 , ONEID_FINAL_CHG_UCI_ID
+                 , ENG_FNAME
+                 , ENG_LNAME
+                 , MOBILE_PHONE_NUMBER_INFO
+                 , EMAIL_ADDRESS
+                 , BIRTH_DATEV
+                 , KOR_FNAME
+                 , KOR_LNAME
+                 , SEX_CODE
+                 , SEX_REGIS_CHNL_CD
+                 , HOME_PHONE_NUMBER_INFO
+                 , OFFICE_PHONE_NUMBER_INFO
+                 , AUTO_CONVS_ENG_FNAME
+                 , AUTO_CONVS_ENG_LNAME
+                 , MULTIPLE_PASSPORT_YN
+                 , AGT_ESTIMATED_CONTACT_TYPE_CD
+                 , ENG_NM_SOUNDEX_VALUE
+                 , MOBILE_PHONE_NO_INFO_HASH_VLU
+                 , EMAIL_ADRS_HASH_VALUE
+                 , HOME_PHONE_NO_INFO_HASH_VALUE
+                 , OFFICE_PHONE_NO_INFO_HASH_VLU
+                 , PERSONAL_INFO_USE_AGREE_YN
+                 , TO_CHAR(final_inq_dtim,'YYYY-MM-DD HH24:MI:SS') AS final_inq_dtim
+                 , TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS') AS CREATION_DATE
+                 , TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE
+            FROM XXOID_MASTER MASTER
+            <include refid="getMasterCondition"/>
+            ORDER BY LAST_UPDATE_DATE DESC
+        ) TB
+        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+    </select>
+    <select id="getCountMaster" resultType="int">
+        SELECT /*+ OneIdMainMapper.getCountMaster */
+            COUNT(*) CNT
+        FROM XXOID_MASTER MASTER
+        <include refid="getMasterCondition"/>
+    </select>
+    <select id="getMasterForHistory" resultType="MasterDTO">
+        SELECT /*+ OneIdMainMapper.getMaster */
+        ROW_NUMBER() OVER() AS NO, TB.*
+        FROM (
+        SELECT DISTINCT MASTER.ONEID_NO
+        , ONEID_TYPE_CD
+        , ONEID_STTS_CD
+        , ONEID_REGIS_CHNL_CD
+        , ONEID_FINAL_CHG_CHNL_CD
+        , ONEID_FINAL_CHG_RELATE_NO
+        , ONEID_FINAL_CHG_UCI_ID
+        , ENG_FNAME
+        , ENG_LNAME
+        , MOBILE_PHONE_NUMBER_INFO
+        , EMAIL_ADDRESS
+        , BIRTH_DATEV
+        , KOR_FNAME
+        , KOR_LNAME
+        , SEX_CODE
+        , SEX_REGIS_CHNL_CD
+        , HOME_PHONE_NUMBER_INFO
+        , OFFICE_PHONE_NUMBER_INFO
+        , AUTO_CONVS_ENG_FNAME
+        , AUTO_CONVS_ENG_LNAME
+        , MULTIPLE_PASSPORT_YN
+        , AGT_ESTIMATED_CONTACT_TYPE_CD
+        , ENG_NM_SOUNDEX_VALUE
+        , MOBILE_PHONE_NO_INFO_HASH_VLU
+        , EMAIL_ADRS_HASH_VALUE
+        , HOME_PHONE_NO_INFO_HASH_VALUE
+        , OFFICE_PHONE_NO_INFO_HASH_VLU
+        , PERSONAL_INFO_USE_AGREE_YN
+        , TO_CHAR(final_inq_dtim,'YYYY-MM-DD HH24:MI:SS') AS final_inq_dtim
+        , TO_CHAR(MASTER.CREATION_DATE,'YYYY-MM-DD HH24:MI:SS') AS CREATION_DATE
+        , TO_CHAR(MASTER.LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE
+        FROM XXOID_MASTER MASTER
+        INNER JOIN XXOID_MASTER_HISTORY HISTORY
+        ON MASTER.ONEID_NO = HISTORY.ONEID_NO
+        <include refid="getMasterCondition"/>
+        ORDER BY LAST_UPDATE_DATE DESC
+        ) TB
+        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+    </select>
+    <select id="getCountMasterForHistory" resultType="int">
+    SELECT COUNT(*) CNT FROM (
+            SELECT /*+ OneIdMainMapper.getCountMaster */
+                DISTINCT MASTER.ONEID_NO
+            FROM XXOID_MASTER MASTER
+            INNER JOIN XXOID_MASTER_HISTORY HISTORY
+            ON MASTER.ONEID_NO = HISTORY.ONEID_NO
+            <include refid="getMasterCondition"/>
+            ) A
+    </select>
+
+    <sql id="getMasterCondition">
+        WHERE 1=1
+        <if test="search.oneidNo != null and search.oneidNo != ''">
+            AND MASTER.ONEID_NO = '${search.oneidNo}'
+        </if>
+        <if test="search.korLname != null and search.korLname != ''">
+            AND KOR_LNAME = '${search.korLname}'
+        </if>
+        <if test="search.korFname != null and search.korFname != ''">
+            AND KOR_FNAME = '${search.korFname}'
+        </if>
+        <if test="search.engLname != null and search.engLname != ''">
+            AND ENG_LNAME = '${search.engLname}'
+        </if>
+        <if test="search.engFname != null and search.engFname != ''">
+            AND ENG_FNAME = '${search.engFname}'
+        </if>
+        <if test="search.mobilePhoneNoInfoHashVlu != null and search.mobilePhoneNoInfoHashVlu != ''">
+            AND MOBILE_PHONE_NO_INFO_HASH_VLU = '${search.mobilePhoneNoInfoHashVlu}'
+        </if>
+            <!--일반전화 입력시, 둘 중 하나의 값을 갖는 경우 search-->
+        <if test="search.homePhoneNoInfoHashValue != null and search.homePhoneNoInfoHashValue != ''">
+            AND (HOME_PHONE_NO_INFO_HASH_VALUE = '${search.homePhoneNoInfoHashValue}'
+            OR OFFICE_PHONE_NO_INFO_HASH_VLU = '${search.officePhoneNoInfoHashVlu}')
+        </if>
+        <if test="search.emailAdrsHashValue != null and search.emailAdrsHashValue != ''">
+            AND EMAIL_ADRS_HASH_VALUE = '${search.emailAdrsHashValue}'
+        </if>
+        <if test="search.birthDatev != null and search.birthDatev != ''">
+            AND BIRTH_DATEV = '${search.birthDatev}'
+        </if>
+        <if test="search.creationStartDate != null and search.creationStartDate != ''">
+            AND MASTER.CREATION_DATE <![CDATA[>=]]> '${search.creationStartDate}'::TIMESTAMP
+        </if>
+        <if test="search.creationEndDate != null and search.creationEndDate != ''">
+            AND MASTER.CREATION_DATE <![CDATA[<]]> '${search.creationEndDate}'::TIMESTAMP + INTERVAL '1 day'
+        </if>
+    </sql>
+    <select id="getMasterHistory" resultType="MasterHistoryDTO">
+        SELECT /*+ OneIdMainMapper.getMasterHistory */
+            ROW_NUMBER() OVER() AS NO, TB.*
+        FROM (
+            SELECT A.ONEID_NO
+                 , A.ONEID_CHG_RSN_CD
+                 , A.BF_CHG_ONEID_TYPE_CD
+                 , A.BF_CHG_ONEID_STTS_CD
+                 , A.BF_CHG_ONEID_FINAL_CHG_CHNL_CD
+                 , A.BF_CHG_ONEID_FINAL_CHG_RELT_NO
+                 , A.BF_CHG_ONEID_FNL_CHG_UCI_ID
+                 , A.BF_CHG_ENG_FNAME
+                 , A.BF_CHG_ENG_LNAME
+                 , A.BF_CHG_MOBILE_PHONE_NO_INFO
+                 , A.BF_CHG_EMAIL_ADRS
+                 , A.BF_CHG_BIRTH_DTV
+                 , A.BF_CHG_KOR_FNAME
+                 , A.BF_CHG_KOR_LNAME
+                 , A.BF_CHG_ENG_NM_SOUNDEX_VALUE
+                 , A.BF_CHG_MBLFON_NO_INFO_HASH_VLU
+                 , A.BF_CHG_EMAIL_ADRS_HASH_VALUE
+                 , A.BF_CHG_PP_NTNLTY_ISO_L3_CTR_CD
+                 , A.BF_CHG_PASSPORT_EXPIRE_DTV
+                 , A.AF_CHG_ONEID_TYPE_CD
+                 , A.AF_CHG_ONEID_STTS_CD
+                 , A.AF_CHG_ONEID_FINAL_CHG_CHNL_CD
+                 , A.AF_CHG_ONEID_FINAL_CHG_RELT_NO
+                 , A.AF_CHG_ONEID_FNL_CHG_UCI_ID
+                 , A.AF_CHG_ENG_FNAME
+                 , A.AF_CHG_ENG_LNAME
+                 , A.AF_CHG_MOBILE_PHONE_NO_INFO
+                 , A.AF_CHG_EMAIL_ADRS
+                 , A.AF_CHG_BIRTH_DTV
+                 , A.AF_CHG_KOR_FNAME
+                 , A.AF_CHG_KOR_LNAME
+                 , A.AF_CHG_ENG_NM_SOUNDEX_VALUE
+                 , A.AF_CHG_MBLFON_NO_INFO_HASH_VLU
+                 , A.AF_CHG_EMAIL_ADRS_HASH_VALUE
+                 , A.AF_CHG_PP_NTNLTY_ISO_L3_CTR_CD
+                 , A.AF_CHG_PASSPORT_EXPIRE_DTV
+                 , TO_CHAR(A.CREATION_DATE,'YYYY-MM-DD HH24:MI:SS') AS CREATION_DATE
+                 , TO_CHAR(A.LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE
+            FROM XXOID_MASTER_HISTORY A
+            <include refid="getMasterHistoryCondition"/>
+            ORDER BY A.LAST_UPDATE_DATE DESC
+        ) TB
+        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+    </select>
+    <select id="getCountMasterHistory" resultType="int">
+        SELECT /*+ OneIdMainMapper.getCountMasterHistory */
+            COUNT(*) AS CNT
+        FROM XXOID_MASTER_HISTORY
+        <include refid="getMasterHistoryCondition"/>
+    </select>
+
+    <sql id="getMasterHistoryEqualCondition">
+        WHERE 1=1
+        <if test="search.oneidNo != null and search.oneidNo != ''">
+            AND ONEID_NO = '${search.oneidNo}'
+        </if>
+        <if test="search.oneidChgRsnCd != null and search.oneidChgRsnCd != ''">
+            AND ONEID_CHG_RSN_CD = '${search.oneidChgRsnCd}'
+        </if>
+        <if test="search.bfChgKorLname != null and search.bfChgKorLname != ''">
+            AND BF_CHG_KOR_LNAME = '${search.bfChgKorLname}'
+        </if>
+        <if test="search.bfChgKorFname != null and search.bfChgKorFname != ''">
+            AND BF_CHG_KOR_FNAME = '${search.bfChgKorFname}'
+        </if>
+        <if test="search.bfChgEngLname != null and search.bfChgEngLname != ''">
+            AND BF_CHG_ENG_LNAME = '${search.bfChgEngLname}'
+        </if>
+        <if test="search.bfChgEngFname != null and search.bfChgEngFname != ''">
+            AND BF_CHG_ENG_FNAME = '${search.bfChgEngFname}'
+        </if>
+        <if test="search.bfChgMblfonNoInfoHashVlu != null and search.bfChgMblfonNoInfoHashVlu != ''">
+            AND BF_CHG_MBLFON_NO_INFO_HASH_VLU = '${search.bfChgMblfonNoInfoHashVlu}'
+        </if>
+        <if test="search.bfChgEmailAdrsHashValue != null and search.bfChgEmailAdrsHashValue != ''">
+            AND BF_CHG_EMAIL_ADRS_HASH_VALUE = '${search.bfChgEmailAdrsHashValue}'
+        </if>
+        <if test="search.bfChgBirthDtv != null and search.bfChgBirthDtv != ''">
+            AND BF_CHG_BIRTH_DTV = '${search.bfChgBirthDtv}'
+        </if>
+        <if test="search.creationStartDate != null and search.creationStartDate != ''">
+            AND CREATION_DATE <![CDATA[>=]]> '${search.creationStartDate}'::TIMESTAMP
+        </if>
+        <if test="search.creationEndDate != null and search.creationEndDate != ''">
+            AND CREATION_DATE <![CDATA[<]]> '${search.creationEndDate}'::TIMESTAMP + INTERVAL '1 day'
+        </if>
+    </sql>
+    <sql id="getMasterHistoryCondition">
+        <choose>
+            <when test="search.criteria != 'equal'">
+                WHERE ONEID_NO IN (
+                    SELECT ONEID_NO
+                    FROM XXOID_MASTER_HISTORY
+                    <include refid="getMasterHistoryEqualCondition"/>
+                )
+            </when>
+            <otherwise>
+                <include refid="getMasterHistoryEqualCondition"/>
+            </otherwise>
+        </choose>
+    </sql>
+
+    <select id="getPaxMapping" resultType="PaxMappingDTO">
+        SELECT /*+ OneIdMainMapper.getPaxMapping */
+               ROW_NUMBER() OVER() AS NO
+             , ONEID_NO
+             , PNR_NUMBER
+             , UCI_ID
+             , TEMPORARY_ONEID_NO
+             , USE_YN
+             , SKYPASS_MEMBER_NUMBER
+             , TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS') AS CREATION_DATE
+             , TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE
+        FROM (
+            SELECT *
+            FROM XXOID_PAX_MAPPING
+            <include refid="getPaxMappingCondition"/>
+            ORDER BY CREATION_DATE DESC
+        ) TB
+        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+    </select>
+    <select id="getCountPaxMapping" resultType="int">
+        SELECT /*+ OneIdMainMapper.getCountPaxMapping */
+            COUNT(*) CNT
+        FROM XXOID_PAX_MAPPING
+        <include refid="getPaxMappingCondition"/>
+    </select>
+
+    <sql id="getPaxMappingCondition">
+        WHERE 1=1
+        <if test="search.oneidNo != null and search.oneidNo != ''">
+            AND ONEID_NO = '${search.oneidNo}'
+        </if>
+        <if test="search.pnrNumber != null and search.pnrNumber != ''">
+            AND PNR_NUMBER = '${search.pnrNumber}'
+        </if>
+        <if test="search.uciId != null and search.uciId != ''">
+            AND UCI_ID = '${search.uciId}'
+        </if>
+        <if test="search.creationStartDate != null and search.creationStartDate != ''">
+            AND CREATION_DATE <![CDATA[>=]]> '${search.creationStartDate}'::TIMESTAMP
+        </if>
+        <if test="search.creationEndDate != null and search.creationEndDate != ''">
+            AND CREATION_DATE <![CDATA[<]]> '${search.creationEndDate}'::TIMESTAMP + INTERVAL '1 day'
+        </if>
+    </sql>
+<!--     <select id="getPsptInfo" resultType="com.ke.cdp.be.restapi.v1.oneid.dto.PsptInfoDTO"> -->
+<!--         SELECT /*+ OneIdMainMapper.getPsptInfo */ -->
+<!--             ROW_NUMBER() OVER() AS NO, TB.* -->
+<!--         FROM ( -->
+<!--             SELECT A.ONEID_NO AS ONEID_NO -->
+<!--                  , B.MULTIPLE_PASSPORT_YN AS MULTIPLE_PASSPORT_YN -->
+<!--                  , A.PASSPORT_EXPIRE_DATEV AS PASSPORT_EXPIRE_DATEV -->
+<!--                  , A.ENG_FNAME AS ENG_FNAME -->
+<!--                  , A.ENG_LNAME AS ENG_LNAME -->
+<!--                  , A.BIRTH_DATEV AS BIRTH_DATEV -->
+<!--                  , A.NATIONALITY_ISO_L3_COUNTRY_CD AS NATIONALITY_ISO_L3_COUNTRY_CD -->
+<!--                  , A.ISS_ISO_3_LETTER_COUNTRY_CODE AS ISS_ISO_3_LETTER_COUNTRY_CODE -->
+<!--                  , TO_CHAR(A.CREATION_DATE,'YYYY-MM-DD HH24:MI:SS') AS CREATION_DATE -->
+<!--                  , TO_CHAR(A.LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE -->
+<!--             FROM XXOID_PSPT_INFO A -->
+<!--             LEFT JOIN XXOID_MASTER B -->
+<!--             ON A.ONEID_NO = B.ONEID_NO -->
+<!--             <include refid="getPsptInfoCondition"/> -->
+<!--             ORDER BY A.ONEID_NO, A.NATIONALITY_ISO_L3_COUNTRY_CD -->
+<!--         ) TB -->
+<!--         LIMIT ${paging.perPage} OFFSET ${paging.offset} -->
+<!--     </select> -->
+<!--     <select id="getCountPsptInfo" resultType="int"> -->
+<!--         SELECT /*+ OneIdMainMapper.getCountPsptInfo */ -->
+<!--             COUNT(*) CNT -->
+<!--         FROM XXOID_PSPT_INFO A -->
+<!--              LEFT JOIN XXOID_MASTER B -->
+<!--                        ON A.ONEID_NO = B.ONEID_NO -->
+<!--         <include refid="getPsptInfoCondition"/> -->
+<!--     </select> -->
+<!--     <select id="createPsptInfoExcel" resultType="com.ke.cdp.be.restapi.v1.common.dto.CamelMap"> -->
+<!--         SELECT /*+ OneIdMainMapper.createPsptInfoExcel */ -->
+<!--               A.ONEID_NO -->
+<!--             , B.MULTIPLE_PASSPORT_YN -->
+<!--             , A.PASSPORT_EXPIRE_DATEV -->
+<!--             , A.ENG_FNAME -->
+<!--             , A.ENG_LNAME -->
+<!--             , A.BIRTH_DATEV -->
+<!--             , A.NATIONALITY_ISO_L3_COUNTRY_CD -->
+<!--             , A.ISS_ISO_3_LETTER_COUNTRY_CODE -->
+<!--             , TO_CHAR(A.CREATION_DATE, 'YYYY-MM-DD HH24:MI:SS')    AS CREATION_DATE -->
+<!--             , TO_CHAR(A.LAST_UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE -->
+<!--         FROM XXOID_PSPT_INFO A -->
+<!--              LEFT JOIN XXOID_MASTER B -->
+<!--                        ON A.ONEID_NO = B.ONEID_NO -->
+<!--         <include refid="getPsptInfoCondition"/> -->
+<!--         ORDER BY A.ONEID_NO, A.NATIONALITY_ISO_L3_COUNTRY_CD -->
+<!--     </select> -->
+<!--     <sql id="getPsptInfoCondition"> -->
+<!--         WHERE 1=1 -->
+<!--         <if test="search.oneidNo != null and search.oneidNo != ''"> -->
+<!--             AND A.ONEID_NO = '${search.oneidNo}' -->
+<!--         </if> -->
+<!--         <if test="search.engFname != null and search.engFname != ''"> -->
+<!--             AND A.ENG_FNAME = '${search.engFname}' -->
+<!--         </if> -->
+<!--         <if test="search.engLname != null and search.engLname != ''"> -->
+<!--             AND A.ENG_LNAME = '${search.engLname}' -->
+<!--         </if> -->
+<!--         <if test="search.birthDatev != null and search.birthDatev != ''"> -->
+<!--             AND A.BIRTH_DATEV = '${search.birthDatev}' -->
+<!--         </if> -->
+<!--         <if test="search.nationalityIsoL3CountryCd != null and search.nationalityIsoL3CountryCd != ''"> -->
+<!--             AND A.NATIONALITY_ISO_L3_COUNTRY_CD = '${search.nationalityIsoL3CountryCd}' -->
+<!--         </if> -->
+<!--         <if test="search.creationStartDate != null and search.creationStartDate != ''"> -->
+<!--             AND A.CREATION_DATE <![CDATA[>=]]> '${search.creationStartDate}'::TIMESTAMP -->
+<!--         </if> -->
+<!--         <if test="search.creationEndDate != null and search.creationEndDate != ''"> -->
+<!--             AND A.CREATION_DATE <![CDATA[<]]> '${search.creationEndDate}'::TIMESTAMP + INTERVAL '1 day' -->
+<!--         </if> -->
+<!--     </sql> -->
+    <select id="getAgtContact" resultType="AgtContactDTO">
+        SELECT /*+ OneIdMainMapper.getAgtContact */
+            ROW_NUMBER() OVER() AS NO, TB.*
+        FROM (
+            SELECT AGT_ESTIMATED_MBLFON_NO_INFO
+                 , AGT_EST_MBLFON_NO_INFO_HSH_VLU
+                 , USE_YN
+                 , DISUSE_CONVS_DT
+                 , TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS') AS CREATION_DATE
+                 , TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE
+            FROM XXOID_AGT_CONTACT
+            <include refid="getAgtContactCondition"/>
+            ORDER BY AGT_ESTIMATED_MBLFON_NO_INFO
+        ) TB
+        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+    </select>
+    <select id="getCountAgtContact" resultType="int">
+        SELECT /*+ OneIdMainMapper.getCountAgtContact */
+            COUNT(*) CNT
+        FROM XXOID_AGT_CONTACT
+        <include refid="getAgtContactCondition"/>
+    </select>
+
+    <sql id="getAgtContactCondition">
+        WHERE 1=1
+        <if test="search.convertMblfonNoInfoToHshVlu != null and search.convertMblfonNoInfoToHshVlu != ''">
+            AND AGT_EST_MBLFON_NO_INFO_HSH_VLU = '${search.convertMblfonNoInfoToHshVlu}'
+        </if>
+        <if test="search.agtEstMblfonNoInfoHshVlu != null and search.agtEstMblfonNoInfoHshVlu != ''">
+            AND AGT_EST_MBLFON_NO_INFO_HSH_VLU = '${search.agtEstMblfonNoInfoHshVlu}'
+        </if>
+    </sql>
+    <select id="getMergeHistory" resultType="MergeHistoryDTO">
+        SELECT /*+ OneIdMainMapper.getMergeHistory */
+            ROW_NUMBER() OVER() AS NO, TB.*
+        FROM (
+            SELECT MERGE_HISTORY.MERGE_TARGET_ONEID_NO                              AS MERGE_TARGET_ONEID_NO
+                 , MERGE_HISTORY.MERGE_SOURCE_ONEID_NO                              AS MERGE_SOURCE_ONEID_NO
+                 , MERGE_HISTORY.ONEID_MERGE_STTS_CD                                AS ONEID_MERGE_STTS_CD
+                 , SKYPASS.SKYPASS_MEMBER_NUMBER                                    AS SKYPASS_MEMBER_NUMBER
+                 , PAX.PAX_SKYPASS_MEMBER_NUMBER                                    AS PAX_SKYPASS_MEMBER_NUMBER
+                 , MASTER.ENG_FNAME                                                 AS ENG_FNAME
+                 , MASTER.ENG_LNAME                                                 AS ENG_LNAME
+                 , MASTER.KOR_FNAME                                                 AS KOR_FNAME
+                 , MASTER.KOR_LNAME                                                 AS KOR_LNAME
+                 , MASTER.EMAIL_ADDRESS                                             AS EMAIL_ADDRESS
+                 , MASTER.MOBILE_PHONE_NUMBER_INFO                                  AS MOBILE_PHONE_NUMBER_INFO
+                 , MASTER.BIRTH_DATEV                                               AS BIRTH_DATEV
+                 , TO_CHAR(MERGE_HISTORY.CREATION_DATE, 'YYYY-MM-DD HH24:MI:SS')    AS CREATION_DATE
+                 , TO_CHAR(MERGE_HISTORY.LAST_UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE
+            FROM XXOID_MERGE_HISTORY MERGE_HISTORY
+                 LEFT JOIN XXOID_MASTER MASTER
+                           ON MERGE_HISTORY.MERGE_SOURCE_ONEID_NO = MASTER.ONEID_NO
+                               AND MASTER.ONEID_STTS_CD = 'A'
+                 LEFT JOIN XXOID_SKYPASS_MAPPING SKYPASS
+                           ON MERGE_HISTORY.MERGE_SOURCE_ONEID_NO = SKYPASS.ONEID_NO
+                               AND SKYPASS.SKYPASS_MEMBER_STATUS_CODE IN ('Active', 'Sleeping', 'Merged')
+                 LEFT JOIN (
+                                SELECT ONEID_NO, STRING_AGG(DISTINCT SKYPASS_MEMBER_NUMBER, ', ') PAX_SKYPASS_MEMBER_NUMBER
+                                FROM XXOID_PAX_MAPPING PAX_MAPPING
+                                WHERE PAX_MAPPING.USE_YN = 'Y'
+                                <include refid="getPaxmappingCondition"/>
+                                GROUP BY PAX_MAPPING.ONEID_NO
+                            ) PAX
+                            ON MERGE_HISTORY.MERGE_SOURCE_ONEID_NO = PAX.ONEID_NO
+            <include refid="getMergeHistoryCondition"/>
+            ORDER BY MERGE_HISTORY.MERGE_SOURCE_ONEID_NO
+        ) TB
+        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+    </select>
+    <select id="getCountMergeHistory" resultType="int">
+        SELECT /*+ OneIdMainMapper.getCountMergeHistory */
+        	COUNT(*) CNT
+        FROM XXOID_MERGE_HISTORY MERGE_HISTORY
+        	 LEFT JOIN XXOID_MASTER MASTER
+        			   ON MERGE_HISTORY.MERGE_SOURCE_ONEID_NO = MASTER.ONEID_NO
+        				   AND MASTER.ONEID_STTS_CD = 'A'
+        	 LEFT JOIN XXOID_SKYPASS_MAPPING SKYPASS
+        			   ON MERGE_HISTORY.MERGE_SOURCE_ONEID_NO = SKYPASS.ONEID_NO
+        				   AND SKYPASS.SKYPASS_MEMBER_STATUS_CODE IN ('Active', 'Sleeping', 'Merged')
+        	 LEFT JOIN (
+                            SELECT ONEID_NO, STRING_AGG(DISTINCT SKYPASS_MEMBER_NUMBER, ', ') PAX_SKYPASS_MEMBER_NUMBER
+                            FROM XXOID_PAX_MAPPING PAX_MAPPING
+                            WHERE PAX_MAPPING.USE_YN = 'Y'
+                            <include refid="getPaxmappingCondition"/>
+                            GROUP BY PAX_MAPPING.ONEID_NO
+                        ) PAX
+                        ON MERGE_HISTORY.MERGE_SOURCE_ONEID_NO = PAX.ONEID_NO
+        <include refid="getMergeHistoryCondition"/>
+    </select>
+
+    <sql id="getPaxmappingCondition">
+        <if test="search.oneidNo != null and search.oneidNo != ''">
+            AND EXISTS (
+                SELECT 1
+                FROM XXOID_MERGE_HISTORY MAIN
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM XXOID_MERGE_HISTORY SUB
+                    WHERE MERGE_SOURCE_ONEID_NO = '${search.oneidNo}'
+                    AND MAIN.MERGE_TARGET_ONEID_NO = SUB.MERGE_TARGET_ONEID_NO
+                )
+                AND MAIN.MERGE_SOURCE_ONEID_NO = PAX_MAPPING.ONEID_NO
+            )
+        </if>
+    </sql>
+    <sql id="getMergeHistoryCondition">
+        WHERE 1=1
+        <if test="search.oneidNo != null and search.oneidNo != ''">
+            AND EXISTS (
+                SELECT 1
+                FROM XXOID_MERGE_HISTORY SUB
+                WHERE MERGE_SOURCE_ONEID_NO = '${search.oneidNo}'
+                AND MERGE_HISTORY.MERGE_TARGET_ONEID_NO = SUB.MERGE_TARGET_ONEID_NO
+            )
+        </if>
+        <if test="search.creationStartDate != null and search.creationStartDate != ''">
+            AND MERGE_HISTORY.CREATION_DATE <![CDATA[>=]]> '${search.creationStartDate}'::TIMESTAMP
+        </if>
+        <if test="search.creationEndDate != null and search.creationEndDate != ''">
+            AND MERGE_HISTORY.CREATION_DATE <![CDATA[<]]> '${search.creationEndDate}'::TIMESTAMP + INTERVAL '1 day'
+        </if>
+    </sql>
+<!--     <select id="getSkypassMerge" resultType="com.ke.cdp.be.restapi.v1.oneid.dto.SkypassMergeDTO"> -->
+<!--         SELECT /*+ OneIdMainMapper.getSkypassMerge */ -->
+<!--             ROW_NUMBER() OVER() AS NO, TB.* -->
+<!--         FROM ( -->
+<!--             SELECT SKYPASS.SKYPASS_MEMBER_NUMBER AS MERGE_SOURCE_SKYPASS_NUMBER -->
+<!--                  , SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO AS MERGE_TARGET_SKYPASS_NUMBER -->
+<!--                  , SKYPASS.ONEID_NO AS SKYPASS_SOURCE_ONEID_NUMBER -->
+<!--                  , TARGETSKYPASS.ONEID_NO AS SKYPASS_TARGET_ONEID_NUMBER -->
+<!--                  , MERGE.MERGE_SOURCE_ONEID_NO AS MERGE_SOURCE_ONEID_NUMBER -->
+<!--                  , MERGE.MERGE_TARGET_ONEID_NO AS MERGE_TARGET_ONEID_NUMBER -->
+<!--             FROM XXOID_SKYPASS_MAPPING SKYPASS -->
+<!--                 LEFT JOIN XXOID_SKYPASS_MAPPING TARGETSKYPASS -->
+<!--                     ON SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO = TARGETSKYPASS.SKYPASS_MEMBER_NUMBER -->
+<!--                 INNER JOIN XXOID_MERGE_HISTORY MERGE -->
+<!--                     ON SKYPASS.ONEID_NO = MERGE.MERGE_SOURCE_ONEID_NO -->
+<!--                     AND MERGE.ONEID_MERGE_STTS_CD = 'A' -->
+<!--             <include refid="getSkypassMergeCondition"/> -->
+<!--             ORDER BY SKYPASS.ONEID_NO, SKYPASS.SKYPASS_MEMBER_NUMBER -->
+<!--         ) TB -->
+<!--         LIMIT ${paging.perPage} OFFSET ${paging.offset} -->
+<!--     </select> -->
+<!--     <select id="getCountSkypassMerge" resultType="int"> -->
+<!--         SELECT /*+ OneIdMainMapper.getCountSkypassMerge */ -->
+<!--             COUNT(*) CNT -->
+<!--         FROM XXOID_SKYPASS_MAPPING SKYPASS -->
+<!--              LEFT JOIN XXOID_SKYPASS_MAPPING TARGETSKYPASS -->
+<!--                        ON SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO = TARGETSKYPASS.SKYPASS_MEMBER_NUMBER -->
+<!--              INNER JOIN XXOID_MERGE_HISTORY MERGE -->
+<!--                         ON SKYPASS.ONEID_NO = MERGE.MERGE_SOURCE_ONEID_NO -->
+<!--                             AND MERGE.ONEID_MERGE_STTS_CD = 'A' -->
+<!--         <include refid="getSkypassMergeCondition"/> -->
+<!--     </select> -->
+<!--     <select id="createSkypassMergeExcel" resultType="com.ke.cdp.be.restapi.v1.common.dto.CamelMap"> -->
+<!--         SELECT /*+ OneIdMainMapper.createSkypassMergeExcel */ -->
+<!--                SKYPASS.SKYPASS_MEMBER_NUMBER         AS MERGE_SOURCE_SKYPASS_NUMBER -->
+<!--              , SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO AS MERGE_TARGET_SKYPASS_NUMBER -->
+<!--              , SKYPASS.ONEID_NO                      AS SKYPASS_SOURCE_ONEID_NUMBER -->
+<!--              , TARGETSKYPASS.ONEID_NO                AS SKYPASS_TARGET_ONEID_NUMBER -->
+<!--              , MERGE.MERGE_SOURCE_ONEID_NO           AS MERGE_SOURCE_ONEID_NUMBER -->
+<!--              , MERGE.MERGE_TARGET_ONEID_NO           AS MERGE_TARGET_ONEID_NUMBER -->
+<!--         FROM XXOID_SKYPASS_MAPPING SKYPASS -->
+<!--              LEFT JOIN XXOID_SKYPASS_MAPPING TARGETSKYPASS -->
+<!--                        ON SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO = TARGETSKYPASS.SKYPASS_MEMBER_NUMBER -->
+<!--              INNER JOIN XXOID_MERGE_HISTORY MERGE -->
+<!--                         ON SKYPASS.ONEID_NO = MERGE.MERGE_SOURCE_ONEID_NO -->
+<!--                             AND MERGE.ONEID_MERGE_STTS_CD = 'A' -->
+<!--         <include refid="getSkypassMergeCondition"/> -->
+<!--         ORDER BY SKYPASS.ONEID_NO, SKYPASS.SKYPASS_MEMBER_NUMBER -->
+<!--     </select> -->
+<!--     <sql id="getSkypassMergeCondition"> -->
+<!--         WHERE SKYPASS.SKYPASS_MEMBER_STATUS_CODE = 'Merged' -->
+<!--         AND COALESCE(SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO,'') = '' -->
+<!--         <if test="search.skypassMemberNumber != null and search.skypassMemberNumber != ''"> -->
+<!--             AND (SKYPASS.SKYPASS_MEMBER_NUMBER = '${search.skypassMemberNumber}' OR -->
+<!--             SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO = '${search.skypassMemberNumber}') -->
+<!--         </if> -->
+<!--     </sql> -->
+</mapper>
