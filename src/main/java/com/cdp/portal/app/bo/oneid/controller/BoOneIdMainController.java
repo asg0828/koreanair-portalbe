@@ -44,14 +44,14 @@ public class BoOneIdMainController {
     @Operation(summary = "OneID 마스터 조회", description = "OneID 마스터 조회")
     @GetMapping(value = "/v1/master")
     public ResponseEntity<GridResponseVO<GridData>> getMaster(
-            @RequestParam int perSize,
+            @RequestParam int pageSize,
             @RequestParam(defaultValue = "1", name = "page") int page,
             @ModelAttribute MasterSearchDTO inDTO) {//Test
 
         Pagination paging = Pagination.builder()
                 .page(page)
-                .perSize(perSize)
-                .offset((page - 1) * perSize)
+                .pageSize(pageSize)
+                .offset((page - 1) * pageSize)
                 .build();
 
         inDTO.setMobilePhoneNoInfoHashVlu(cryptoProvider.toHashEncryptedText(inDTO.getMobilePhoneNumberInfo()));
@@ -64,20 +64,20 @@ public class BoOneIdMainController {
 
         return new GridResponseVO().data(GridData.<MasterDTO>builder()
                 .contents(oneIdMainService.getMaster(baseSearchDTO))
-                .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
+                .page(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 
     @Operation(summary = "OneID 마스터 조회", description = "OneID 마스터 조회")
     @GetMapping(value = "/v1/master-for-history")
     public ResponseEntity<GridResponseVO<GridData>> getMasterForHistory(
-            @RequestParam int perSize,
+            @RequestParam int pageSize,
             @RequestParam(defaultValue = "1", name = "page") int page,
             @ModelAttribute MasterSearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
-                .perSize(perSize)
-                .offset((page - 1) * perSize)
+                .pageSize(pageSize)
+                .offset((page - 1) * pageSize)
                 .build();
 
         inDTO.setMobilePhoneNoInfoHashVlu(cryptoProvider.toHashEncryptedText(inDTO.getMobilePhoneNumberInfo()));
@@ -90,20 +90,20 @@ public class BoOneIdMainController {
 
         return new GridResponseVO().data(GridData.<MasterDTO>builder()
                 .contents(oneIdMainService.getMasterForHistory(baseSearchDTO))
-                .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
+                .page(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 
     @Operation(summary = "OneID 마스터 History 조회", description = "OneID 마스터 History 조회")
     @GetMapping(value = "/v1/master-history")
     public ResponseEntity<GridResponseVO<GridData>> getMasterHistory(
-            @RequestParam int perSize,
+            @RequestParam int pageSize,
             @RequestParam(defaultValue = "0", name = "page") int page,
             @ModelAttribute MasterHistorySearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
-                .perSize(perSize)
-                .offset((page - 1) * perSize)
+                .pageSize(pageSize)
+                .offset((page - 1) * pageSize)
                 .build();
 
         inDTO.setBfChgMblfonNoInfoHashVlu(cryptoProvider.toHashEncryptedText(inDTO.getBfChgMobilePhoneNoInfo()));
@@ -114,20 +114,20 @@ public class BoOneIdMainController {
 
         return new GridResponseVO().data(GridData.<MasterHistoryDTO>builder()
                 .contents(oneIdMainService.getMasterHistory(baseSearchDTO))
-                .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
+                .page(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 
     @Operation(summary = "OneID-PAX 매핑 조회", description = "OneID-PAX 매핑 조회")
     @GetMapping(value = "/v1/pax-mapping")
     public ResponseEntity<GridResponseVO<GridData>> getPaxMapping(
-            @RequestParam int perSize,
+            @RequestParam int pageSize,
             @RequestParam(defaultValue = "1", name = "page") int page,
             @ModelAttribute PaxMappingSearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
-                .perSize(perSize)
-                .offset((page - 1) * perSize)
+                .pageSize(pageSize)
+                .offset((page - 1) * pageSize)
                 .build();
 
         BaseSearchDTO<PaxMappingSearchDTO> baseSearchDTO = BaseSearchDTO.<PaxMappingSearchDTO>builder().paging(paging).search(inDTO).build();
@@ -135,20 +135,20 @@ public class BoOneIdMainController {
 
         return new GridResponseVO().data(GridData.<PaxMappingDTO>builder()
                 .contents(oneIdMainService.getPaxMapping(baseSearchDTO))
-                .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
+                .page(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 
     @Operation(summary = "대리점 추정 모바일 번호 조회", description = "대리점 추정 모바일 번호 조회")
     @GetMapping(value = "/v1/agt-contact")
     public ResponseEntity<GridResponseVO<GridData>> getAgtContact(
-            @RequestParam int perSize,
+            @RequestParam int pageSize,
             @RequestParam(defaultValue = "1", name = "page") int page,
             @ModelAttribute AgtContactSearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
-                .perSize(perSize)
-                .offset((page - 1) * perSize)
+                .pageSize(pageSize)
+                .offset((page - 1) * pageSize)
                 .build();
 
         inDTO.setConvertMblfonNoInfoToHshVlu(cryptoProvider.toHashEncryptedText(inDTO.getAgtEstimatedMblfonNoInfo()));
@@ -157,20 +157,20 @@ public class BoOneIdMainController {
 
         return new GridResponseVO().data(GridData.<AgtContactDTO>builder()
                 .contents(oneIdMainService.getAgtContact(baseSearchDTO))
-                .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
+                .page(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 
     @Operation(summary = "OneID관계이력테이블 조회", description = "OneID관계이력테이블 조회")
     @GetMapping(value = "/v1/merge-history")
     public ResponseEntity<GridResponseVO<GridData>> getMergeHistory(
-            @RequestParam int perSize,
+            @RequestParam int pageSize,
             @RequestParam(defaultValue = "1", name = "page") int page,
             @ModelAttribute MergeHistorySearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
-                .perSize(perSize)
-                .offset((page - 1) * perSize)
+                .pageSize(pageSize)
+                .offset((page - 1) * pageSize)
                 .build();
 
         BaseSearchDTO<MergeHistorySearchDTO> baseSearchDTO = BaseSearchDTO.<MergeHistorySearchDTO>builder().paging(paging).search(inDTO).build();
@@ -178,7 +178,7 @@ public class BoOneIdMainController {
 
         return new GridResponseVO().data(GridData.<MergeHistoryDTO>builder()
                 .contents(oneIdMainService.getMergeHistory(baseSearchDTO))
-                .pagination(paging).build()).successResponse(OneidConstants.SUCCESS);
+                .page(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 
 }

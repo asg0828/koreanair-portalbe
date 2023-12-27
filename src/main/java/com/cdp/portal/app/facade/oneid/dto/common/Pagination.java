@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 public class Pagination {
 	private int offset;
-	private int perSize;
+	private int pageSize;
 	private int page;
 	private int totalCount;
 }

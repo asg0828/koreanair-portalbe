@@ -10,6 +10,6 @@ import java.util.List;
 @Builder
 public class GridData<T> {
     private List<T> contents;
-    private Pagination pagination;
+    private Pagination page;
 }
 
