@@ -1,7 +1,11 @@
 package com.cdp.portal.app.facade.oneid.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+import lombok.Data;
 
+@Data
+@Builder
 public class CleansingHashResultsDTO {
     @Schema(description = "휴대전화번호 클렌징 결과")
     private String phoneCleansingResult;
