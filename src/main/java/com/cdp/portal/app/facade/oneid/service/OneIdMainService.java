@@ -79,44 +79,6 @@ public class OneIdMainService {
         return oneIdMainMapper.getCountMasterHistory(baseSearchDTO);
     }
 
-//    @Transactional(readOnly = true)
-//    public List<PsptInfoDTO> getPsptInfo(BaseSearchDTO<PsptInfoSearchDTO> baseSearchDTO) {
-//        return oneIdMainMapper.getPsptInfo(baseSearchDTO);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public int getCountPsptInfo(BaseSearchDTO<PsptInfoSearchDTO> baseSearchDTO) {
-//        return oneIdMainMapper.getCountPsptInfo(baseSearchDTO);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public List<SkypassMappingDTO> getSkypassMapping(BaseSearchDTO<SkypassMappingSearchDTO> baseSearchDTO) {
-//        return oneIdMainMapper.getSkypassMapping(baseSearchDTO);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public int getCountSkypassMapping(BaseSearchDTO<SkypassMappingSearchDTO> baseSearchDTO) {
-//        return oneIdMainMapper.getCountSkypassMapping(baseSearchDTO);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public List<SkypassInfoDTO> getSkypassInfo(BaseSearchDTO<SkypassInfoSearchDTO> baseSearchDTO) {
-//        List<SkypassInfoDTO> result = oneIdMainMapper.getSkypassInfo(baseSearchDTO);
-//        for (SkypassInfoDTO dto : result) {
-//            dto.setMobilePhoneNumberInfo(cryptoProvider.toAesDecryptedText(dto.getMobilePhoneNumberInfo()));
-//            dto.setHomePhoneNumberInfo(cryptoProvider.toAesDecryptedText(dto.getHomePhoneNumberInfo()));
-//            dto.setOfficePhoneNumberInfo(cryptoProvider.toAesDecryptedText(dto.getOfficePhoneNumberInfo()));
-//            dto.setEmailAddress(cryptoProvider.toAesDecryptedText(dto.getEmailAddress()));
-//        }
-//
-//        return result;
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public int getCountSkypassInfo(BaseSearchDTO<SkypassInfoSearchDTO> baseSearchDTO) {
-//        return oneIdMainMapper.getCountSkypassInfo(baseSearchDTO);
-//    }
-
     @Transactional(readOnly = true)
     public List<PaxMappingDTO> getPaxMapping(BaseSearchDTO<PaxMappingSearchDTO> baseSearchDTO) {
         return oneIdMainMapper.getPaxMapping(baseSearchDTO);
@@ -156,13 +118,4 @@ public class OneIdMainService {
         return oneIdMainMapper.getCountMergeHistory(baseSearchDTO);
     }
 
-//    @Transactional(readOnly = true)
-//    public List<SkypassMergeDTO> getSkypassMerge(BaseSearchDTO<SkypassMergeSearchDTO> baseSearchDTO) {
-//        return oneIdMainMapper.getSkypassMerge(baseSearchDTO);
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public int getCountSkypassMerge(BaseSearchDTO<SkypassMergeSearchDTO> baseSearchDTO) {
-//        return oneIdMainMapper.getCountSkypassMerge(baseSearchDTO);
-//    }
 }

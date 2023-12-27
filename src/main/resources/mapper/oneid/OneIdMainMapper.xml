@@ -41,7 +41,7 @@
             <include refid="getMasterCondition"/>
             ORDER BY LAST_UPDATE_DATE DESC
         ) TB
-        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+        LIMIT ${paging.perSize} OFFSET ${paging.offset}
     </select>
     <select id="getCountMaster" resultType="int">
         SELECT /*+ OneIdMainMapper.getCountMaster */
@@ -90,7 +90,7 @@
         <include refid="getMasterCondition"/>
         ORDER BY LAST_UPDATE_DATE DESC
         ) TB
-        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+        LIMIT ${paging.perSize} OFFSET ${paging.offset}
     </select>
     <select id="getCountMasterForHistory" resultType="int">
     SELECT COUNT(*) CNT FROM (
@@ -187,7 +187,7 @@
             <include refid="getMasterHistoryCondition"/>
             ORDER BY A.LAST_UPDATE_DATE DESC
         ) TB
-        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+        LIMIT ${paging.perSize} OFFSET ${paging.offset}
     </select>
     <select id="getCountMasterHistory" resultType="int">
         SELECT /*+ OneIdMainMapper.getCountMasterHistory */
@@ -264,7 +264,7 @@
             <include refid="getPaxMappingCondition"/>
             ORDER BY CREATION_DATE DESC
         ) TB
-        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+        LIMIT ${paging.perSize} OFFSET ${paging.offset}
     </select>
     <select id="getCountPaxMapping" resultType="int">
         SELECT /*+ OneIdMainMapper.getCountPaxMapping */
@@ -377,7 +377,7 @@
             <include refid="getAgtContactCondition"/>
             ORDER BY AGT_ESTIMATED_MBLFON_NO_INFO
         ) TB
-        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+        LIMIT ${paging.perSize} OFFSET ${paging.offset}
     </select>
     <select id="getCountAgtContact" resultType="int">
         SELECT /*+ OneIdMainMapper.getCountAgtContact */
@@ -431,7 +431,7 @@
             <include refid="getMergeHistoryCondition"/>
             ORDER BY MERGE_HISTORY.MERGE_SOURCE_ONEID_NO
         ) TB
-        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+        LIMIT ${paging.perSize} OFFSET ${paging.offset}
     </select>
     <select id="getCountMergeHistory" resultType="int">
         SELECT /*+ OneIdMainMapper.getCountMergeHistory */
@@ -486,61 +486,4 @@
             AND MERGE_HISTORY.CREATION_DATE <![CDATA[<]]> '${search.creationEndDate}'::TIMESTAMP + INTERVAL '1 day'
         </if>
     </sql>
-<!--     <select id="getSkypassMerge" resultType="com.ke.cdp.be.restapi.v1.oneid.dto.SkypassMergeDTO"> -->
-<!--         SELECT /*+ OneIdMainMapper.getSkypassMerge */ -->
-<!--             ROW_NUMBER() OVER() AS NO, TB.* -->
-<!--         FROM ( -->
-<!--             SELECT SKYPASS.SKYPASS_MEMBER_NUMBER AS MERGE_SOURCE_SKYPASS_NUMBER -->
-<!--                  , SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO AS MERGE_TARGET_SKYPASS_NUMBER -->
-<!--                  , SKYPASS.ONEID_NO AS SKYPASS_SOURCE_ONEID_NUMBER -->
-<!--                  , TARGETSKYPASS.ONEID_NO AS SKYPASS_TARGET_ONEID_NUMBER -->
-<!--                  , MERGE.MERGE_SOURCE_ONEID_NO AS MERGE_SOURCE_ONEID_NUMBER -->
-<!--                  , MERGE.MERGE_TARGET_ONEID_NO AS MERGE_TARGET_ONEID_NUMBER -->
-<!--             FROM XXOID_SKYPASS_MAPPING SKYPASS -->
-<!--                 LEFT JOIN XXOID_SKYPASS_MAPPING TARGETSKYPASS -->
-<!--                     ON SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO = TARGETSKYPASS.SKYPASS_MEMBER_NUMBER -->
-<!--                 INNER JOIN XXOID_MERGE_HISTORY MERGE -->
-<!--                     ON SKYPASS.ONEID_NO = MERGE.MERGE_SOURCE_ONEID_NO -->
-<!--                     AND MERGE.ONEID_MERGE_STTS_CD = 'A' -->
-<!--             <include refid="getSkypassMergeCondition"/> -->
-<!--             ORDER BY SKYPASS.ONEID_NO, SKYPASS.SKYPASS_MEMBER_NUMBER -->
-<!--         ) TB -->
-<!--         LIMIT ${paging.perPage} OFFSET ${paging.offset} -->
-<!--     </select> -->
-<!--     <select id="getCountSkypassMerge" resultType="int"> -->
-<!--         SELECT /*+ OneIdMainMapper.getCountSkypassMerge */ -->
-<!--             COUNT(*) CNT -->
-<!--         FROM XXOID_SKYPASS_MAPPING SKYPASS -->
-<!--              LEFT JOIN XXOID_SKYPASS_MAPPING TARGETSKYPASS -->
-<!--                        ON SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO = TARGETSKYPASS.SKYPASS_MEMBER_NUMBER -->
-<!--              INNER JOIN XXOID_MERGE_HISTORY MERGE -->
-<!--                         ON SKYPASS.ONEID_NO = MERGE.MERGE_SOURCE_ONEID_NO -->
-<!--                             AND MERGE.ONEID_MERGE_STTS_CD = 'A' -->
-<!--         <include refid="getSkypassMergeCondition"/> -->
-<!--     </select> -->
-<!--     <select id="createSkypassMergeExcel" resultType="com.ke.cdp.be.restapi.v1.common.dto.CamelMap"> -->
-<!--         SELECT /*+ OneIdMainMapper.createSkypassMergeExcel */ -->
-<!--                SKYPASS.SKYPASS_MEMBER_NUMBER         AS MERGE_SOURCE_SKYPASS_NUMBER -->
-<!--              , SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO AS MERGE_TARGET_SKYPASS_NUMBER -->
-<!--              , SKYPASS.ONEID_NO                      AS SKYPASS_SOURCE_ONEID_NUMBER -->
-<!--              , TARGETSKYPASS.ONEID_NO                AS SKYPASS_TARGET_ONEID_NUMBER -->
-<!--              , MERGE.MERGE_SOURCE_ONEID_NO           AS MERGE_SOURCE_ONEID_NUMBER -->
-<!--              , MERGE.MERGE_TARGET_ONEID_NO           AS MERGE_TARGET_ONEID_NUMBER -->
-<!--         FROM XXOID_SKYPASS_MAPPING SKYPASS -->
-<!--              LEFT JOIN XXOID_SKYPASS_MAPPING TARGETSKYPASS -->
-<!--                        ON SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO = TARGETSKYPASS.SKYPASS_MEMBER_NUMBER -->
-<!--              INNER JOIN XXOID_MERGE_HISTORY MERGE -->
-<!--                         ON SKYPASS.ONEID_NO = MERGE.MERGE_SOURCE_ONEID_NO -->
-<!--                             AND MERGE.ONEID_MERGE_STTS_CD = 'A' -->
-<!--         <include refid="getSkypassMergeCondition"/> -->
-<!--         ORDER BY SKYPASS.ONEID_NO, SKYPASS.SKYPASS_MEMBER_NUMBER -->
-<!--     </select> -->
-<!--     <sql id="getSkypassMergeCondition"> -->
-<!--         WHERE SKYPASS.SKYPASS_MEMBER_STATUS_CODE = 'Merged' -->
-<!--         AND COALESCE(SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO,'') = '' -->
-<!--         <if test="search.skypassMemberNumber != null and search.skypassMemberNumber != ''"> -->
-<!--             AND (SKYPASS.SKYPASS_MEMBER_NUMBER = '${search.skypassMemberNumber}' OR -->
-<!--             SKYPASS.MERGE_MAINTAIN_SKYPASS_MBR_NO = '${search.skypassMemberNumber}') -->
-<!--         </if> -->
-<!--     </sql> -->
 </mapper>

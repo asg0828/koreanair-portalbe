@@ -21,7 +21,7 @@
             <include refid="getErrorLogCondition"/>
             ORDER BY ERROR_NM, DETAIL_ERROR_NM
         ) TB
-        LIMIT ${paging.perPage} OFFSET ${paging.offset}
+        LIMIT ${paging.perSize} OFFSET ${paging.offset}
     </select>
 
     <select id="getCountErrorLog" resultType="int">

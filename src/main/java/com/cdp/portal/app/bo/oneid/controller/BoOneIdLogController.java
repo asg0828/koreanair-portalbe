@@ -42,14 +42,14 @@ public class BoOneIdLogController {
     @Operation(summary = "OneID 에러 이력 조회", description = "OneID 에러 이력 조회")
     @GetMapping(value = "/v1/error-log")
     public ResponseEntity<GridResponseVO<GridData>> getErrorLog(
-            @RequestParam(defaultValue = "10", name = "perPage") int perPage,
+            @RequestParam(defaultValue = "10", name = "perSize") int perSize,
             @RequestParam(defaultValue = "1", name = "page") int page,
             @ModelAttribute ErrorLogSearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
-                .perPage(perPage)
-                .offset((page - 1) * perPage)
+                .perSize(perSize)
+                .offset((page - 1) * perSize)
                 .build();
 
         BaseSearchDTO<ErrorLogSearchDTO> baseSearchDTO = BaseSearchDTO.<ErrorLogSearchDTO>builder().paging(paging).search(inDTO).build();
@@ -67,14 +67,14 @@ public class BoOneIdLogController {
     )
     @GetMapping(value = "/v1/daily-report", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDailyReport(
-            @RequestParam(defaultValue = "10", name = "perPage") int perPage,
+            @RequestParam(defaultValue = "10", name = "perPage") int perSize,
             @RequestParam(defaultValue = "1", name = "page") int page,
             @ModelAttribute DailyReportSearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
-                .perPage(perPage)
-                .offset((page - 1) * perPage)
+                .perSize(perSize)
+                .offset((page - 1) * perSize)
                 .build();
 
         BaseSearchDTO<DailyReportSearchDTO> baseSearchDTO = BaseSearchDTO.<DailyReportSearchDTO>builder().paging(paging).search(inDTO).build();
@@ -92,14 +92,14 @@ public class BoOneIdLogController {
     )
     @GetMapping(value = "/v1/cti-voc-report", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCtiVocReport(
-            @RequestParam int perPage,
+            @RequestParam int perSize,
             @RequestParam(defaultValue = "1", name = "page") int page,
             @ModelAttribute CtiVocReportSearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
-                .perPage(perPage)
-                .offset((page - 1) * perPage)
+                .perSize(perSize)
+                .offset((page - 1) * perSize)
                 .build();
 
         BaseSearchDTO<CtiVocReportSearchDTO> baseSearchDTO = BaseSearchDTO.<CtiVocReportSearchDTO>builder().paging(paging).search(inDTO).build();
@@ -117,13 +117,13 @@ public class BoOneIdLogController {
     )
     @GetMapping(value = "/v1/same-pnr", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSamePnrReport(
-            @RequestParam int perPage,
+            @RequestParam int perSize,
             @RequestParam(defaultValue = "1", name = "page") int page) {
 
         Pagination paging = Pagination.builder()
                 .page(page)
-                .perPage(perPage)
-                .offset((page - 1) * perPage)
+                .perSize(perSize)
+                .offset((page - 1) * perSize)
                 .build();
 
         BaseSearchDTO<SamePnrReportDTO> baseSearchDTO = BaseSearchDTO.<SamePnrReportDTO>builder().paging(paging).build();
