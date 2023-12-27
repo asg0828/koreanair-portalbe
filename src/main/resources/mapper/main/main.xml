@@ -1,0 +1,56 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cdp.portal.app.facade.main.mapper.MainTotalCountMapper">
+
+    <select id="selectDeptCount" resultType="int">
+        SELECT COUNT(*) AS cnt
+        FROM T_FEATURE F
+        WHERE del_yn = 'N'
+          and F.ENR_DEPT_CODE = (SELECT dept_code FROM T_USER WHERE USER_ID = #{userId})
+    </select>
+
+    <select id="selectInterestDeptCount" resultType="int">
+        SELECT COUNT(*) AS cnt
+        FROM T_USER_FEATURE UF
+                 INNER JOIN T_USER U ON UF.user_id = U.user_id
+        WHERE U.dept_code = (SELECT dept_code FROM T_USER WHERE USER_ID = #{userId});
+    </select>
+
+    <select id="selectAvgUserCount" resultType="int">
+        SELECT
+            ROUND(AVG(daily_login_count)) AS average_login_count
+        FROM (
+                 SELECT
+                     DATE(log_dt) AS log_date,
+                     COUNT(*) AS daily_login_count
+                 FROM cdp.t_log_user
+                 WHERE rqst_uri ILIKE '%login%'
+                   AND log_dt >= NOW() - INTERVAL '1 year'
+                 GROUP BY log_date
+             ) AS daily_counts;
+    </select>
+
+    <select id="selectFeatureCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM
+        T_FEATURE F
+        LEFT JOIN T_USER U
+        ON F.ENR_USER_ID = U.USER_ID
+        LEFT JOIN T_DEPT D
+        ON F.ENR_DEPT_CODE = D.DEPT_CODE
+        LEFT JOIN T_FEATURE_SE SE
+        ON F.FEATURE_SE = SE.SE_ID
+        LEFT JOIN T_CODE C
+        ON F.FEATURE_TYP = C.CODE_ID
+        WHERE DEL_YN = 'N'
+    </select>
+
+    <select id="selectTableSpecCount" resultType="int">
+        SELECT
+        COUNT(*) AS cnt
+        FROM
+        T_META_TB_SPEC
+        WHERE DEL_YN='N'
+    </select>
+
+</mapper>

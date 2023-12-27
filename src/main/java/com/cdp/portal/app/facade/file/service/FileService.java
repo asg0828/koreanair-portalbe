@@ -108,7 +108,6 @@ public class FileService {
                     fileExtsn = fileNm.substring(lastIndex + 1);
                 }
             }
-
             String fileUUID = idUtil.getUUID() + '.' + fileExtsn;
 
             final String fileId = idUtil.getFileId();

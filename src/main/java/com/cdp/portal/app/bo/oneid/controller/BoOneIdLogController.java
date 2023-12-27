@@ -2,6 +2,7 @@ package com.cdp.portal.app.bo.oneid.controller;
 
 import javax.validation.Valid;
 
+import com.cdp.portal.app.facade.oneid.dto.common.*;
 import com.cdp.portal.app.facade.oneid.dto.response.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,15 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdp.portal.app.facade.menu.dto.response.MenuMgmtResDto.ApiResMenus;
-import com.cdp.portal.app.facade.oneid.dto.common.BaseSearchDTO;
-import com.cdp.portal.app.facade.oneid.dto.common.GridData;
-import com.cdp.portal.app.facade.oneid.dto.common.GridResponseVO;
-import com.cdp.portal.app.facade.oneid.dto.common.Pagination;
 import com.cdp.portal.app.facade.oneid.dto.request.ErrorLogSearchDTO;
 import com.cdp.portal.app.facade.oneid.service.OneIdLogService;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.constants.OneidConstants;
-import com.cdp.portal.common.dto.ApiResDto;
+import com.cdp.portal.common.encryption.CryptoProvider;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,6 +35,8 @@ import lombok.RequiredArgsConstructor;
 public class BoOneIdLogController {
 
 	private final OneIdLogService oneIdLogService;
+    private final CryptoProvider cryptoProvider;
+//    private final CleansingRule cleansingRule;
 
     @Operation(summary = "OneID 에러 이력 조회", description = "OneID 에러 이력 조회")
     @GetMapping(value = "/v1/error-log")
@@ -140,10 +139,14 @@ public class BoOneIdLogController {
     }
     )
     @GetMapping(value = "/v1/cleansing-hash-results", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getCleansingHashResults(
+    public ResponseEntity<ResponseVO> getCleansingHashResults(
             @RequestParam String inptPhone,
             @RequestParam String inptEmail) {
 
-        return ResponseEntity.ok(ApiResDto.success());
+        return new ResponseVO().data(CleansingHashResultsDTO.builder()
+//                .phoneCleansingResult(cleansingRule.cleanseMobile(inptPhone))
+//                .emailCleansingResult(cleansingRule.cleanseEmail(inptEmail))
+                .phoneHashValue(cryptoProvider.toHashEncryptedText(inptPhone))
+                .emailHashValue(cryptoProvider.toHashEncryptedText(inptEmail)).build()).successResponse(OneidConstants.SUCCESS);
     }
 }
