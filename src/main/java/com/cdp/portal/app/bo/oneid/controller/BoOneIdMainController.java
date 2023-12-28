@@ -12,6 +12,7 @@ import com.cdp.portal.app.facade.oneid.dto.common.BaseSearchDTO;
 import com.cdp.portal.app.facade.oneid.dto.common.GridData;
 import com.cdp.portal.app.facade.oneid.dto.common.GridResponseVO;
 import com.cdp.portal.app.facade.oneid.dto.common.Pagination;
+import com.cdp.portal.app.facade.oneid.dto.common.ResponseVO;
 import com.cdp.portal.app.facade.oneid.dto.response.AgtContactDTO;
 import com.cdp.portal.app.facade.oneid.dto.response.AgtContactSearchDTO;
 import com.cdp.portal.app.facade.oneid.dto.response.MasterDTO;
@@ -179,6 +180,14 @@ public class BoOneIdMainController {
         return new GridResponseVO().data(GridData.<MergeHistoryDTO>builder()
                 .contents(oneIdMainService.getMergeHistory(baseSearchDTO))
                 .page(paging).build()).successResponse(OneidConstants.SUCCESS);
+    }
+
+    @Operation(summary = "Double Metaphone 변환값 조회", description = "Double Metaphone 변환값 조회")
+    @GetMapping(value = "/v1/double-metaphone")
+    public ResponseEntity<ResponseVO> getDoubleMetaphone(
+            @RequestParam String bfConvertDoubleMetaphone) {
+        doubleMetaphone.setMaxCodeLen(12);
+        return new ResponseVO().data(doubleMetaphone.encode(bfConvertDoubleMetaphone)).successResponse(OneidConstants.SUCCESS);
     }
 
 }
