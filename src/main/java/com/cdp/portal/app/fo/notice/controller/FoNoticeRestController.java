@@ -49,6 +49,7 @@ public class FoNoticeRestController {
         NoticeReqDto.SearchNotice searchDto = NoticeReqDto.SearchNotice.builder()
                 .searchTable(searchTable)
                 .searchConditions(searchConditions)
+                .useYn("Y")
                 .build();
 
         return ResponseEntity.ok(ApiResDto.success(noticeService.getNotices(pagingDto,searchDto)));

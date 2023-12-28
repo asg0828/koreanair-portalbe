@@ -23,6 +23,9 @@
                     </foreach>
                     )
                 </if>
+	            <if test="search.useYn != null and search.useYn != ''">
+	                AND USE_YN = #{search.useYn}
+	            </if>
             </if>
         </where>
     </sql>

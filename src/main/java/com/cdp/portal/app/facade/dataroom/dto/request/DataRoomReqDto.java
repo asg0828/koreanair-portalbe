@@ -79,5 +79,7 @@ public class DataRoomReqDto {
         @Schema(description = "검색 조건", example = "")
         private String[] searchConditions;
 
+        @Schema(description = "공개여부", example = "")
+        private String useYn;
     }
 }

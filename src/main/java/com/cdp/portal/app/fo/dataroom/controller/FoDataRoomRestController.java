@@ -51,6 +51,7 @@ public class FoDataRoomRestController {
         DataRoomReqDto.SearchDataRoom searchDto = DataRoomReqDto.SearchDataRoom.builder()
                 .searchTable(searchTable)
                 .searchConditions(searchConditions)
+                .useYn("Y")
                 .build();
 
         return ResponseEntity.ok(ApiResDto.success(dataRoomService.getDataRooms(pagingDto,searchDto)));

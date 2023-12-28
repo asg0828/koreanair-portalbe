@@ -52,6 +52,7 @@ public class FoFaqRestController {
         FaqReqDto.SearchFaq searchDto = FaqReqDto.SearchFaq.builder()
                 .searchTable(searchTable)
                 .searchConditions(searchConditions)
+                .useYn("Y")
                 .build();
 
         return ResponseEntity.ok(ApiResDto.success(faqService.getFaqs(pagingDto,searchDto)));

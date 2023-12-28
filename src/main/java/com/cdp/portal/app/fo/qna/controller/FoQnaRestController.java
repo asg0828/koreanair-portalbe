@@ -76,6 +76,7 @@ public class FoQnaRestController {
         QnaReqDto.SearchQna searchDto = QnaReqDto.SearchQna.builder()
                 .searchTable(searchTable)
                 .searchConditions(searchConditions)
+                .useYn("Y")
                 .build();
 
         return ResponseEntity.ok(ApiResDto.success(qnaService.getQnas(pagingDto, searchDto)));
