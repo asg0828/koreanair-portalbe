@@ -53,4 +53,46 @@
         WHERE DEL_YN='N'
     </select>
 
+    <select id="selectLoginInfoLogDt" resultType="java.sql.Timestamp">
+        SELECT log_dt FROM T_LOG_MGR
+        WHERE rqst_body::text iLIKE '%"googleIdToken"%'
+          AND (rspt_body::text ~* ('.*' || #{userId} || '.*'))
+        ORDER BY log_dt DESC
+        LIMIT 1;
+    </select>
+
+    <select id="selectLoginInfoClientIp" resultType="String">
+        SELECT client_ip  FROM T_LOG_MGR
+        WHERE rqst_body::text iLIKE '%"googleIdToken"%'
+          AND (rspt_body::text ~* ('.*' || #{userId} || '.*'))
+        ORDER BY log_dt DESC
+        LIMIT 1;
+    </select>
+
+    <select id="selectLoginUserByDept" resultType="String">
+        WITH LoginLogs AS (
+            SELECT
+                l.rqst_uri,
+                jsonb_extract_path_text(l.rqst_body, 'googleIdToken') AS google_id_token,
+                jsonb_extract_path_text(l.rspt_body, 'body', 'data', 'deptNm') AS dept_nm,
+                l.log_dt
+            FROM
+                t_log_user AS l
+            WHERE
+                l.rqst_uri ILIKE '%login%'
+              AND jsonb_extract_path_text(l.rqst_body, 'googleIdToken') IS NOT NULL
+              AND l.log_dt >= NOW() - INTERVAL '1 week'
+        )
+        SELECT
+            dept_nm,
+            COUNT(*) AS login_count
+        FROM
+            LoginLogs
+        GROUP BY
+            dept_nm
+        ORDER BY
+            login_count DESC
+        LIMIT 4;
+    </select>
+
 </mapper>

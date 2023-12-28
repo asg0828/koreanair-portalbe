@@ -4,6 +4,7 @@ import com.amazonaws.util.IOUtils;
 import com.cdp.portal.app.facade.file.dto.response.FileResDto;
 import com.cdp.portal.app.facade.file.mapper.FileMapper;
 import com.cdp.portal.app.facade.file.model.FileModel;
+import com.cdp.portal.common.CommonUtil;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.aws.AwsS3Util;
 import com.cdp.portal.common.util.SessionScopeUtil;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -37,6 +39,7 @@ public class FileService {
     private final FileMapper fileMapper;
     private final IdUtil idUtil;
     private final AwsS3Util s3Util;
+    private final CommonUtil commonUtil;
 
     /**
      * 파일 다운로드 헤더
@@ -95,6 +98,19 @@ public class FileService {
      */
     @Transactional
     public List<String> insertFile(List<MultipartFile> files, String fileCl) throws IOException {
+        List<String> activeProfiles = commonUtil.getProfiles();
+
+        String activeProfile = activeProfiles.get(0);
+        String bucketName = null;
+
+        if ("local".equals(activeProfile)) {
+            bucketName = "awsdc-s3-dlk-dev-cdp-portalobject";
+        } else if ("dev".equals(activeProfile)) {
+            bucketName = "awsdc-s3-dlk-dev-cdp-portalobject";
+        } else if ("prd".equals(activeProfile)) {
+            bucketName = "awsdc-s3-dlk-prd-cdp-portalobject";
+        }
+
         List<FileModel> fileModels = new ArrayList<>();
         List<String> uploadedFileIds = new ArrayList<>();
 
@@ -122,7 +138,7 @@ public class FileService {
                     .saveFileNm(fileUUID)
                     .inputStream(file.getResource().getInputStream())
                     .storageSe("S3")
-                    .bucketNm("awsdc-s3-dlk-dev-cdp-portalobject")
+                    .bucketNm(bucketName)
                     .useYn("Y")
                     .rgstId(SessionScopeUtil.getContextSession().getUserId())
                     .modiId(SessionScopeUtil.getContextSession().getUserId())
@@ -133,7 +149,7 @@ public class FileService {
             uploadedFileIds.add(fileId);
             fileModels.add(fileModel);
         }
-            s3Util.upload(fileModels);
+        s3Util.upload(fileModels, bucketName);
 
         return uploadedFileIds;
     }

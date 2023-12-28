@@ -1,5 +1,6 @@
-package com.cdp.portal.app.fo.main.controller;
+package com.cdp.portal.app.bo.main.controller;
 
+import com.cdp.portal.app.facade.main.dto.response.MainResDto;
 import com.cdp.portal.app.facade.main.service.MainTotalCountService;
 import com.cdp.portal.app.facade.user.dto.response.UserFeatureResDto;
 import com.cdp.portal.common.constants.CommonConstants;
@@ -21,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = CommonConstants.API_FO_PREFIX + "/main")
-@Tag(name = "main", description = "CDP 메인 totalCount API")
-public class FoMainRestController {
+@RequestMapping(value = CommonConstants.API_BO_PREFIX + "/main")
+@Tag(name = "main", description = "CDP 관리자 메인 totalCount API")
+public class BoMainRestController {
 
     private final MainTotalCountService mainTotalCountService;
 
@@ -37,15 +38,25 @@ public class FoMainRestController {
         return ResponseEntity.ok(ApiResDto.success(mainTotalCountService.getUserBizMetaCount()));
     }
 
-    @Operation(summary = "내 부서의 신청/등록Feature와 관심Feature 총 건수를 Count", description = "내 부서의 신청/등록Feature와 관심Feature 총 건수를 Count한다.", tags = {"user-feature"})
+    @Operation(summary = "Admin 페이지 접속 정보", description = "Admin 페이지 접속 정보", tags = {"admin-main"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = UserFeatureResDto.ApiResUserFeatures.class)))
     }
     )
     @Parameter(name = "userId", required = true, description = "사용자ID", example = "")
-    @GetMapping(value = "/v1/users/{userId}/features-mydept", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getFeatureDeptCount(
-            @PathVariable String userId) {
-        return ResponseEntity.ok(ApiResDto.success(mainTotalCountService.getFeaturesDeptCount(userId)));
+    @GetMapping(value = "/v1/login-info/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAdminLoginInfo(@PathVariable String userId) {
+        return ResponseEntity.ok(ApiResDto.success(mainTotalCountService.getAdminLoginInfo(userId)));
     }
 }
+
+//    @Operation(summary = "Admin 페이지 접속 정보", description = "Admin 페이지 접속 정보", tags = {"admin-main"})
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = UserFeatureResDto.ApiResUserFeatures.class)))
+//    }
+//    )
+//    @GetMapping(value = "/v1/login-user-dept", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<?> getLoginUserbyDept() {
+//        return ResponseEntity.ok(ApiResDto.success(mainTotalCountService.getLoginUserbyDept()));
+//    }
+//}

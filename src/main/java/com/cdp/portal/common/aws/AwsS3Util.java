@@ -77,10 +77,8 @@ public class AwsS3Util {
     /**
      * S3 파일 업로드
      */
-    public boolean upload(List<FileModel> files) {
+    public boolean upload(List<FileModel> files, String bucketName) {
         try {
-            String bucketName = "awsdc-s3-dlk-dev-cdp-portalobject";
-
             for (FileModel file : files) {
                 if (StringUtils.isBlank(file.getStorageSe())) {
                     setSavePath(file);
