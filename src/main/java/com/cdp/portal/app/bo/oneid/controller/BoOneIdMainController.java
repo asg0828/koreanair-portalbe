@@ -51,7 +51,6 @@ public class BoOneIdMainController {
         Pagination paging = Pagination.builder()
                 .page(page)
                 .pageSize(pageSize)
-                .offset((page - 1) * pageSize)
                 .build();
 
         inDTO.setMobilePhoneNoInfoHashVlu(cryptoProvider.toHashEncryptedText(inDTO.getMobilePhoneNumberInfo()));
@@ -61,6 +60,7 @@ public class BoOneIdMainController {
 
         BaseSearchDTO<MasterSearchDTO> baseSearchDTO = BaseSearchDTO.<MasterSearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdMainService.getCountMaster(baseSearchDTO));
+        paging.setTotalPage((int)Math.ceil((float)paging.getTotalCount() / pageSize));
 
         return new GridResponseVO().data(GridData.<MasterDTO>builder()
                 .contents(oneIdMainService.getMaster(baseSearchDTO))
@@ -77,7 +77,6 @@ public class BoOneIdMainController {
         Pagination paging = Pagination.builder()
                 .page(page)
                 .pageSize(pageSize)
-                .offset((page - 1) * pageSize)
                 .build();
 
         inDTO.setMobilePhoneNoInfoHashVlu(cryptoProvider.toHashEncryptedText(inDTO.getMobilePhoneNumberInfo()));
@@ -87,6 +86,7 @@ public class BoOneIdMainController {
 
         BaseSearchDTO<MasterSearchDTO> baseSearchDTO = BaseSearchDTO.<MasterSearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdMainService.getCountMasterForHistory(baseSearchDTO));
+        paging.setTotalPage((int)Math.ceil((float)paging.getTotalCount() / pageSize));
 
         return new GridResponseVO().data(GridData.<MasterDTO>builder()
                 .contents(oneIdMainService.getMasterForHistory(baseSearchDTO))
@@ -103,7 +103,6 @@ public class BoOneIdMainController {
         Pagination paging = Pagination.builder()
                 .page(page)
                 .pageSize(pageSize)
-                .offset((page - 1) * pageSize)
                 .build();
 
         inDTO.setBfChgMblfonNoInfoHashVlu(cryptoProvider.toHashEncryptedText(inDTO.getBfChgMobilePhoneNoInfo()));
@@ -111,6 +110,7 @@ public class BoOneIdMainController {
 
         BaseSearchDTO<MasterHistorySearchDTO> baseSearchDTO = BaseSearchDTO.<MasterHistorySearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdMainService.getCountMasterHistory(baseSearchDTO));
+        paging.setTotalPage((int)Math.ceil((float)paging.getTotalCount() / pageSize));
 
         return new GridResponseVO().data(GridData.<MasterHistoryDTO>builder()
                 .contents(oneIdMainService.getMasterHistory(baseSearchDTO))
@@ -127,11 +127,11 @@ public class BoOneIdMainController {
         Pagination paging = Pagination.builder()
                 .page(page)
                 .pageSize(pageSize)
-                .offset((page - 1) * pageSize)
                 .build();
 
         BaseSearchDTO<PaxMappingSearchDTO> baseSearchDTO = BaseSearchDTO.<PaxMappingSearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdMainService.getCountPaxMapping(baseSearchDTO));
+        paging.setTotalPage((int)Math.ceil((float)paging.getTotalCount() / pageSize));
 
         return new GridResponseVO().data(GridData.<PaxMappingDTO>builder()
                 .contents(oneIdMainService.getPaxMapping(baseSearchDTO))
@@ -148,12 +148,12 @@ public class BoOneIdMainController {
         Pagination paging = Pagination.builder()
                 .page(page)
                 .pageSize(pageSize)
-                .offset((page - 1) * pageSize)
                 .build();
 
         inDTO.setConvertMblfonNoInfoToHshVlu(cryptoProvider.toHashEncryptedText(inDTO.getAgtEstimatedMblfonNoInfo()));
         BaseSearchDTO<AgtContactSearchDTO> baseSearchDTO = BaseSearchDTO.<AgtContactSearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdMainService.getCountAgtContact(baseSearchDTO));
+        paging.setTotalPage((int)Math.ceil((float)paging.getTotalCount() / pageSize));
 
         return new GridResponseVO().data(GridData.<AgtContactDTO>builder()
                 .contents(oneIdMainService.getAgtContact(baseSearchDTO))
@@ -170,11 +170,11 @@ public class BoOneIdMainController {
         Pagination paging = Pagination.builder()
                 .page(page)
                 .pageSize(pageSize)
-                .offset((page - 1) * pageSize)
                 .build();
 
         BaseSearchDTO<MergeHistorySearchDTO> baseSearchDTO = BaseSearchDTO.<MergeHistorySearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdMainService.getCountMergeHistory(baseSearchDTO));
+        paging.setTotalPage((int)Math.ceil((float)paging.getTotalCount() / pageSize));
 
         return new GridResponseVO().data(GridData.<MergeHistoryDTO>builder()
                 .contents(oneIdMainService.getMergeHistory(baseSearchDTO))

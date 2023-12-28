@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class Pagination {
-	private int offset;
+	private int totalPage;
 	private int pageSize;
 	private int page;
 	private int totalCount;

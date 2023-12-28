@@ -48,7 +48,7 @@
         <include refid="getDailyReportCondition"/>
         ORDER BY AGGR_DATE
         ) TB
-        LIMIT ${paging.pageSize} OFFSET ${paging.offset}
+        LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
 
     <select id="getCountDailyReport" resultType="int">
@@ -104,7 +104,7 @@
         <include refid="getCtiVocReportCondition"/>
         ORDER BY REQ_DATEV
         ) TB
-        LIMIT ${paging.pageSize} OFFSET ${paging.offset}
+        LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
     <select id="getCountCtiVocReport" resultType="int">
         SELECT /*+ OneIdReportMapper.getCountCtiVocReport */
@@ -139,7 +139,7 @@
             PNR_FQTV                     as pnrFqtv
         FROM XXOID_CDP_GLUE_SAME_PNR_ONEID_II
         WHERE 1 = 1
-        LIMIT ${paging.pageSize} OFFSET ${paging.offset}
+        LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
 
     <select id="getCountSamePnrReport" resultType="int">

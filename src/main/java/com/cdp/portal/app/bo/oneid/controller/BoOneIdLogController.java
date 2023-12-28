@@ -1,24 +1,29 @@
 package com.cdp.portal.app.bo.oneid.controller;
 
-import javax.validation.Valid;
-
-import com.cdp.portal.app.facade.oneid.dto.common.*;
-import com.cdp.portal.app.facade.oneid.dto.response.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdp.portal.app.facade.menu.dto.response.MenuMgmtResDto.ApiResMenus;
+import com.cdp.portal.app.facade.oneid.dto.common.BaseSearchDTO;
+import com.cdp.portal.app.facade.oneid.dto.common.GridData;
+import com.cdp.portal.app.facade.oneid.dto.common.GridResponseVO;
+import com.cdp.portal.app.facade.oneid.dto.common.Pagination;
 import com.cdp.portal.app.facade.oneid.dto.request.ErrorLogSearchDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.CtiVocReportDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.CtiVocReportSearchDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.DailyReportDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.DailyReportSearchDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.ErrorLogDTO;
+import com.cdp.portal.app.facade.oneid.dto.response.SamePnrReportDTO;
 import com.cdp.portal.app.facade.oneid.service.OneIdLogService;
 import com.cdp.portal.common.constants.CommonConstants;
 import com.cdp.portal.common.constants.OneidConstants;
-import com.cdp.portal.common.encryption.CryptoProvider;
+import com.cdp.portal.common.dto.ApiResDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,8 +40,6 @@ import lombok.RequiredArgsConstructor;
 public class BoOneIdLogController {
 
 	private final OneIdLogService oneIdLogService;
-    private final CryptoProvider cryptoProvider;
-//    private final CleansingRule cleansingRule;
 
     @Operation(summary = "OneID 에러 이력 조회", description = "OneID 에러 이력 조회")
     @GetMapping(value = "/v1/error-log")
@@ -48,11 +51,11 @@ public class BoOneIdLogController {
         Pagination paging = Pagination.builder()
                 .page(page)
                 .pageSize(pageSize)
-                .offset((page - 1) * pageSize)
                 .build();
 
         BaseSearchDTO<ErrorLogSearchDTO> baseSearchDTO = BaseSearchDTO.<ErrorLogSearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdLogService.getCountErrorLog(baseSearchDTO));
+        paging.setTotalPage((int)Math.ceil((float)paging.getTotalCount() / pageSize));
 
         return new GridResponseVO().data(GridData.<ErrorLogDTO>builder()
                 .contents(oneIdLogService.getErrorLog(baseSearchDTO))
@@ -73,11 +76,11 @@ public class BoOneIdLogController {
         Pagination paging = Pagination.builder()
                 .page(page)
                 .pageSize(pageSize)
-                .offset((page - 1) * pageSize)
                 .build();
 
         BaseSearchDTO<DailyReportSearchDTO> baseSearchDTO = BaseSearchDTO.<DailyReportSearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdLogService.getCountDailyReport(baseSearchDTO));
+        paging.setTotalPage((int)Math.ceil((float)paging.getTotalCount() / pageSize));
 
         return new GridResponseVO().data(GridData.<DailyReportDTO>builder()
                 .contents(oneIdLogService.getDailyReport(baseSearchDTO))
@@ -98,11 +101,11 @@ public class BoOneIdLogController {
         Pagination paging = Pagination.builder()
                 .page(page)
                 .pageSize(pageSize)
-                .offset((page - 1) * pageSize)
                 .build();
 
         BaseSearchDTO<CtiVocReportSearchDTO> baseSearchDTO = BaseSearchDTO.<CtiVocReportSearchDTO>builder().paging(paging).search(inDTO).build();
         paging.setTotalCount(oneIdLogService.getCountCtiVocReport(baseSearchDTO));
+        paging.setTotalPage((int)Math.ceil((float)paging.getTotalCount() / pageSize));
 
         return new GridResponseVO().data(GridData.<CtiVocReportDTO>builder()
                 .contents(oneIdLogService.getCtiVocReport(baseSearchDTO))
@@ -122,31 +125,15 @@ public class BoOneIdLogController {
         Pagination paging = Pagination.builder()
                 .page(page)
                 .pageSize(pageSize)
-                .offset((page - 1) * pageSize)
                 .build();
 
         BaseSearchDTO<SamePnrReportDTO> baseSearchDTO = BaseSearchDTO.<SamePnrReportDTO>builder().paging(paging).build();
         paging.setTotalCount(oneIdLogService.getCountSamePnrReport(baseSearchDTO));
+        paging.setTotalPage((int)Math.ceil((float)paging.getTotalCount() / pageSize));
 
         return new GridResponseVO().data(GridData.<SamePnrReportDTO>builder()
                 .contents(oneIdLogService.getSamePnrReport(baseSearchDTO))
                 .page(paging).build()).successResponse(OneidConstants.SUCCESS);
     }
 
-    @Operation(summary = "CleansingRule / Hash 변환 결과 조회", description = "CleansingRule / Hash 변환 결과를 조회한다", tags = { "oneid" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = ApiResMenus.class)))
-    }
-    )
-    @GetMapping(value = "/v1/cleansing-hash-results", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseVO> getCleansingHashResults(
-            @RequestParam String inptPhone,
-            @RequestParam String inptEmail) {
-
-        return new ResponseVO().data(CleansingHashResultsDTO.builder()
-//                .phoneCleansingResult(cleansingRule.cleanseMobile(inptPhone))
-//                .emailCleansingResult(cleansingRule.cleanseEmail(inptEmail))
-                .phoneHashValue(cryptoProvider.toHashEncryptedText(inptPhone))
-                .emailHashValue(cryptoProvider.toHashEncryptedText(inptEmail)).build()).successResponse(OneidConstants.SUCCESS);
-    }
 }

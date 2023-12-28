@@ -41,7 +41,7 @@
             <include refid="getMasterCondition"/>
             ORDER BY LAST_UPDATE_DATE DESC
         ) TB
-        LIMIT ${paging.pageSize} OFFSET ${paging.offset}
+        LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
     <select id="getCountMaster" resultType="int">
         SELECT /*+ OneIdMainMapper.getCountMaster */
@@ -90,7 +90,7 @@
         <include refid="getMasterCondition"/>
         ORDER BY LAST_UPDATE_DATE DESC
         ) TB
-        LIMIT ${paging.pageSize} OFFSET ${paging.offset}
+        LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
     <select id="getCountMasterForHistory" resultType="int">
     SELECT COUNT(*) CNT FROM (
@@ -187,7 +187,7 @@
             <include refid="getMasterHistoryCondition"/>
             ORDER BY A.LAST_UPDATE_DATE DESC
         ) TB
-        LIMIT ${paging.pageSize} OFFSET ${paging.offset}
+        LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
     <select id="getCountMasterHistory" resultType="int">
         SELECT /*+ OneIdMainMapper.getCountMasterHistory */
@@ -264,7 +264,7 @@
             <include refid="getPaxMappingCondition"/>
             ORDER BY CREATION_DATE DESC
         ) TB
-        LIMIT ${paging.pageSize} OFFSET ${paging.offset}
+        LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
     <select id="getCountPaxMapping" resultType="int">
         SELECT /*+ OneIdMainMapper.getCountPaxMapping */
@@ -311,7 +311,7 @@
 <!--             <include refid="getPsptInfoCondition"/> -->
 <!--             ORDER BY A.ONEID_NO, A.NATIONALITY_ISO_L3_COUNTRY_CD -->
 <!--         ) TB -->
-<!--         LIMIT ${paging.perPage} OFFSET ${paging.offset} -->
+<!--         LIMIT ${paging.perPage} OFFSET (#{paging.page} - 1) * #{paging.pageSize} -->
 <!--     </select> -->
 <!--     <select id="getCountPsptInfo" resultType="int"> -->
 <!--         SELECT /*+ OneIdMainMapper.getCountPsptInfo */ -->
@@ -377,7 +377,7 @@
             <include refid="getAgtContactCondition"/>
             ORDER BY AGT_ESTIMATED_MBLFON_NO_INFO
         ) TB
-        LIMIT ${paging.pageSize} OFFSET ${paging.offset}
+        LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
     <select id="getCountAgtContact" resultType="int">
         SELECT /*+ OneIdMainMapper.getCountAgtContact */
@@ -431,7 +431,7 @@
             <include refid="getMergeHistoryCondition"/>
             ORDER BY MERGE_HISTORY.MERGE_SOURCE_ONEID_NO
         ) TB
-        LIMIT ${paging.pageSize} OFFSET ${paging.offset}
+        LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
     <select id="getCountMergeHistory" resultType="int">
         SELECT /*+ OneIdMainMapper.getCountMergeHistory */
