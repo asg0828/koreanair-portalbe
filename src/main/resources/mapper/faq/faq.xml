@@ -31,7 +31,7 @@
     </sql>
 
     <sql id="order">
-        ORDER BY a.rownum ASC
+        ORDER BY rownum ASC
     </sql>
 
     <insert id="insertFaq" parameterType="faqModel">
@@ -66,10 +66,10 @@
 
     <select id="selectAll" resultType="FaqResDto">
         SELECT
+        row_number() over(order by rgst_dt ASC) as rownum,
         *
         FROM (
         SELECT
-        row_number() over(order by faq.rgst_dt ASC) as rownum,
         faq.faq_id,
         faq.cl_code,
         faq.qstn,

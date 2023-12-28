@@ -31,7 +31,7 @@
     </sql>
 
     <sql id="order">
-        ORDER BY a.rownum ASC
+        ORDER BY rownum ASC
     </sql>
 
     <insert id="insertNotice" parameterType="NoticeModel">
@@ -71,11 +71,11 @@
 
     <select id="selectAll" resultType="NoticeResDto">
         SELECT
+        row_number() over(order by important_yn desc, rgst_dt desc) as rownum,
         *
         FROM (
         SELECT
-        row_number() over(order by TBN.important_yn desc, TBN.rgst_dt desc) as rownum
-        , TBN.NOTICE_ID		AS NOTICE_ID
+        TBN.NOTICE_ID		AS NOTICE_ID
         , TBN.SJ			AS SJ
         , TBN.CN			AS CN
         , TBN.IMPORTANT_YN  AS IMPORTANT_YN

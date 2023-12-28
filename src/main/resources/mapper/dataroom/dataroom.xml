@@ -30,16 +30,16 @@
         </where>
     </sql>
     <sql id="order">
-        ORDER BY a.rownum ASC
+        ORDER BY rownum ASC
     </sql>
 
     <select id="selectAll" resultType="DataRoomResDto">
         SELECT
+        row_number() over(order by rgst_dt desc) as rownum,
         *
         FROM (
         SELECT
-        row_number() over(order by DT.rgst_dt desc) as rownum
-        , DT.DATA_ID AS DATA_ID
+        DT.DATA_ID AS DATA_ID
         , DT.SJ AS SJ
         , DT.CN AS CN
         , DT.VIEW_CNT AS VIEW_CNT

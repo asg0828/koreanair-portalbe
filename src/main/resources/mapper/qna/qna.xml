@@ -31,7 +31,7 @@
     </sql>
 
     <sql id="order">
-        ORDER BY a.rownum ASC
+        ORDER BY rownum ASC
     </sql>
 
     <insert id="insertQna" parameterType="qnaModel">
@@ -78,10 +78,10 @@
 
     <select id="selectAll" resultType="QnaResDto">
         select
+        row_number() over(order by rgst_dt ASC) as rownum,
         *
         from (
         SELECT
-        row_number() over(order by tbq.rgst_dt ASC) as rownum,
         tbq.qna_id,
         tbq.cl_code,
         tbq.sj,
