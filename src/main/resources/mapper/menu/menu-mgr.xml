@@ -5,17 +5,20 @@
         SELECT ROW_NUMBER() OVER (ORDER BY Z.ORD_SEQ ASC) AS ROWNUM
              , Z.*
           FROM (
-                SELECT MENU_ID
-				     , UP_MENU_ID
-				     , MENU_NM
-				     , MENU_URL
-				     , MENU_DSC
-				     , ORD_SEQ
-				     , MENU_SE
-				     , MENU_ATTR
-				     , USE_YN
-				     , MENU_ICON
-				  FROM T_MGR_SYS_MENU USM
+                SELECT MSM.MENU_ID
+				     , MSM.UP_MENU_ID
+				     , MSM.MENU_NM
+				     , MSM.MENU_URL
+				     , MSM.MENU_DSC
+				     , MSM2.MENU_NM AS UP_MENU_NM
+				     , MSM.ORD_SEQ
+				     , MSM.MENU_SE
+				     , MSM.MENU_ATTR
+				     , MSM.USE_YN
+				     , MSM.MENU_ICON
+				  FROM T_MGR_SYS_MENU MSM
+				       LEFT JOIN T_MGR_SYS_MENU MSM2
+				            ON MSM.UP_MENU_ID = MSM2.MENU_ID
                  <include refid="selectWhere"/>
                ) Z
     </select>
