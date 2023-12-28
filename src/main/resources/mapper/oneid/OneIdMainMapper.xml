@@ -37,9 +37,10 @@
                  , TO_CHAR(final_inq_dtim,'YYYY-MM-DD HH24:MI:SS') AS final_inq_dtim
                  , TO_CHAR(CREATION_DATE,'YYYY-MM-DD HH24:MI:SS') AS CREATION_DATE
                  , TO_CHAR(LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE
+                 , LAST_UPDATE_DATE as L_UPDATE_DATE
             FROM XXOID_MASTER MASTER
             <include refid="getMasterCondition"/>
-            ORDER BY LAST_UPDATE_DATE DESC
+            ORDER BY L_UPDATE_DATE DESC
         ) TB
         LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
@@ -50,46 +51,44 @@
         <include refid="getMasterCondition"/>
     </select>
     <select id="getMasterForHistory" resultType="MasterDTO">
-        SELECT /*+ OneIdMainMapper.getMaster */
-        ROW_NUMBER() OVER() AS NO, TB.*
-        FROM (
-        SELECT DISTINCT MASTER.ONEID_NO
-        , ONEID_TYPE_CD
-        , ONEID_STTS_CD
-        , ONEID_REGIS_CHNL_CD
-        , ONEID_FINAL_CHG_CHNL_CD
-        , ONEID_FINAL_CHG_RELATE_NO
-        , ONEID_FINAL_CHG_UCI_ID
-        , ENG_FNAME
-        , ENG_LNAME
-        , MOBILE_PHONE_NUMBER_INFO
-        , EMAIL_ADDRESS
-        , BIRTH_DATEV
-        , KOR_FNAME
-        , KOR_LNAME
-        , SEX_CODE
-        , SEX_REGIS_CHNL_CD
-        , HOME_PHONE_NUMBER_INFO
-        , OFFICE_PHONE_NUMBER_INFO
-        , AUTO_CONVS_ENG_FNAME
-        , AUTO_CONVS_ENG_LNAME
-        , MULTIPLE_PASSPORT_YN
-        , AGT_ESTIMATED_CONTACT_TYPE_CD
-        , ENG_NM_SOUNDEX_VALUE
-        , MOBILE_PHONE_NO_INFO_HASH_VLU
-        , EMAIL_ADRS_HASH_VALUE
-        , HOME_PHONE_NO_INFO_HASH_VALUE
-        , OFFICE_PHONE_NO_INFO_HASH_VLU
-        , PERSONAL_INFO_USE_AGREE_YN
-        , TO_CHAR(final_inq_dtim,'YYYY-MM-DD HH24:MI:SS') AS final_inq_dtim
-        , TO_CHAR(MASTER.CREATION_DATE,'YYYY-MM-DD HH24:MI:SS') AS CREATION_DATE
-        , TO_CHAR(MASTER.LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE
-        FROM XXOID_MASTER MASTER
-        INNER JOIN XXOID_MASTER_HISTORY HISTORY
-        ON MASTER.ONEID_NO = HISTORY.ONEID_NO
-        <include refid="getMasterCondition"/>
-        ORDER BY LAST_UPDATE_DATE DESC
-        ) TB
+        SELECT
+        ROW_NUMBER() OVER() AS NO
+            , MASTER.ONEID_NO
+            , ONEID_TYPE_CD
+            , ONEID_STTS_CD
+            , ONEID_REGIS_CHNL_CD
+            , ONEID_FINAL_CHG_CHNL_CD
+            , ONEID_FINAL_CHG_RELATE_NO
+            , ONEID_FINAL_CHG_UCI_ID
+            , ENG_FNAME
+            , ENG_LNAME
+            , MOBILE_PHONE_NUMBER_INFO
+            , EMAIL_ADDRESS
+            , BIRTH_DATEV
+            , KOR_FNAME
+            , KOR_LNAME
+            , SEX_CODE
+            , SEX_REGIS_CHNL_CD
+            , HOME_PHONE_NUMBER_INFO
+            , OFFICE_PHONE_NUMBER_INFO
+            , AUTO_CONVS_ENG_FNAME
+            , AUTO_CONVS_ENG_LNAME
+            , MULTIPLE_PASSPORT_YN
+            , AGT_ESTIMATED_CONTACT_TYPE_CD
+            , ENG_NM_SOUNDEX_VALUE
+            , MOBILE_PHONE_NO_INFO_HASH_VLU
+            , EMAIL_ADRS_HASH_VALUE
+            , HOME_PHONE_NO_INFO_HASH_VALUE
+            , OFFICE_PHONE_NO_INFO_HASH_VLU
+            , PERSONAL_INFO_USE_AGREE_YN
+            , TO_CHAR(final_inq_dtim,'YYYY-MM-DD HH24:MI:SS') AS final_inq_dtim
+            , TO_CHAR(MASTER.CREATION_DATE,'YYYY-MM-DD HH24:MI:SS') AS CREATION_DATE
+            , TO_CHAR(MASTER.LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE
+            , MASTER.LAST_UPDATE_DATE as L_UPDATE_DATE
+            FROM XXOID_MASTER MASTER
+            <include refid="getMasterCondition"/>
+            and exists(select 1 from xxoid_master_history history where MASTER.oneid_no = history.oneid_no)
+            ORDER BY L_UPDATE_DATE desc
         LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
     <select id="getCountMasterForHistory" resultType="int">
@@ -97,9 +96,8 @@
             SELECT /*+ OneIdMainMapper.getCountMaster */
                 DISTINCT MASTER.ONEID_NO
             FROM XXOID_MASTER MASTER
-            INNER JOIN XXOID_MASTER_HISTORY HISTORY
-            ON MASTER.ONEID_NO = HISTORY.ONEID_NO
             <include refid="getMasterCondition"/>
+            and exists(select 1 from xxoid_master_history history where MASTER.oneid_no = history.oneid_no)
             ) A
     </select>
 
@@ -183,9 +181,10 @@
                  , A.AF_CHG_PASSPORT_EXPIRE_DTV
                  , TO_CHAR(A.CREATION_DATE,'YYYY-MM-DD HH24:MI:SS') AS CREATION_DATE
                  , TO_CHAR(A.LAST_UPDATE_DATE,'YYYY-MM-DD HH24:MI:SS') AS LAST_UPDATE_DATE
+                 , A.LAST_UPDATE_DATE as L_UPDATE_DATE
             FROM XXOID_MASTER_HISTORY A
             <include refid="getMasterHistoryCondition"/>
-            ORDER BY A.LAST_UPDATE_DATE DESC
+            ORDER BY L_UPDATE_DATE DESC
         ) TB
         LIMIT ${paging.pageSize} OFFSET (#{paging.page} - 1) * #{paging.pageSize}
     </select>
