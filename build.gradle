@@ -62,6 +62,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws-secrets-manager-config:2.2.6.RELEASE'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	// google
     implementation 'com.google.api-client:google-api-client:2.2.0'

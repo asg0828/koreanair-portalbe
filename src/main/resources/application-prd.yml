@@ -98,3 +98,7 @@ core:
       dir: /safenet/prd/CryptoContexts.properties
     IngrianNAE-properties:
       dir: /safenet/prd/IngrianNAE.properties
+      
+external:
+  cdp-api:
+    url: http://dlk-dev-cdp-api:8080
