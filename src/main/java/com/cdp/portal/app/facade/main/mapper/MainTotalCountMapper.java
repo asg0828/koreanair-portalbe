@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Mapper
 public interface MainTotalCountMapper {
@@ -21,4 +22,6 @@ public interface MainTotalCountMapper {
 
     Timestamp selectLoginInfoLogDt(@Param("userId") String userId);
     String selectLoginInfoClientIp(@Param("userId") String userId);
+
+    List<MainResDto> selectLoginUserByDept();
 }
