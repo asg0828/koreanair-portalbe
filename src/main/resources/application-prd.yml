@@ -63,7 +63,8 @@ cloud:
       db-password-arn-oneid: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/prd/oneid/oneidprddb-44eNpd
 
 hr:
-  arn: arn:aws:secretsmanager:us-east-1:993398491107:secret:secret/dlk/prd/cdp-Ye6TOa
+  #arn: arn:aws:secretsmanager:us-east-1:993398491107:secret:secret/dlk/prd/cdp-Ye6TOa
+  arn: arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:secret/dlk/prd/cdp-Ye6TOa
 
 # AWS Properties
 aws-props:
