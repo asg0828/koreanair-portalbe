@@ -78,7 +78,7 @@
 
     <select id="selectAll" resultType="QnaResDto">
         select
-        row_number() over(order by rgst_dt ASC) as rownum,
+        row_number() over(order by rgst_dt desc) as rownum,
         *
         from (
         SELECT

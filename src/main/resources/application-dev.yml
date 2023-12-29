@@ -93,3 +93,7 @@ core:
         arn: "arn:aws:secretsmanager:ap-northeast-2:993398491107:secret:rds/dlk/dev/cdp/cdpdevdb-VDgFOR"
         region: ap-northeast-2
         enabled: true
+        
+external:
+  cdp-api:
+    url: http://dlk-dev-cdp-api:8080

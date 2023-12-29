@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -54,5 +55,12 @@ public class MainTotalCountService {
                 .logDt(formattedLogDt)
                 .clientIp(clientIp)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public MainResDto.MainLoginUserByDept[] getLoginUserbyDept() {
+        List<MainResDto> loginUserCountByDept = mainTotalCountMapper.selectLoginUserByDept();
+        MainResDto.MainLoginUserByDept[] resultArray = loginUserCountByDept.toArray(new MainResDto.MainLoginUserByDept[0]);
+        return resultArray;
     }
 }

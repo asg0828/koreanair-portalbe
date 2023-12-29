@@ -55,7 +55,12 @@ public enum CdpPortalError {
 	// menu
 	MENU_ID_NOT_FOUND("E0701", "메뉴 ID({0})를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
 	USER_QUICK_MENU_DUPLICATED("E0702", "퀵메뉴에 이미 등록되어있습니다.", HttpStatus.BAD_REQUEST),
-	USER_QUICK_MENU_NOT_EXISTS("E0703", "퀵메뉴에 등록 되어있지않습니다.", HttpStatus.BAD_REQUEST)
+	USER_QUICK_MENU_NOT_EXISTS("E0703", "퀵메뉴에 등록 되어있지않습니다.", HttpStatus.BAD_REQUEST),
+	
+	// customer
+	CUSTOMER_PROFILE_NOT_FOUND("E0801", "프로필 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    CUSTOMER_MEMEBER_NOT_FOUND("E0802", "멤버 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    SKYPASS_MEMEBER_NOT_FOUND("E0803", "스카이패스 회원 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND)
 	;
 
     private String code;

@@ -69,30 +69,30 @@
         LIMIT 1;
     </select>
 
-    <select id="selectLoginUserByDept" resultType="String">
+    <select id="selectLoginUserByDept" resultType="com.cdp.portal.app.facade.main.dto.response.MainResDto$MainLoginUserByDept">
         WITH LoginLogs AS (
             SELECT
-                l.rqst_uri,
-                jsonb_extract_path_text(l.rqst_body, 'googleIdToken') AS google_id_token,
                 jsonb_extract_path_text(l.rspt_body, 'body', 'data', 'deptNm') AS dept_nm,
-                l.log_dt
+                COUNT(*) AS login_count,
+                ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC) AS rank
             FROM
                 t_log_user AS l
             WHERE
                 l.rqst_uri ILIKE '%login%'
               AND jsonb_extract_path_text(l.rqst_body, 'googleIdToken') IS NOT NULL
               AND l.log_dt >= NOW() - INTERVAL '1 week'
+            GROUP BY
+                dept_nm
+            ORDER BY
+                login_count DESC
+            LIMIT 4
         )
         SELECT
+            rank,
             dept_nm,
-            COUNT(*) AS login_count
+            login_count
         FROM
-            LoginLogs
-        GROUP BY
-            dept_nm
-        ORDER BY
-            login_count DESC
-        LIMIT 4;
+            LoginLogs;
     </select>
 
 </mapper>

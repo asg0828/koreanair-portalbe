@@ -41,15 +41,32 @@ public class MainResDto extends MainModel {
         private int featureInterestDeptCount;
     }
 
-        @Setter
-        @ToString
-        @Builder
-        @AllArgsConstructor
-        @NoArgsConstructor(access = AccessLevel.PROTECTED)
-        @Schema(description = "관리자 메인 접속 정보")
-        public static class MainAdminLoginInfoCdpResult {
-            @Schema(description = "접속 정보", nullable = false)
-            private String logDt;
-            private String clientIp;
+    @Getter
+    @Setter
+    @ToString
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @Schema(description = "관리자 메인 접속 정보")
+    public static class MainAdminLoginInfoCdpResult {
+        @Schema(description = "접속 정보", nullable = false)
+        private String logDt;
+        private String clientIp;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @Schema(description = "관리자 메인 접속 정보")
+    public static class MainLoginUserByDept {
+        @Schema(description = "랭크", nullable = false)
+        private int rank;
+        @Schema(description = "부서명", nullable = false)
+        private String deptNm;
+        @Schema(description = "로그인 횟수", nullable = false)
+        private int loginCount;
     }
 }

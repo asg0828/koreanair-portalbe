@@ -48,15 +48,14 @@ public class BoMainRestController {
     public ResponseEntity<?> getAdminLoginInfo(@PathVariable String userId) {
         return ResponseEntity.ok(ApiResDto.success(mainTotalCountService.getAdminLoginInfo(userId)));
     }
-}
 
-//    @Operation(summary = "Admin 페이지 접속 정보", description = "Admin 페이지 접속 정보", tags = {"admin-main"})
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = UserFeatureResDto.ApiResUserFeatures.class)))
-//    }
-//    )
-//    @GetMapping(value = "/v1/login-user-dept", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<?> getLoginUserbyDept() {
-//        return ResponseEntity.ok(ApiResDto.success(mainTotalCountService.getLoginUserbyDept()));
-//    }
-//}
+    @Operation(summary = "부서별 접속량", description = "부서별 접속량", tags = {"admin-main"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = UserFeatureResDto.ApiResUserFeatures.class)))
+    }
+    )
+    @GetMapping(value = "/v1/login-user-dept", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getLoginUserbyDept() {
+        return ResponseEntity.ok(ApiResDto.success(mainTotalCountService.getLoginUserbyDept()));
+    }
+}
