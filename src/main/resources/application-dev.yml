@@ -96,4 +96,4 @@ core:
         
 external:
   cdp-api:
-    url: http://dlk-dev-cdp-api:8080
+    url: http://dlk-dev-cdp-api
