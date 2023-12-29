@@ -163,7 +163,7 @@
 			WHERE
 				F.DEL_YN = 'N'
 		) Z
-		ORDER BY Z.USER_FEATURE_CNT DESC
+		ORDER BY isUserFeature DESC, Z.USER_FEATURE_CNT DESC
 	</select>
 	
 
