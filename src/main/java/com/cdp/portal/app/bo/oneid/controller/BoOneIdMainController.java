@@ -98,7 +98,7 @@ public class BoOneIdMainController {
     @GetMapping(value = "/v1/master-history")
     public ResponseEntity<GridResponseVO<GridData>> getMasterHistory(
             @RequestParam int pageSize,
-            @RequestParam(defaultValue = "0", name = "page") int page,
+            @RequestParam(defaultValue = "1", name = "page") int page,
             @ModelAttribute MasterHistorySearchDTO inDTO) {
 
         Pagination paging = Pagination.builder()
