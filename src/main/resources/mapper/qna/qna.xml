@@ -113,10 +113,13 @@
 
     <select id="selectCount" resultType="int">
         SELECT
-        COUNT(*) AS cnt
+        	COUNT(*) AS CNT
         FROM
-        T_BBS_QNA
+        	T_BBS_QNA
         <include refid="selectWhere"/>
+        AND CL_CODE IS NOT NULL
+       	AND SJ IS NOT NULL
+       	AND CN IS NOT NULL
     </select>
 
     <select id="selectByQnaId" parameterType="String" resultType="QnaResDto">
