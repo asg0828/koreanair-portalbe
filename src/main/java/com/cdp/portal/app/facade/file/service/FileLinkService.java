@@ -34,9 +34,6 @@ public class FileLinkService {
     	FileLinkModel fileLinkModel = FileLinkModel.builder()
     			.fileLinkId(fileLinkId)
     			.fileLinkUrl(fileLink.getFileLinkUrl())
-    			.useYn(fileLink.getUseYn())
-    			.rgstId(fileLink.getRgstId())
-    			.modiId(fileLink.getModiId())
     			.build();
     	
         fileLinkMapper.insertFileLink(fileLinkModel);
