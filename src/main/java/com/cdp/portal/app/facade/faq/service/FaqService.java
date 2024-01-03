@@ -160,6 +160,7 @@ public class FaqService {
 
     @Transactional
     public void deleteFaq(String faqId) {
+    	fileLinkMapper.deleteFileLinkByRefId(faqId);
         faqMapper.deleteFaq(faqId);
     }
     @Transactional

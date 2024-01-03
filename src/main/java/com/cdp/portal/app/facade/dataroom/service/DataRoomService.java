@@ -163,6 +163,7 @@ public class DataRoomService {
      */
     @Transactional
     public void deleteDataRoom(String dataId) {
+    	fileLinkMapper.deleteFileLinkByRefId(dataId);
         dataRoomMapper.deleteDataRoom(dataId);
     }
 

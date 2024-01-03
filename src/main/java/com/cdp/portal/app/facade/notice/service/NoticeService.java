@@ -167,6 +167,7 @@ public class NoticeService {
      */
     @Transactional
     public void deleteNotice(String noticeId) {
+    	fileLinkMapper.deleteFileLinkByRefId(noticeId);
         noticeMapper.deleteNotice(noticeId);
     }
     @Transactional

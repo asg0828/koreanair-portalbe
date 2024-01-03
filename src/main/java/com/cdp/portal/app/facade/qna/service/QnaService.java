@@ -174,6 +174,7 @@ public class QnaService {
      */
     @Transactional
     public void deleteQna(String qnaId) {
+    	fileLinkMapper.deleteFileLinkByRefId(qnaId);
         qnaMapper.deleteQna(qnaId);
     }
     @Transactional
