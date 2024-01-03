@@ -1,5 +1,7 @@
 package com.cdp.portal.app.facade.customer.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -10,6 +12,7 @@ import com.cdp.portal.app.facade.customer.dto.response.CustomerResDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 import com.cdp.portal.external.api.client.CdpApiClient;
 import com.cdp.portal.external.api.dto.response.CdpApiResDto;
+import com.cdp.portal.external.api.dto.response.CustomerMemberResDto;
 import com.cdp.portal.external.api.dto.response.CustomerProfileResDto;
 
 import feign.FeignException;
@@ -58,6 +61,37 @@ public class CustomerService {
                         })
                         .collect(Collectors.toList()))
                 .build();
+    }
+    
+    public List<CustomerResDto.Member> getCustomerMembers(String searchType, String korFname, String korLname, String engFname, String engLname, String mobilePhoneNumber) {
+        List<CustomerMemberResDto> dtos = new ArrayList<>();
+        
+        try {
+            CdpApiResDto<List<CustomerMemberResDto>> customerMemberResDtos = cdpApiClient.getCustomerMembers(searchType, korFname, korLname, engFname, engLname, mobilePhoneNumber);
+            if (Objects.isNull(customerMemberResDtos) || Objects.isNull(customerMemberResDtos.getData()) || !StringUtils.equals(customerMemberResDtos.getStatus(), "success")) {
+                throw CdpPortalError.CUSTOMER_MEMEBER_NOT_FOUND.exception();
+            }
+            
+            dtos = customerMemberResDtos.getData();
+        } catch (FeignException feignException) {
+            log.error("getCustomerMembers error: {}", feignException.getMessage(), feignException);
+            throw CdpPortalError.CUSTOMER_MEMEBER_NOT_FOUND.exception();
+        }
+        
+        return dtos.stream()
+                .map(m -> {
+                    return CustomerResDto.Member.builder()
+                            .korFname(m.getKorFname())
+                            .korLname(m.getKorLname())
+                            .engFname(m.getEngFname())
+                            .engLname(m.getEngLname())
+                            .skypassMemberNumber(m.getSkypassMemberNumber())
+                            .membershipLevel(m.getMembershipLevel())
+                            .sexCode(m.getSexCode())
+                            .oneidNo(m.getOneidNo())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
 }

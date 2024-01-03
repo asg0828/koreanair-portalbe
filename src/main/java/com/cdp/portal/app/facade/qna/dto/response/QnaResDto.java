@@ -2,28 +2,37 @@ package com.cdp.portal.app.facade.qna.dto.response;
 
 import java.util.List;
 
+import com.cdp.portal.app.facade.file.model.FileLinkModel;
 import com.cdp.portal.app.facade.file.model.FileModel;
 import com.cdp.portal.app.facade.qna.dto.request.QnaReqDto;
 import com.cdp.portal.app.facade.qna.model.QnaModel;
 import com.cdp.portal.common.dto.ApiResDto;
-
 import com.cdp.portal.common.dto.PagingDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Schema(description = "QNA 관리 응답")
 public class QnaResDto extends QnaModel {
+	
     public static class QnaResDtoResult extends ApiResDto<QnaResDto.QnasResult> {}
 
     @JsonProperty("comments")
     @Schema(description = "댓글 목록", nullable = true)
     private List<QnaResDto> comments;
+    @Schema(description = "파일 목록", nullable = false)
+    private List<FileModel> fileList;
+    @Schema(description = "파일 링크 URL 목록", nullable = false)
+    private List<String> fileLinks;
 
     @Getter
     @ToString
@@ -42,13 +51,5 @@ public class QnaResDto extends QnaModel {
         @Schema(description = "파일 목록", nullable = false)
         private List<FileModel> fileList;
 
-    }
-    @Schema(description = "파일 목록", nullable = false)
-    private List<FileModel> fileList;
-    public void setFileList(List<FileModel> fileList) {
-        this.fileList = fileList;
-    }
-    public List<FileModel> getFileList() {
-        return this.fileList;
     }
 }

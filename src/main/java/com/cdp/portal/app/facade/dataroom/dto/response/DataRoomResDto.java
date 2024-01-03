@@ -4,17 +4,31 @@ import java.util.List;
 
 import com.cdp.portal.app.facade.dataroom.dto.request.DataRoomReqDto;
 import com.cdp.portal.app.facade.dataroom.model.DataRoomModel;
+import com.cdp.portal.app.facade.file.model.FileLinkModel;
 import com.cdp.portal.app.facade.file.model.FileModel;
 import com.cdp.portal.common.dto.ApiResDto;
-
 import com.cdp.portal.common.dto.PagingDto;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-
+@Getter
+@Setter
 @Schema(description = "자료실 관리 응답")
 public class DataRoomResDto extends DataRoomModel {
+	
     public static class DataRoomResDtoResult extends ApiResDto<List<DataRoomResDto>> {}
+    
+    @Schema(description = "파일 목록", nullable = false)
+    private List<FileModel> fileList;
+    @Schema(description = "파일 링크 URL 목록", nullable = false)
+    private List<String> fileLinks;
 
     @Getter
     @ToString
@@ -32,14 +46,5 @@ public class DataRoomResDto extends DataRoomModel {
         private PagingDto page;
         @Schema(description = "파일 목록", nullable = false)
         private List<FileModel> fileList;
-
-    }
-    @Schema(description = "파일 목록", nullable = false)
-    private List<FileModel> fileList;
-    public void setFileList(List<FileModel> fileList) {
-        this.fileList = fileList;
-    }
-    public List<FileModel> getFileList() {
-        return this.fileList;
     }
 }

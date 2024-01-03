@@ -3,34 +3,34 @@ package com.cdp.portal.app.facade.qna.service;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cdp.portal.app.facade.file.mapper.FileLinkMapper;
 import com.cdp.portal.app.facade.file.mapper.FileMapper;
+import com.cdp.portal.app.facade.file.model.FileLinkModel;
 import com.cdp.portal.app.facade.file.model.FileModel;
-import com.cdp.portal.app.facade.file.service.FileService;
-import com.cdp.portal.app.facade.notice.dto.response.NoticeResDto;
 import com.cdp.portal.app.facade.qna.dto.request.QnaReqDto;
 import com.cdp.portal.app.facade.qna.dto.response.QnaResDto;
+import com.cdp.portal.app.facade.qna.mapper.QnaMapper;
 import com.cdp.portal.app.facade.qna.model.QnaModel;
 import com.cdp.portal.common.IdUtil;
 import com.cdp.portal.common.dto.PagingDto;
 import com.cdp.portal.common.enumeration.CdpPortalError;
 import com.cdp.portal.common.util.SessionScopeUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import com.cdp.portal.app.facade.qna.mapper.QnaMapper;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class QnaService {
 
+	private final IdUtil idUtil;
     private final QnaMapper qnaMapper;
-    private final IdUtil idUtil;
-    private final FileService fileService;
     private final FileMapper fileMapper;
+    private final FileLinkMapper fileLinkMapper;
 
     /**
      * Q&A 등록
@@ -63,8 +63,18 @@ public class QnaService {
                 file.setFileId(fileId);
                 file.setRefId(qnaId);
                 file.setModiId(SessionScopeUtil.getContextSession().getUserId());
-                fileService.updateFile(file);
+                fileMapper.updateFile(file);
             }
+        }
+        
+        if (dto.getFileLinks() != null) {
+        	for (String fileLinkUrl : dto.getFileLinks()) {
+        		FileLinkModel fileLink = new FileLinkModel();
+        		fileLink.setFileLinkId(idUtil.getFileLinkId());
+        		fileLink.setRefId(qnaId);
+        		fileLink.setFileLinkUrl(fileLinkUrl);
+        		fileLinkMapper.insertFileLink(fileLink);
+        	}
         }
 
         qnaMapper.insertQna(qnaModel);
@@ -96,6 +106,8 @@ public class QnaService {
         if (qna != null) {
             List<FileModel> fileList = fileMapper.selectFileListByRefId(qnaId);
             qna.setFileList(fileList);
+            List<String> fileLinks = fileLinkMapper.selectFileLinkListByRefId(qnaId);
+            qna.setFileLinks(fileLinks);
         }
 
         return qna;
@@ -137,8 +149,20 @@ public class QnaService {
                 file.setFileId(fileId);
                 file.setRefId(qnaId); // 파일의 refId를 공지사항의 ID로 설정
                 file.setModiId(SessionScopeUtil.getContextSession().getUserId());
-                fileService.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
+                fileMapper.updateFile(file); // 파일 서비스의 updateFile 메서드를 호출하여 파일의 refId를 업데이트
             }
+        }
+        
+        if (dto.getFileLinks() != null) {
+        	fileLinkMapper.deleteFileLinkByRefId(qnaId);
+        	
+        	for (String fileLinkUrl : dto.getFileLinks()) {
+        		FileLinkModel fileLink = new FileLinkModel();
+        		fileLink.setFileLinkId(idUtil.getFileLinkId());
+        		fileLink.setRefId(qnaId);
+        		fileLink.setFileLinkUrl(fileLinkUrl);
+        		fileLinkMapper.insertFileLink(fileLink);
+        	}
         }
 
         qnaMapper.updateQna(qnaModel);
@@ -150,6 +174,7 @@ public class QnaService {
      */
     @Transactional
     public void deleteQna(String qnaId) {
+    	fileLinkMapper.deleteFileLinkByRefId(qnaId);
         qnaMapper.deleteQna(qnaId);
     }
     @Transactional

@@ -114,45 +114,57 @@ public class FileService {
         List<FileModel> fileModels = new ArrayList<>();
         List<String> uploadedFileIds = new ArrayList<>();
 
-        for (MultipartFile file : files) {
-            String fileNm = file.getOriginalFilename();
-            String fileExtsn = "";
+        try {
+            for (MultipartFile file : files) {
+                String fileNm = file.getOriginalFilename();
+                String fileExtsn = "";
 
-            if (fileNm != null) {
-                int lastIndex = fileNm.lastIndexOf(".");
-                if (lastIndex != -1) {
-                    fileExtsn = fileNm.substring(lastIndex + 1);
+                if (fileNm != null) {
+                    int lastIndex = fileNm.lastIndexOf(".");
+                    if (lastIndex != -1) {
+                        fileExtsn = fileNm.substring(lastIndex + 1);
+                    }
                 }
+                String fileUUID = idUtil.getUUID() + '.' + fileExtsn;
+
+                final String fileId = idUtil.getFileId();
+                log.debug("##### insertFile fileId: {}", fileId);
+
+                FileModel fileModel = FileModel.builder()
+                        .fileId(fileId)
+                        .fileNm(fileNm)
+                        .fileExtsn(fileExtsn)
+                        .savePath("board")
+                        .fileSize(file.getSize())
+                        .saveFileNm(fileUUID)
+                        .inputStream(file.getResource().getInputStream())
+                        .storageSe("S3")
+                        .bucketNm(bucketName)
+                        .useYn("Y")
+                        .rgstId(SessionScopeUtil.getContextSession().getUserId())
+                        .modiId(SessionScopeUtil.getContextSession().getUserId())
+                        .fileCl(fileCl)
+                        .build();
+                uploadedFileIds.add(fileId);
+                fileModels.add(fileModel);
             }
-            String fileUUID = idUtil.getUUID() + '.' + fileExtsn;
+            boolean uploadSuccess = s3Util.upload(fileModels, bucketName);
+            if (uploadSuccess) {
+                for (FileModel fileModel : fileModels) {
+                    fileMapper.insertFile(fileModel);
+                }
+            } else {
+                throw new RuntimeException("파일 업로드에 실패하였습니다");
+            }
 
-            final String fileId = idUtil.getFileId();
-            log.debug("##### insertFile fileId: {}", fileId);
-
-            FileModel fileModel = FileModel.builder()
-                    .fileId(fileId)
-                    .fileNm(fileNm)
-                    .fileExtsn(fileExtsn)
-                    .savePath("board")
-                    .fileSize(file.getSize())
-                    .saveFileNm(fileUUID)
-                    .inputStream(file.getResource().getInputStream())
-                    .storageSe("S3")
-                    .bucketNm(bucketName)
-                    .useYn("Y")
-                    .rgstId(SessionScopeUtil.getContextSession().getUserId())
-                    .modiId(SessionScopeUtil.getContextSession().getUserId())
-                    .fileCl(fileCl)
-                    .build();
-
-            fileMapper.insertFile(fileModel);
-            uploadedFileIds.add(fileId);
-            fileModels.add(fileModel);
+        } catch (Exception e) {
+            throw new RuntimeException("파일 업로드 중 오류가 발생하였습니다.", e);
         }
-        s3Util.upload(fileModels, bucketName);
-
         return uploadedFileIds;
     }
+
+
+
 
     /**
      * 파일 목록 조회

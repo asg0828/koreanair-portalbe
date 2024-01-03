@@ -34,6 +34,13 @@ public class IdUtil {
 	public String getFileId() {
 		return service.getId(CommonConstants.ID.FILE);
 	}
+	
+	/**
+	 * 파일 ID : 파일 링크
+	 */
+	public String getFileLinkId() {
+		return service.getId(CommonConstants.ID.FILE_LINK);
+	}
 
 	/**
 	 * 공지사항 ID : 공지사항

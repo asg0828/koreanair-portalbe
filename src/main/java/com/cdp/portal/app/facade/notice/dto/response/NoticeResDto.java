@@ -6,16 +6,28 @@ import com.cdp.portal.app.facade.file.model.FileModel;
 import com.cdp.portal.app.facade.notice.dto.request.NoticeReqDto;
 import com.cdp.portal.app.facade.notice.model.NoticeModel;
 import com.cdp.portal.common.dto.ApiResDto;
-
 import com.cdp.portal.common.dto.PagingDto;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
 @Schema(description = "공지사항 관리 응답")
 public class NoticeResDto extends NoticeModel {
+	
+	public static class NoticeResDtoResult extends ApiResDto<NoticeResDto.NoticesResult> {}
 
-    public static class NoticeResDtoResult extends ApiResDto<NoticeResDto.NoticesResult> {}
-
+	@Schema(description = "파일 목록", nullable = false)
+    private List<FileModel> fileList;
+    @Schema(description = "파일 링크 URL 목록", nullable = false)
+    private List<String> fileLinks;
 
     @Getter
     @ToString
@@ -33,14 +45,5 @@ public class NoticeResDto extends NoticeModel {
         private PagingDto page;
         @Schema(description = "파일 목록", nullable = false)
         private List<FileModel> fileList;
-    }
-
-    @Schema(description = "파일 목록", nullable = false)
-    private List<FileModel> fileList;
-    public void setFileList(List<FileModel> fileList) {
-        this.fileList = fileList;
-    }
-    public List<FileModel> getFileList() {
-        return this.fileList;
     }
 }
