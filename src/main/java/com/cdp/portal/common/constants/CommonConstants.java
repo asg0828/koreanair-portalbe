@@ -57,6 +57,8 @@ public class CommonConstants {
 		public static final String ID_SE = "idSe";
 		//파일
 		public static final String FILE = "fl";
+		//파일 링크
+		public static final String FILE_LINK = "fk";
 		//메타테이블정의
 		public static final String META_TBL_ID = "mt";
 		//메타테이블컬럼정의

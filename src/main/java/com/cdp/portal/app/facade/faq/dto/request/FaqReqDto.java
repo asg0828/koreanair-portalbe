@@ -38,6 +38,9 @@ public class FaqReqDto {
         private String modiId;
         @Schema(description = "파일 ID 목록", example = "[fl23000000360]", nullable = false)
         private String[] fileIds;
+        
+        @Schema(description = "파일 링크 URL 목록", example = "[https://example.com]", nullable = false)
+        private String[] fileLinks;
     }
 
     @Getter
@@ -64,6 +67,9 @@ public class FaqReqDto {
         private String modiId;
         @Schema(description = "파일 ID 목록", example = "[fl23000000360]", nullable = false)
         private String[] fileIds;
+        
+        @Schema(description = "파일 링크 URL 목록", example = "[https://example.com]", nullable = false)
+        private String[] fileLinks;
     }
 
     @Getter
